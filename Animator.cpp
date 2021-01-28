@@ -10,8 +10,11 @@ void Animator::update(float dt)
 {
 	auto animation_components = world.GetComponents<Sprite, Animation>();
 	for (auto& [sprite, anim] : animation_components) {
-		anim->dt += dt;
-		if (anim->dt > anim->lifetime) {
+		if (anim->dynamic) {
+			anim->dt += dt;
+		}
+
+		if (anim->dt > anim->lifetime && anim->dynamic) {
 			const auto& state = anim->animations.at(anim->_state).front();
 			anim->animations.at(anim->_state).pop_front();
 			anim->animations.at(anim->_state).push_back(state);

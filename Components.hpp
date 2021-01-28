@@ -28,6 +28,14 @@ struct Blocker {
 	
 };
 
+struct Interactable {
+	Interactable() {};
+	Interactable(bool repeat) : repeatable(repeat) {};
+	~Interactable() {};
+	bool repeatable{ true };
+	bool triggered{ false };
+};
+
 
 struct Sprite {
 	Sprite() {};
@@ -59,30 +67,16 @@ struct Animation {
 	Animation() {
 		animations.insert({ state::IDLE, {} });
 	};
-	Animation(float _lifetime, unsigned int _id, unsigned int _clip_x, unsigned int _clip_y, unsigned int _width, unsigned int _height) : lifetime(_lifetime) {
+	Animation(float _lifetime, unsigned int _id, unsigned int _clip_x, unsigned int _clip_y, unsigned int _width, unsigned int _height, bool is_dynamic = true) 
+		: lifetime(_lifetime), dynamic(is_dynamic) {
 		animations.insert({ state::IDLE, {AnimFrame(_id, _clip_x, _clip_y, _width, _height)} });
-	};
-	Animation(float _lifetime) : lifetime(_lifetime) {
-		animations.insert({ state::IDLE, {} });
 	};
 	~Animation() {};
 	float dt{ 0.0f };
 	float lifetime{ 1.0f };
 	state _state{ state::IDLE };
 	std::map<state, std::deque<AnimFrame>> animations;
-};
-
-
-struct RigidBody {
-	RigidBody() {};
-	RigidBody(float _vx, float _vy, float _mass) : vx(_vx), vy(_vy), mass(_mass) {};
-	~RigidBody() {};
-	float vx{ 0.0f }; 
-	float vy{ 0.0f };
-	float ax{ 0.0f };
-	float ay{ 0.0f };
-	float mass{ 1.0f };
-	bool gravity{ true };
+	bool dynamic{ true };
 };
 
 
@@ -94,10 +88,11 @@ struct Particle {
 };
 
 
-using Script = void(*)(World & world, uint32_t entity, SDL_Event& event);
+using Script = void(*)(World & world, uint32_t entity);
 struct Scriptable {
 	Scriptable(uint32_t entity) : owner(entity) {};
 	Script Init{ nullptr };
 	Script OnUpdate{ nullptr };
+	Script OnBump{ nullptr };
 	uint32_t owner;
 };

@@ -57,6 +57,7 @@ void RegisterComponents(World& world) {
 	world.RegisterComponent<Player>();
 	world.RegisterComponent<Actor>();
 	world.RegisterComponent<Blocker>();
+	world.RegisterComponent<Interactable>();
 }
 
 void load_tiles(Renderer& renderer, TextureManager& tex_manager, unsigned int tile_size) {
@@ -125,7 +126,8 @@ int main(int argc, char* argv[])
 
 
 		auto tex_manager = TextureManager(window);
-		auto bat_tex = tex_manager.LoadTexture("./Resources/32x32-bat-sprite.png");
+		auto chest0_tex = tex_manager.LoadTexture("./Resources/Chest0.png");
+		auto chest1_tex = tex_manager.LoadTexture("./Resources/Chest1.png");
 		auto fire_tex = tex_manager.LoadTexture("./Resources/CampFireFinished.png");
 		auto exp_tex = tex_manager.LoadTexture("./Resources/exp2_0.png");
 		auto kenny_tileset = tex_manager.LoadTexture("./Resources/colored_packed.png");
@@ -188,6 +190,36 @@ int main(int argc, char* argv[])
 		world.AddComponent<Blocker>(npc);
 		world.AddComponent<Actor>(npc);
 
+		auto chest = world.CreateEntity();
+		world.AddComponent<Position>(chest, 15, 20, 0);
+		world.AddComponent<Sprite>(chest, chest0_tex, 0, 0, TILE_SIZE, TILE_SIZE, 0);
+		world.AddComponent<Animation>(chest, 0.1f, chest1_tex, 0, 0, TILE_SIZE, TILE_SIZE, false);
+		world.AddComponent<Blocker>(chest);
+		world.AddComponent<Interactable>(chest);
+		auto* chest_animation = world.GetComponent<Animation>(chest);
+		chest_animation->animations.at(state::IDLE).push_back(AnimFrame(chest0_tex, 0, 0, TILE_SIZE, TILE_SIZE));
+		
+		world.AddComponent<Scriptable>(chest, chest);
+		auto* script = world.GetComponent<Scriptable>(chest);
+
+		auto open_script = [](World& world, uint32_t entity) {
+			auto* anim = world.GetComponent<Animation>(entity);
+			auto* sprite = world.GetComponent<Sprite>(entity);
+			auto* interactable = world.GetComponent<Interactable>(entity);
+			interactable->triggered = true;
+
+			const auto& state = anim->animations.at(anim->_state).front();
+			anim->animations.at(anim->_state).pop_front();
+			anim->animations.at(anim->_state).push_back(state);
+			sprite->id = state.id;
+			sprite->clip_x = state.clip_x;
+			sprite->clip_y = state.clip_y;
+			sprite->width = state.width;
+			sprite->height = state.height;
+		};
+		script->OnBump = open_script;
+
+
 		auto fire = world.CreateEntity();
 		world.AddComponent<Position>(fire, 25, 25, 0);
 		world.AddComponent<Sprite>(fire, fire_tex, 0, 0, 64, 64, 0);
@@ -232,7 +264,9 @@ int main(int argc, char* argv[])
 
 			auto scripts = world.GetComponents<Scriptable>();
 			for (auto& s : scripts) {
-				s->OnUpdate(world, entity, event);
+				if (s->OnUpdate != nullptr) {
+					s->OnUpdate(world, entity);
+				}
 			}
 		}
 	}

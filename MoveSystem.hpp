@@ -14,6 +14,7 @@ private:
 	WorldMap& world_map;
 	bool can_move(uint32_t mover, int x, int y);
 	void move(std::tuple<int, int> direction, uint32_t actor);
+	void do_bump_script(uint32_t entity);
 public:
 	MoveSystem(World& _world, EventManager& _event_manager, Camera& _camera, WorldMap& _world_map);
 	~MoveSystem() { };

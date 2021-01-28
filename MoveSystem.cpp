@@ -15,6 +15,26 @@ MoveSystem::MoveSystem(World& _world, EventManager& _event_manager, Camera& _cam
 	event_manager.add_subscriber(EventTypes::DESCEND_DUNGEON, *this);
 }
 
+void MoveSystem::do_bump_script(uint32_t entity) 
+{
+	auto* interactable = world.GetComponent<Interactable>(entity);
+	if (interactable != nullptr) {
+		auto* script = world.GetComponent<Scriptable>(entity);
+		if (script->OnBump != nullptr) {
+			if (interactable->repeatable) {
+				script->OnBump(world, entity);
+				interactable->triggered = !interactable->triggered;
+			}
+			else {
+				if (!interactable->triggered) {
+					script->OnBump(world, entity);
+					interactable->triggered = true;
+				}
+			}
+		}
+	}
+}
+
 bool MoveSystem::can_move(uint32_t mover, int x, int y)
 {
 	auto& level = world_map.get_level(world_map.get_current_depth());
@@ -35,12 +55,15 @@ bool MoveSystem::can_move(uint32_t mover, int x, int y)
 		if (blocker == nullptr) {
 			continue;
 		}
-		
+
 		auto* actor = world.GetComponent<Actor>(entity);
 		if (actor != nullptr) {
 			//event_manager.push_event(EventTypes::BUMP_ATTACK, mover, entity); // don't have a combat system to handle this yet...
 			return false;
 		}
+
+		do_bump_script(entity);
+		return false;
 	}
 
 	return true;

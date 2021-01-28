@@ -160,6 +160,7 @@
     <ClCompile Include="Prefabs.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WorldMap.cpp" />
   </ItemGroup>
@@ -186,6 +187,7 @@
     <ClInclude Include="StateManager.hpp" />
     <ClInclude Include="TextureManager.hpp" />
     <ClInclude Include="Tile.hpp" />
+    <ClInclude Include="Utils.hpp" />
     <ClInclude Include="Window.hpp" />
     <ClInclude Include="World.hpp" />
     <ClInclude Include="WorldMap.hpp" />
