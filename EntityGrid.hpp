@@ -26,6 +26,11 @@ public:
 		grid.at(x + y * width).push_back(entity);
 	}
 
+	inline void remove_entity(uint32_t entity, int x, int y) {
+		auto& g = grid.at(x + y * width);
+		g.erase(std::remove_if(g.begin(), g.end(), [entity](const uint32_t e) {return e == entity; }), g.end());
+	}
+
 	void clear() {
 		for (auto& [i, vec] : grid) {
 			vec.clear();

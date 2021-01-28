@@ -55,6 +55,5 @@ void WorldMap::populate_entity_grid()
 	for (auto e : entities) {
 		auto* p = world.GetComponent<Position>(e);
 		entity_grid.get()->add_entity(e, p->x, p->y);
-
 	}
 }

@@ -75,9 +75,10 @@ void MoveSystem::move(std::tuple<int, int> direction, uint32_t actor)
 	auto* pos = world.GetComponent<Position>(actor);
 
 	if (can_move(actor, pos->x + x, pos->y + y)) {
+		world_map.get_entity_grid().remove_entity(actor, pos->x, pos->y);
 		pos->x += x;
 		pos->y += y;
-
+		world_map.get_entity_grid().add_entity(actor, pos->x, pos->y);
 		if (world.GetComponent<Player>(actor)) {
 			camera.follow(pos->x, pos->y);
 		}
