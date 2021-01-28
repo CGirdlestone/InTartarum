@@ -22,6 +22,7 @@ void WorldMap::create_dungeon()
 	auto level = std::make_unique<Level>(map_width, map_height);
 	auto& grid = level.get()->get_grid();
 
+	// place holder - full dungeon generation to go here.
 	for (int i = 0; i < grid.get_width(); i++) {
 		for (int j = 0; j < grid.get_height(); j++){
 			auto& tile = grid.get_tile(i, j);
@@ -34,9 +35,9 @@ void WorldMap::create_dungeon()
 			}
 		}
 	}
-	dungeon_depth++;
 	dungeon.swap(level);
-	// populate dungeon level
+
+	// create mobs & items here.
 }
 
 void WorldMap::populate_entity_grid()
@@ -48,6 +49,8 @@ void WorldMap::populate_entity_grid()
 		return p->z != this->dungeon_depth; 
 		}
 	), entities.end());
+
+	entity_grid.get()->clear();
 
 	for (auto e : entities) {
 		auto* p = world.GetComponent<Position>(e);

@@ -101,12 +101,14 @@ void build_town(Level& level) {
 			}
 		}
 	}
+
+	grid.set_tile(25, 25, true, false, TileType::STAIRS);
 }
 
 int main(int argc, char* argv[])
 {
 	srand(time(0));
-	// create a new scope so all the SDL allocated objects and destroyed before the SDL quit functions are called. 
+	// create a new scope so all the SDL allocated objects are destroyed before the SDL quit functions are called. 
 	{
 		const int TILE_SIZE{ 16 };
 		const int WIDTH{ 80 };
@@ -119,7 +121,7 @@ int main(int argc, char* argv[])
 
 
 		auto window = Window("Sticky", WIDTH, HEIGHT, TILE_SIZE);
-		auto camera = Camera(0, 0, WIDTH - 10, HEIGHT - 10, 2 * WIDTH, 2 * HEIGHT);
+		auto camera = Camera(0, 0, WIDTH - 10, HEIGHT, 2 * WIDTH, 2 * HEIGHT);
 
 
 		auto tex_manager = TextureManager(window);

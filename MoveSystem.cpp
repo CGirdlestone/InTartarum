@@ -1,23 +1,24 @@
 #include "MoveSystem.hpp"
 
 MoveSystem::MoveSystem(World& _world, EventManager& _event_manager, Camera& _camera, WorldMap& _world_map)
-	: world(_world), camera(_camera), event_mananger(_event_manager), world_map(_world_map)
+	: world(_world), camera(_camera), event_manager(_event_manager), world_map(_world_map)
 {
-	event_mananger.add_subscriber(EventTypes::MOVE_NORTH, *this);
-	event_mananger.add_subscriber(EventTypes::MOVE_NORTH_WEST, *this);
-	event_mananger.add_subscriber(EventTypes::MOVE_NORTH_EAST, *this);
-	event_mananger.add_subscriber(EventTypes::MOVE_SOUTH, *this);
-	event_mananger.add_subscriber(EventTypes::MOVE_SOUTH_WEST, *this);
-	event_mananger.add_subscriber(EventTypes::MOVE_SOUTH_EAST, *this);
-	event_mananger.add_subscriber(EventTypes::MOVE_EAST, *this);
-	event_mananger.add_subscriber(EventTypes::MOVE_WEST, *this);
-	event_mananger.add_subscriber(EventTypes::ASCEND_DUNGEON, *this);
-	event_mananger.add_subscriber(EventTypes::DESCEND_DUNGEON, *this);
+	event_manager.add_subscriber(EventTypes::MOVE_NORTH, *this);
+	event_manager.add_subscriber(EventTypes::MOVE_NORTH_WEST, *this);
+	event_manager.add_subscriber(EventTypes::MOVE_NORTH_EAST, *this);
+	event_manager.add_subscriber(EventTypes::MOVE_SOUTH, *this);
+	event_manager.add_subscriber(EventTypes::MOVE_SOUTH_WEST, *this);
+	event_manager.add_subscriber(EventTypes::MOVE_SOUTH_EAST, *this);
+	event_manager.add_subscriber(EventTypes::MOVE_EAST, *this);
+	event_manager.add_subscriber(EventTypes::MOVE_WEST, *this);
+	event_manager.add_subscriber(EventTypes::ASCEND_DUNGEON, *this);
+	event_manager.add_subscriber(EventTypes::DESCEND_DUNGEON, *this);
 }
 
 bool MoveSystem::can_move(uint32_t mover, int x, int y)
 {
-	auto& tile = world_map.get_level(dungeon_depth).get_grid().get_tile(x, y);
+	auto& level = world_map.get_level(world_map.get_current_depth());
+	auto& tile = level.get_grid().get_tile(x, y);
 	
 	if (!tile.walkable) {
 		return false;
@@ -37,7 +38,7 @@ bool MoveSystem::can_move(uint32_t mover, int x, int y)
 		
 		auto* actor = world.GetComponent<Actor>(entity);
 		if (actor != nullptr) {
-			//event_mananger.push_event(EventTypes::BUMP_ATTACK, mover, entity); // don't have a combat system to handle this yet...
+			//event_manager.push_event(EventTypes::BUMP_ATTACK, mover, entity); // don't have a combat system to handle this yet...
 			return false;
 		}
 	}
@@ -73,10 +74,7 @@ void MoveSystem::on_tick()
 
 void MoveSystem::receive(EventTypes event)
 {
-	switch (event) {
-	case EventTypes::DESCEND_DUNGEON: dungeon_depth++; break;
-	case EventTypes::ASCEND_DUNGEON: dungeon_depth = 0; break;
-	}
+
 }
 
 void MoveSystem::receive(EventTypes event, uint32_t actor)

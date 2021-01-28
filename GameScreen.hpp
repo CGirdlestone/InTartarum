@@ -4,7 +4,7 @@
 #include "EventManager.hpp"
 #include "WorldMap.hpp"
 
-class GameScreen : public BaseState
+class GameScreen : public BaseState, BaseSystem
 {
 private:
 	StateManager& state_manager;
@@ -31,6 +31,10 @@ public:
 	virtual void on_entrance(Renderer& renderer) const;
 	virtual void on_bury() const;
 	inline const int get_depth() const { return dungeon_depth; };
+	virtual void receive(EventTypes event) override;
+	virtual void receive(EventTypes event, uint32_t actor)  override;
+	virtual void receive(EventTypes event, uint32_t actor, uint32_t target)  override;
+	virtual void receive(EventTypes event, uint32_t actor, uint32_t target, uint32_t item)  override;
 };
 
 
