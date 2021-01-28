@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
 		RegisterComponents(world);
 
 
-		auto window = Window("Sticky", WIDTH, HEIGHT, TILE_SIZE);
+		auto window = Window("Sticky", WIDTH, HEIGHT, TILE_SIZE, TILE_SIZE);
 		auto camera = Camera(0, 0, WIDTH - 10, HEIGHT, 2 * WIDTH, 2 * HEIGHT);
 
 
