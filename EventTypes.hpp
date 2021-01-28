@@ -18,4 +18,5 @@ enum class EventTypes {
 	BUTTON_CLICK,
 	PLAY_CHUNK,
 	BUMP_ATTACK,
+	BUMP_SCRIPT,
 };

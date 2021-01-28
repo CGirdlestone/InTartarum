@@ -150,6 +150,7 @@
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="MoveSystem.cpp" />
+    <ClCompile Include="ScriptSystem.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="SoundSystem.cpp" />
     <ClCompile Include="SplashScreen.cpp" />
@@ -181,6 +182,7 @@
     <ClInclude Include="ParticleSystem.hpp" />
     <ClInclude Include="Prefabs.hpp" />
     <ClInclude Include="Renderer.hpp" />
+    <ClInclude Include="ScriptSystem.hpp" />
     <ClInclude Include="SoundManager.hpp" />
     <ClInclude Include="SoundSystem.hpp" />
     <ClInclude Include="SplashScreen.hpp" />

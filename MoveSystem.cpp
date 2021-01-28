@@ -20,14 +20,14 @@ void MoveSystem::do_bump_script(uint32_t entity)
 	auto* interactable = world.GetComponent<Interactable>(entity);
 	if (interactable != nullptr) {
 		auto* script = world.GetComponent<Scriptable>(entity);
-		if (script->OnBump != nullptr) {
+		if (script->OnBump != "") {
 			if (interactable->repeatable) {
-				script->OnBump(world, entity);
+				event_manager.push_event(EventTypes::BUMP_SCRIPT, entity);
 				interactable->triggered = !interactable->triggered;
 			}
 			else {
 				if (!interactable->triggered) {
-					script->OnBump(world, entity);
+					event_manager.push_event(EventTypes::BUMP_SCRIPT, entity);
 					interactable->triggered = true;
 				}
 			}

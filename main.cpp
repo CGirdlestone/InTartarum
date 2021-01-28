@@ -16,6 +16,7 @@
 #include "ParticleSystem.hpp"
 #include "SoundSystem.hpp"
 #include "MoveSystem.hpp"
+#include "ScriptSystem.hpp"
 #include "Prefabs.hpp"
 #include "StateManager.hpp"
 #include "SplashScreen.hpp"
@@ -164,6 +165,10 @@ int main(int argc, char* argv[])
 
 		auto move_system = MoveSystem(world, event_manager, camera, world_map);
 		systems.push_back(std::reference_wrapper(move_system));
+
+		auto script_system = ScriptSystem(world, event_manager, world_map);
+		script_system.init();
+		systems.push_back(std::reference_wrapper(script_system));
 		
 
 		auto state_manager = StateManager(world, renderer, event_manager);
@@ -201,23 +206,7 @@ int main(int argc, char* argv[])
 		
 		world.AddComponent<Scriptable>(chest, chest);
 		auto* script = world.GetComponent<Scriptable>(chest);
-
-		auto open_script = [](World& world, uint32_t entity) {
-			auto* anim = world.GetComponent<Animation>(entity);
-			auto* sprite = world.GetComponent<Sprite>(entity);
-			auto* interactable = world.GetComponent<Interactable>(entity);
-			interactable->triggered = true;
-
-			const auto& state = anim->animations.at(anim->_state).front();
-			anim->animations.at(anim->_state).pop_front();
-			anim->animations.at(anim->_state).push_back(state);
-			sprite->id = state.id;
-			sprite->clip_x = state.clip_x;
-			sprite->clip_y = state.clip_y;
-			sprite->width = state.width;
-			sprite->height = state.height;
-		};
-		script->OnBump = open_script;
+		script->OnBump = "OPEN";
 
 
 		auto fire = world.CreateEntity();
@@ -261,13 +250,6 @@ int main(int argc, char* argv[])
 			state_manager.update(dt);
 
 			std::for_each(systems.begin(), systems.end(), [dt](std::reference_wrapper<BaseSystem>& s) {s.get().update(dt); });
-
-			auto scripts = world.GetComponents<Scriptable>();
-			for (auto& s : scripts) {
-				if (s->OnUpdate != nullptr) {
-					s->OnUpdate(world, entity);
-				}
-			}
 		}
 	}
 

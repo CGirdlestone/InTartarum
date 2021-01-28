@@ -111,6 +111,9 @@
     <ClCompile Include="Utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ScriptSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.hpp">
@@ -190,6 +193,9 @@
     </ClInclude>
     <ClInclude Include="Utils.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptSystem.hpp">
+      <Filter>Header Files\Systems</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

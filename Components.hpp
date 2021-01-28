@@ -91,8 +91,8 @@ struct Particle {
 using Script = void(*)(World & world, uint32_t entity);
 struct Scriptable {
 	Scriptable(uint32_t entity) : owner(entity) {};
-	Script Init{ nullptr };
-	Script OnUpdate{ nullptr };
-	Script OnBump{ nullptr };
+	std::string Init{ "" };
+	std::string OnUpdate{ "" };
+	std::string OnBump{ "" };
 	uint32_t owner;
 };
