@@ -96,7 +96,6 @@ struct Particle {
 };
 
 
-using Script = void(*)(World & world, uint32_t entity);
 struct Scriptable {
 	Scriptable(uint32_t entity) : owner(entity) {};
 	std::string Init{ "" };

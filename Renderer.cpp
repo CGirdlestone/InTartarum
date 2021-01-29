@@ -151,8 +151,8 @@ void Renderer::DrawMapTexture(int x, int y)
 	SDL_Rect srcrect;
 	srcrect.x = cam_x * window.GetTileWidth();
 	srcrect.y = cam_y * window.GetTileHeight();;
-	srcrect.w = camera.get_width() * window.GetTileWidth();
-	srcrect.h = camera.get_height() * window.GetTileHeight();
+	srcrect.w = camera.get_width() * window.GetTileWidth() / camera.get_zoom();
+	srcrect.h = camera.get_height() * window.GetTileHeight() / camera.get_zoom();
 
 	SDL_RenderCopy(window.GetRenderer(), map_texture.get(), &srcrect, &dstrect);
 }
@@ -162,10 +162,10 @@ void Renderer::DrawSprite(Position* pos, Sprite* sprite)
 {
 	SDL_Rect dstrect;
 	auto [x, y] = camera.viewport(pos->x, pos->y);
-	dstrect.x = x * window.GetTileWidth();
-	dstrect.y = y * window.GetTileHeight();
-	dstrect.w = sprite->width;
-	dstrect.h = sprite->height;
+	dstrect.x = x * camera.get_zoom() * window.GetTileWidth();
+	dstrect.y = y * camera.get_zoom() * window.GetTileHeight();
+	dstrect.w = sprite->width * 2;
+	dstrect.h = sprite->height * 2;
 
 	SDL_Rect srcrect;
 	srcrect.x = sprite->clip_x;

@@ -20,11 +20,13 @@ void GameScreen::return_to_safe_zone()
 	world_map.set_depth(0);
 	world_map.populate_entity_grid();
 
+	auto components = world.GetComponents<Position, Player>();
+	auto& [pos, player] = components[0]; // there will only be one player.
+	world_map.update_fov(pos->x, pos->y, player->vision);
+
 	auto& renderer = state_manager.get_renderer();
 	renderer.DrawMap(world_map.get_level(world_map.get_current_depth()));
 	
-	auto components = world.GetComponents<Position, Player>();
-	auto& [pos, player] = components[0]; // there will only be one player.
 	pos->z = 0;
 }
 

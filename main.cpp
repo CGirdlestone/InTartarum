@@ -114,8 +114,8 @@ int main(int argc, char* argv[])
 	// create a new scope so all the SDL allocated objects are destroyed before the SDL quit functions are called. 
 	{
 		const int TILE_SIZE{ 16 };
-		const int WIDTH{ 80 };
-		const int HEIGHT{ 45 };
+		const int WIDTH{ 90 };
+		const int HEIGHT{ 46 };
 		const int MAP_WIDTH{ 120 };
 		const int MAP_HEIGHT{ 70 };
 
@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
 
 
 		auto window = Window("Sticky", WIDTH, HEIGHT, TILE_SIZE, TILE_SIZE);
-		auto camera = Camera(0, 0, WIDTH - 10, HEIGHT, MAP_WIDTH, MAP_HEIGHT);
+		auto camera = Camera(0, 0, WIDTH - 20, HEIGHT, MAP_WIDTH, MAP_HEIGHT, 2);
 
 
 		auto tex_manager = TextureManager(window);
