@@ -26,6 +26,7 @@ private:
 	void DrawMapTexture(int x, int y);
 	void DrawFPS(uint32_t fps);
 	void DrawSprite(Position* pos, Sprite* sprite);
+	void DrawBox(unsigned int x, unsigned int y, unsigned int width, unsigned int height);
 public:
 	Renderer(World& _world, Window& _window, TextureManager& _tex_manager, Camera& _camera);
 	virtual ~Renderer() {};

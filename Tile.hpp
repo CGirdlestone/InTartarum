@@ -19,7 +19,7 @@ enum class TileType {
 };
 
 struct Tile {
-	bool walkable{ false };
+	bool walkable{ true };
 	bool explored{ false };
 	bool blocks_view{ false };
 	bool visible{ false };

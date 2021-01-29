@@ -16,13 +16,20 @@ void Renderer::DrawMap(Level& level)
 
 	for (int j = 0; j < camera.get_map_height(); j++) {
 		for (int i = 0; i < camera.get_map_width(); i++) {
-			auto sprite = tile_sprites.at(grid.get_tile(i, j).type);
-
+			
 			SDL_Rect dstrect;
 			dstrect.x = i * window.GetTileWidth();
 			dstrect.y = j * window.GetTileHeight();
 			dstrect.w = window.GetTileWidth();
 			dstrect.h = window.GetTileHeight();
+
+			auto& tile = grid.get_tile(i, j);
+
+			auto sprite = tile_sprites.at(tile.type);
+
+			if (!tile.explored) {
+				sprite = tile_sprites.at(TileType::EMPTY);
+			}
 
 			SDL_Rect srcrect;
 			srcrect.x = sprite.clip_x;
@@ -31,12 +38,83 @@ void Renderer::DrawMap(Level& level)
 			srcrect.h = sprite.height;
 
 			SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(sprite.id), &srcrect, &dstrect);
+
+			if (!tile.visible) {
+				SDL_SetRenderDrawColor(window.GetRenderer(), 50, 50, 50, 128);
+				SDL_SetRenderDrawBlendMode(window.GetRenderer(), SDL_BLENDMODE_BLEND);
+				SDL_RenderFillRect(window.GetRenderer(), &dstrect);
+				SDL_SetRenderDrawColor(window.GetRenderer(), 255, 255, 255, 0);
+			}
 		}
 	}
 	ResetTarget();
 }
 
+void Renderer::DrawBox(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
+{
+	auto* gui_0 = texture_manager.GetTexture(texture_manager.LoadTexture("./Resources/GUI0.png"));
 
+	for (unsigned int i = 0; i < width; i++) {
+		for (unsigned int j = 0; j < height; j++) {
+			SDL_Rect dstrect;
+			dstrect.x = (x + i) * window.GetTileWidth();
+			dstrect.y = (y + j) * window.GetTileHeight();
+			dstrect.w = window.GetTileWidth();
+			dstrect.h = window.GetTileHeight();
+			unsigned int _x{ 2 };
+			unsigned int _y{ 8 };
+
+			if (i == 0 && j == 0) {
+				// top left
+				_x = 1;
+				_y = 7;
+			}
+			else if (i == width - 1 && j == 0) {
+				// top right
+				_x = 3;
+				_y = 7;
+			}
+			else if (i == 0 && j == height - 1) {
+				// bottom left
+				_x = 1;
+				_y = 9;
+			}
+			else if (i == width - 1 && j == height - 1) {
+				// bottom right
+				_x = 3;
+				_y = 9;
+			}
+			else if (j == 0) {
+				// top
+				_x = 2;
+				_y = 7;
+			}
+			else if (j == height - 1) {
+				// bottom
+				_x = 2;
+				_y = 9;
+			}
+			else if (i == 0) {
+				// left
+				_x = 1;
+				_y = 8;
+			}
+			else if (i == width - 1) {
+				// right
+				_x = 3;
+				_y = 8;
+			}
+
+			SDL_Rect srcrect;
+			srcrect.x = _x * window.GetTileWidth();
+			srcrect.y = _y * window.GetTileHeight();
+			srcrect.w = window.GetTileWidth();
+			srcrect.h = window.GetTileHeight();
+
+			SDL_RenderCopy(window.GetRenderer(), gui_0, &srcrect, &dstrect);
+		}
+	}
+}
 
 void Renderer::DrawFPS(uint32_t fps)
 {
@@ -62,6 +140,7 @@ void Renderer::DrawFPS(uint32_t fps)
 
 void Renderer::DrawMapTexture(int x, int y)
 {
+	
 	SDL_Rect dstrect;
 	dstrect.x = 0;
 	dstrect.y = 0;
@@ -110,6 +189,7 @@ void Renderer::DrawScene(uint32_t fps, WorldMap& world_map)
 	Clear();
 	
 	DrawMapTexture(0, 0);
+	DrawBox(camera.get_width(), 0, window.GetWidth() - camera.get_width(), window.GetHeight());
 
 	auto components = world.GetComponents<Position, Sprite>();
 	// sort the entities based on the sprite depth value.
@@ -123,9 +203,11 @@ void Renderer::DrawScene(uint32_t fps, WorldMap& world_map)
 		return std::get<0>(a)->z != world_map.get_current_depth();
 		}
 	), components.end());
-
+	auto& grid = world_map.get_level(world_map.get_current_depth()).get_grid();
 	for (auto& [pos, sprite] : components) {
-		DrawSprite(pos, sprite);
+		if (grid.get_tile(pos->x, pos->y).visible) {
+			DrawSprite(pos, sprite);
+		}
 	}
 
 	DrawFPS(fps);

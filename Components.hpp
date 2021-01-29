@@ -18,6 +18,7 @@ struct Position {
 
 struct Player {
 	int level{ 1 };
+	int vision{ 10 };
 };
 
 struct Actor {
@@ -26,6 +27,13 @@ struct Actor {
 
 struct Blocker {
 	
+};
+
+struct LightSource {
+	LightSource() {};
+	LightSource(int _radius) : radius(_radius) {};
+	~LightSource() {};
+	int radius;
 };
 
 struct Interactable {

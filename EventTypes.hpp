@@ -19,4 +19,5 @@ enum class EventTypes {
 	PLAY_CHUNK,
 	BUMP_ATTACK,
 	BUMP_SCRIPT,
+	TICK,
 };

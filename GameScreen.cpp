@@ -5,12 +5,13 @@ void GameScreen::descend_dungeon()
 	world_map.set_depth(world_map.get_current_depth() + 1);
 	world_map.create_dungeon();
 	world_map.populate_entity_grid();
+	auto components = world.GetComponents<Position, Player>();
+	auto& [pos, player] = components[0]; // there will only be one player.
+	world_map.update_fov(pos->x, pos->y, player->vision);
 
 	auto& renderer = state_manager.get_renderer();
 	renderer.DrawMap(world_map.get_level(world_map.get_current_depth()));
 
-	auto components = world.GetComponents<Position, Player>();
-	auto& [pos, player] = components[0]; // there will only be one player.
 	pos->z++;
 }
 
@@ -32,6 +33,7 @@ GameScreen::GameScreen(StateManager& _state_manager, World& _world, TextureManag
 {
 	event_manager.add_subscriber(EventTypes::ASCEND_DUNGEON, *this); // required to allow teleporting back to town.
 	event_manager.add_subscriber(EventTypes::DESCEND_DUNGEON, *this);
+	event_manager.add_subscriber(EventTypes::TICK, *this);
 }
 
 void GameScreen::handle_input(SDL_Event& event)
@@ -62,12 +64,16 @@ void GameScreen::handle_input(SDL_Event& event)
 
 void GameScreen::on_tick()
 {
-
+	auto components = world.GetComponents<Player, Position>();
+	auto& [player, pos] = components[0];
+	world_map.update_fov(pos->x, pos->y, player->vision);
+	auto& renderer = state_manager.get_renderer();
+	renderer.DrawMap(world_map.get_level(world_map.get_current_depth()));
 }
 
 void GameScreen::update(float dt)
 {
-
+	
 }
 
 void GameScreen::draw_scene(Renderer& renderer, const uint32_t fps) const
@@ -91,6 +97,7 @@ void GameScreen::receive(EventTypes event)
 	switch (event) {
 	case EventTypes::ASCEND_DUNGEON: return_to_safe_zone(); break;
 	case EventTypes::DESCEND_DUNGEON: descend_dungeon(); break;
+	case EventTypes::TICK: on_tick(); break;
 	}
 }
 

@@ -59,6 +59,7 @@ void RegisterComponents(World& world) {
 	world.RegisterComponent<Actor>();
 	world.RegisterComponent<Blocker>();
 	world.RegisterComponent<Interactable>();
+	world.RegisterComponent<LightSource>();
 }
 
 void load_tiles(Renderer& renderer, TextureManager& tex_manager, unsigned int tile_size) {
@@ -115,6 +116,8 @@ int main(int argc, char* argv[])
 		const int TILE_SIZE{ 16 };
 		const int WIDTH{ 80 };
 		const int HEIGHT{ 45 };
+		const int MAP_WIDTH{ 120 };
+		const int MAP_HEIGHT{ 70 };
 
 		initialise_SDL();
 
@@ -123,7 +126,7 @@ int main(int argc, char* argv[])
 
 
 		auto window = Window("Sticky", WIDTH, HEIGHT, TILE_SIZE, TILE_SIZE);
-		auto camera = Camera(0, 0, WIDTH - 10, HEIGHT, 2 * WIDTH, 2 * HEIGHT);
+		auto camera = Camera(0, 0, WIDTH - 10, HEIGHT, MAP_WIDTH, MAP_HEIGHT);
 
 
 		auto tex_manager = TextureManager(window);
@@ -134,6 +137,8 @@ int main(int argc, char* argv[])
 		auto kenny_tileset = tex_manager.LoadTexture("./Resources/colored_packed.png");
 		auto kenny_transparent = tex_manager.LoadTexture("./Resources/colored_transparent_packed.png");
 		auto splash = tex_manager.LoadTexture("./Resources/blizzardskull.png");
+		auto gui_0 = tex_manager.LoadTexture("./Resources/GUI0.png");
+		auto gui_1 = tex_manager.LoadTexture("./Resources/GUI1.png");
 
 		auto sound_manager = SoundManager();
 		auto intro_music = sound_manager.LoadMusic("./Resources/Sounds/bleeding_out2.ogg");
@@ -144,10 +149,10 @@ int main(int argc, char* argv[])
 		load_tiles(renderer, tex_manager, TILE_SIZE);
 
 
-		auto town = Level(2 * WIDTH, 2 * HEIGHT);
+		auto town = Level(MAP_WIDTH, MAP_HEIGHT);
 		build_town(town);
 
-		auto world_map = WorldMap(town, world, 2 * WIDTH, 2 * HEIGHT);
+		auto world_map = WorldMap(town, world, MAP_WIDTH, MAP_HEIGHT);
 
 
 		auto event_manager = EventManager(world);
@@ -185,8 +190,8 @@ int main(int argc, char* argv[])
 		world.AddComponent<Position>(entity, start_x, start_y, 0);
 		world.AddComponent<Sprite>(entity, kenny_transparent, 24 * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE, 1);
 		world.AddComponent<Player>(entity);
+		auto* p = world.GetComponent<Player>(entity);
 		world.AddComponent<Blocker>(entity);
-		camera.follow(start_x, start_y);
 
 		auto npc = world.CreateEntity();
 		int npc_x{ 18 }, npc_y{ 21 };
@@ -215,6 +220,7 @@ int main(int argc, char* argv[])
 		world.AddComponent<Animation>(fire, 0.1f, fire_tex, 0, 0, 64, 64);
 		auto fire_animation = world.GetComponent<Animation>(fire);
 		for (int i = 1; i < 5; i++) { fire_animation->animations.at(state::IDLE).push_back(AnimFrame(fire_tex, 64 * i, 0, 64, 64)); }
+		world.AddComponent<LightSource>(fire, 10);
 
 		world_map.populate_entity_grid();
 
@@ -231,6 +237,9 @@ int main(int argc, char* argv[])
 		bool playing{ true };
 
 		state_manager.push(GameState::SPLASH_MENU);
+
+		camera.follow(start_x, start_y);
+		world_map.update_fov(start_x, start_y, p->vision);
 
 		while (state_manager.is_playing()) {
 
