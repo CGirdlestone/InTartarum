@@ -27,5 +27,5 @@ public:
 
 	inline const int get_height() const { return height; };
 
-	inline const bool in_bounds(int x, int y) const { if ((x < 0 || x > width) || (y < 0 || y > height)) { return false; } else { return true; } };
+	inline const bool in_bounds(int x, int y) const { if ((x < 0 || x >= width) || (y < 0 || y >= height)) { return false; } else { return true; } };
 };

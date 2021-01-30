@@ -1,4 +1,5 @@
 #include "WorldMap.hpp"
+#include <iostream>
 
 void WorldMap::populate_town()
 {
@@ -57,6 +58,27 @@ void WorldMap::ray_cast(int x, int y, int radius)
 				grid.get_tile(ray_pos_x, ray_pos_y).visible = true;
 				grid.get_tile(ray_pos_x, ray_pos_y).explored = true;
 
+				bool object_blocker{ false };
+				
+				auto entities = get_entity_grid().get(ray_pos_x, ray_pos_y);
+				if (!entities.empty()) {
+					for (auto e : entities) {
+						auto* blocker = world.GetComponent<Blocker>(e);
+						if (blocker == nullptr) {
+							continue;
+						}
+
+						if (blocker->blocks_view) {
+							object_blocker = true;
+							break;
+						}
+					}
+				}
+				if (object_blocker) {
+					hit = true;
+					continue;
+				}
+
 				if (grid.get_tile(ray_pos_x, ray_pos_y).blocks_view) {
 					hit = true;
 				}
@@ -73,7 +95,7 @@ map_width(_width), map_height(_height), dungeon(nullptr), entity_grid(nullptr)
 
 	double pi = 3.141592;
 
-	int interval{ 720 };
+	int interval{ 360 };
 
 	for (int i = 0; i < interval; ++i) {
 		sin.push_back(std::sin(static_cast<double>(i) * pi / static_cast<double>(interval / 2)));
@@ -96,6 +118,9 @@ void WorldMap::create_dungeon()
 			}
 			else if (roll < 20) {
 				tile.set(false, true, TileType::TREE_01);
+			}
+			else {
+				tile.set(true, false, TileType::GRASS_MIDDLE);
 			}
 		}
 	}

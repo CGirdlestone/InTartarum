@@ -30,6 +30,47 @@ void GameScreen::return_to_safe_zone()
 	pos->z = 0;
 }
 
+void GameScreen::open_doors()
+{
+	auto& grid = world_map.get_level(world_map.get_current_depth()).get_grid();
+	auto player = world.GetEntitiesWith<Player>()[0];
+	auto* pos = world.GetComponent<Position>(player);
+
+	for (int i = -1; i < 2; i++) {
+		for (int j = -1; j < 2; j++) {
+			if (i == 0 && j == 0) {
+				continue;
+			}
+
+			if (!grid.in_bounds(pos->x + i, pos->y + j)) {
+				continue;
+			}
+			
+			auto entities = world_map.get_entity_grid().get(pos->x + i, pos->y + j);
+			for (auto e : entities) {
+				auto* interactable = world.GetComponent<Interactable>(e);
+
+				if (interactable == nullptr) {
+					continue;
+				}
+				auto* script = world.GetComponent<Scriptable>(e);
+				if (script->OnBump == "") {
+					continue;
+				}
+
+				if (interactable->repeatable) {
+					event_manager.push_event(EventTypes::BUMP_SCRIPT, e);
+				}
+				else {
+					if (!interactable->triggered) {
+						event_manager.push_event(EventTypes::BUMP_SCRIPT, e);
+					}
+				}
+			}
+		}
+	}
+}
+
 GameScreen::GameScreen(StateManager& _state_manager, World& _world, TextureManager& _tex_manager, EventManager& _event_manager, WorldMap& _world_map, bool _render_prev, unsigned int _id) :
 	state_manager(_state_manager), world(_world), tex_manager(_tex_manager), event_manager(_event_manager), world_map(_world_map), render_prev(_render_prev), id(_id)
 {
@@ -56,6 +97,7 @@ void GameScreen::handle_input(SDL_Event& event)
 		case SDLK_KP_9: event_manager.push_event(EventTypes::MOVE_NORTH_EAST, entity); break;
 		case SDLK_SPACE: event_manager.push_event(EventTypes::DESCEND_DUNGEON); break;
 		case SDLK_BACKSPACE: event_manager.push_event(EventTypes::ASCEND_DUNGEON); break;
+		case SDLK_o: open_doors(); on_tick(); break;
 		}
 	}
 	else if (event.type == SDL_QUIT) {

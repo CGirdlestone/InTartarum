@@ -19,7 +19,7 @@ private:
 
 	void descend_dungeon();
 	void return_to_safe_zone();
-
+	void open_doors();
 public:
 	GameScreen(StateManager& _state_manager, World& _world, TextureManager& _tex_manager, EventManager& _event_manager, WorldMap& _world_map, bool _render_prev, unsigned int _id);
 	virtual void handle_input(SDL_Event& event) override;

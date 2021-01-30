@@ -51,7 +51,7 @@ bool MoveSystem::can_move(uint32_t mover, int x, int y)
 	for (auto entity : entities) {
 		auto* blocker = world.GetComponent<Blocker>(entity);
 		if (blocker == nullptr) {
-			do_bump_script(entity);
+			//do_bump_script(entity);
 			continue;
 		}
 
@@ -61,7 +61,7 @@ bool MoveSystem::can_move(uint32_t mover, int x, int y)
 			return false;
 		}
 
-		do_bump_script(entity);
+		//do_bump_script(entity);
 		return false;
 	}
 

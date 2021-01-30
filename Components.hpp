@@ -17,6 +17,9 @@ struct Position {
 };
 
 struct Player {
+	Player() {};
+	Player(int _vision) : vision(_vision) {};
+	~Player() {};
 	int level{ 1 };
 	int vision{ 10 };
 };
@@ -26,7 +29,10 @@ struct Actor {
 };
 
 struct Blocker {
-	
+	Blocker() {};
+	Blocker(bool _blocks_view) : blocks_view(_blocks_view) {};
+	~Blocker();
+	bool blocks_view{ false };
 };
 
 struct LightSource {

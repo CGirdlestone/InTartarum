@@ -67,7 +67,7 @@ void load_tiles(Renderer& renderer, TextureManager& tex_manager, unsigned int ti
 	auto tree = tex_manager.LoadTexture("./Resources/Tree0.png");
 	auto water = tex_manager.LoadTexture("./Resources/Pit0.png");
 	auto tile = tex_manager.LoadTexture("./Resources/Tile.png");
-	renderer.AddTile(TileType::EMPTY,		Sprite(floor, 8 * tile_size, 7 * tile_size, tile_size, tile_size, 0));
+	renderer.AddTile(TileType::EMPTY,		Sprite(floor, 10 * tile_size, 0 * tile_size, tile_size, tile_size, 0));
 	renderer.AddTile(TileType::DIRT_LOOSE,	Sprite(floor, 1 * tile_size, 0 * tile_size, tile_size, tile_size, 0));
 	renderer.AddTile(TileType::DIRT_MED,	Sprite(floor, 2 * tile_size, 0 * tile_size, tile_size, tile_size, 0));
 	renderer.AddTile(TileType::DIRT_HEAVY,	Sprite(floor, 3 * tile_size, 0 * tile_size, tile_size, tile_size, 0));
@@ -98,7 +98,10 @@ void build_town(Level& level, World& world, TextureManager& texture_manager, con
 	for (int i = 0; i < grid.get_width(); i++) {
 		for (int j = 0; j < grid.get_height(); j++) {
 			if ((i == 0 || i == grid.get_width() - 1) || (j == 0 || j == grid.get_height() - 1)) {
-				grid.set_tile(i, j, false, true, TileType::GRASS_MIDDLE);
+				grid.set_tile(i, j, false, true, TileType::STONE_01);
+			}
+			else {
+				grid.set_tile(i, j, true, false, TileType::GRASS_MIDDLE);
 			}
 		}
 	}
@@ -126,12 +129,13 @@ void build_town(Level& level, World& world, TextureManager& texture_manager, con
 	world.AddComponent<Sprite>(door, door0, 0 * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE, 0);
 	world.AddComponent<Animation>(door, 0.1f, door1, 0 * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE, false);
 	world.AddComponent<Interactable>(door);
-	auto* chest_animation = world.GetComponent<Animation>(door);
-	chest_animation->animations.at(state::IDLE).push_back(AnimFrame(door0, 0 * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE));
+	world.AddComponent<Blocker>(door, true);
+	auto* door_animation = world.GetComponent<Animation>(door);
+	door_animation->animations.at(state::IDLE).push_back(AnimFrame(door0, 0 * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE));
 
 	world.AddComponent<Scriptable>(door, door);
 	auto* script = world.GetComponent<Scriptable>(door);
-	script->OnBump = "OPEN";
+	script->OnBump = "OPEN_DOOR";
 
 
 	auto player_0 = texture_manager.LoadTexture("./Resources/Player0.png");
@@ -145,7 +149,6 @@ void build_town(Level& level, World& world, TextureManager& texture_manager, con
 	world.AddComponent<Animation>(npc, 0.2f, player_0, 0 * TILE_SIZE, 8 * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 	auto* npc_animation = world.GetComponent<Animation>(npc);
 	npc_animation->animations.at(state::IDLE).push_back(AnimFrame(player_1, 0 * TILE_SIZE, 8 * TILE_SIZE, TILE_SIZE, TILE_SIZE));
-
 }
 
 int main(int argc, char* argv[])
@@ -170,7 +173,7 @@ int main(int argc, char* argv[])
 
 
 		auto tex_manager = TextureManager(window);
-		auto splash = tex_manager.LoadTexture("./Resources/blizzardskull.png");
+		auto splash = tex_manager.LoadTexture("./Resources/fog01.png");
 		auto chest0_tex = tex_manager.LoadTexture("./Resources/Chest0.png");
 		auto chest1_tex = tex_manager.LoadTexture("./Resources/Chest1.png");
 		auto gui_0 = tex_manager.LoadTexture("./Resources/GUI0.png");
@@ -240,10 +243,10 @@ int main(int argc, char* argv[])
 
 
 		auto entity = world.CreateEntity();
-		int start_x{ 20 }, start_y{ 20 };
+		int start_x{ 19 }, start_y{ 19 };
 		world.AddComponent<Position>(entity, start_x, start_y, 0);
 		world.AddComponent<Sprite>(entity, player_0, 1 * TILE_SIZE, 11 * TILE_SIZE, TILE_SIZE, TILE_SIZE, 1);
-		world.AddComponent<Player>(entity);
+		world.AddComponent<Player>(entity, 8);
 		auto* p = world.GetComponent<Player>(entity);
 		world.AddComponent<Blocker>(entity);
 		world.AddComponent<Animation>(entity, 0.2f, player_0, 1 * TILE_SIZE, 11 * TILE_SIZE, TILE_SIZE, TILE_SIZE);
@@ -261,7 +264,7 @@ int main(int argc, char* argv[])
 		
 		world.AddComponent<Scriptable>(chest, chest);
 		auto* script = world.GetComponent<Scriptable>(chest);
-		script->OnBump = "OPEN";
+		script->OnBump = "OPEN_CHEST";
 
 
 		auto fire = world.CreateEntity();

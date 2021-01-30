@@ -2,7 +2,7 @@
 
 void ScriptSystem::load_bump_scripts()
 {
-	auto open_script = [](World& world, EventManager& event_manager, SoundManager& sound_manager, uint32_t entity) {
+	auto open_chest_script = [](World& world, EventManager& event_manager, SoundManager& sound_manager, uint32_t entity) {
 		auto* anim = world.GetComponent<Animation>(entity);
 		auto* sprite = world.GetComponent<Sprite>(entity);
 		auto* interactable = world.GetComponent<Interactable>(entity);
@@ -27,8 +27,35 @@ void ScriptSystem::load_bump_scripts()
 		
 	};
 
-	bump_scripts.insert({ "OPEN", open_script });
+	auto open_door_script = [](World& world, EventManager& event_manager, SoundManager& sound_manager, uint32_t entity) {
+		auto* anim = world.GetComponent<Animation>(entity);
+		auto* sprite = world.GetComponent<Sprite>(entity);
+		auto* interactable = world.GetComponent<Interactable>(entity);
+		if (!interactable->triggered) {
+			event_manager.push_event(EventTypes::PLAY_CHUNK, sound_manager.LoadChunk("./Resources/Sounds/SFX/doorOpen_2.ogg"));
+			interactable->triggered = true;
+			world.RemoveComponent<Blocker>(entity);
+		}
+		else {
+			event_manager.push_event(EventTypes::PLAY_CHUNK, sound_manager.LoadChunk("./Resources/Sounds/SFX/doorClose_2.ogg"));
+			interactable->triggered = false;
+			world.AddComponent<Blocker>(entity, true);
+		}
 
+		const auto& state = anim->animations.at(anim->_state).front();
+		anim->animations.at(anim->_state).pop_front();
+		anim->animations.at(anim->_state).push_back(state);
+		sprite->id = state.id;
+		sprite->clip_x = state.clip_x;
+		sprite->clip_y = state.clip_y;
+		sprite->width = state.width;
+		sprite->height = state.height;
+
+
+	};
+
+	bump_scripts.insert({ "OPEN_CHEST", open_chest_script });
+	bump_scripts.insert({ "OPEN_DOOR", open_door_script });
 }
 
 void ScriptSystem::do_bump(uint32_t entity)

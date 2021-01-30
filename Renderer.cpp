@@ -23,7 +23,7 @@ void Renderer::DrawMap(Level& level)
 			dstrect.w = window.GetTileWidth();
 			dstrect.h = window.GetTileHeight();
 
-			auto sprite = tile_sprites.at(TileType::EMPTY);
+			auto sprite = tile_sprites.at(TileType::GRASS_MIDDLE); // need to have this determined by the level environment theme
 
 			SDL_Rect srcrect;
 			srcrect.x = sprite.clip_x;
@@ -188,6 +188,7 @@ void Renderer::DrawSprite(Position* pos, Sprite* sprite)
 void Renderer::DrawSplash(unsigned int tex_id, const uint32_t fps)
 {
 	Clear();
+	SDL_SetTextureColorMod(texture_manager.GetTexture(tex_id), 128, 0, 0);
 	SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(tex_id), nullptr, nullptr);
 	DrawFPS(fps);
 	Update();
