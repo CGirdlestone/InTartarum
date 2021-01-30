@@ -53,11 +53,13 @@ void WorldMap::ray_cast(int x, int y, int radius)
 				dy++;
 			}
 
-			grid.get_tile(ray_pos_x, ray_pos_y).visible = true;
-			grid.get_tile(ray_pos_x, ray_pos_y).explored = true;
+			if (grid.in_bounds(ray_pos_x, ray_pos_y)) {
+				grid.get_tile(ray_pos_x, ray_pos_y).visible = true;
+				grid.get_tile(ray_pos_x, ray_pos_y).explored = true;
 
-			if (grid.get_tile(ray_pos_x, ray_pos_y).blocks_view) {
-				hit = true;
+				if (grid.get_tile(ray_pos_x, ray_pos_y).blocks_view) {
+					hit = true;
+				}
 			}
 		}
 	}
@@ -131,6 +133,12 @@ void WorldMap::update_fov(int x, int y, int radius)
 	ray_cast(x, y, radius);
 
 	auto lights = world.GetComponents<LightSource, Position>();
+	lights.erase(std::remove_if(lights.begin(), lights.end(), [this](const std::tuple<LightSource*, Position*>& data) { 
+		auto& [ls, pos] = data;
+		return pos->z != this->dungeon_depth;
+	}
+	), lights.end());
+
 	for (auto& [ls, pos] : lights) {
 		ray_cast(pos->x, pos->y, ls->radius);
 	}

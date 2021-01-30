@@ -2,10 +2,11 @@
 
 #include "BaseSystem.hpp"
 #include "EventManager.hpp"
+#include "SoundManager.hpp"
 #include "World.hpp"
 #include "WorldMap.hpp"
 
-using Script = void(*)(World& world, uint32_t entity);
+using Script = void(*)(World& world, EventManager& event_manager, SoundManager& sound_manager, uint32_t entity);
 
 class ScriptSystem : public BaseSystem
 {
@@ -13,6 +14,7 @@ private:
 	World& world;
 	EventManager& event_manager;
 	WorldMap& world_map;
+	SoundManager& sound_manager;
 
 	std::map<std::string, Script> bump_scripts;
 	void load_bump_scripts();
@@ -22,7 +24,7 @@ private:
 	void load_update_scripts();
 	void do_update(uint32_t entity);
 public:
-	ScriptSystem(World& _world, EventManager& _event_manager, WorldMap& _world_map);
+	ScriptSystem(World& _world, EventManager& _event_manager, WorldMap& _world_map, SoundManager& _sound_manager);
 	~ScriptSystem() { };
 	void init();
 	virtual void update(float dt) override;

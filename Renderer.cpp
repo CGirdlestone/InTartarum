@@ -23,15 +23,24 @@ void Renderer::DrawMap(Level& level)
 			dstrect.w = window.GetTileWidth();
 			dstrect.h = window.GetTileHeight();
 
+			auto sprite = tile_sprites.at(TileType::EMPTY);
+
+			SDL_Rect srcrect;
+			srcrect.x = sprite.clip_x;
+			srcrect.y = sprite.clip_y;
+			srcrect.w = sprite.width;
+			srcrect.h = sprite.height;
+
+			SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(sprite.id), &srcrect, &dstrect);
+
 			auto& tile = grid.get_tile(i, j);
 
-			auto sprite = tile_sprites.at(tile.type);
+			sprite = tile_sprites.at(tile.type);
 
 			if (!tile.explored) {
 				sprite = tile_sprites.at(TileType::EMPTY);
 			}
 
-			SDL_Rect srcrect;
 			srcrect.x = sprite.clip_x;
 			srcrect.y = sprite.clip_y;
 			srcrect.w = sprite.width;

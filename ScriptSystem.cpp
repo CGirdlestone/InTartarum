@@ -2,12 +2,19 @@
 
 void ScriptSystem::load_bump_scripts()
 {
-	auto open_script = [](World& world, uint32_t entity) {
+	auto open_script = [](World& world, EventManager& event_manager, SoundManager& sound_manager, uint32_t entity) {
 		auto* anim = world.GetComponent<Animation>(entity);
 		auto* sprite = world.GetComponent<Sprite>(entity);
 		auto* interactable = world.GetComponent<Interactable>(entity);
-		interactable->triggered = true;
-
+		if (!interactable->triggered){
+			event_manager.push_event(EventTypes::PLAY_CHUNK, sound_manager.LoadChunk("./Resources/Sounds/SFX/doorOpen_2.ogg"));
+			interactable->triggered = true;
+		}
+		else {
+			event_manager.push_event(EventTypes::PLAY_CHUNK, sound_manager.LoadChunk("./Resources/Sounds/SFX/doorClose_2.ogg"));
+			interactable->triggered = false;
+		}
+		
 		const auto& state = anim->animations.at(anim->_state).front();
 		anim->animations.at(anim->_state).pop_front();
 		anim->animations.at(anim->_state).push_back(state);
@@ -16,6 +23,8 @@ void ScriptSystem::load_bump_scripts()
 		sprite->clip_y = state.clip_y;
 		sprite->width = state.width;
 		sprite->height = state.height;
+
+		
 	};
 
 	bump_scripts.insert({ "OPEN", open_script });
@@ -25,7 +34,7 @@ void ScriptSystem::load_bump_scripts()
 void ScriptSystem::do_bump(uint32_t entity)
 {
 	auto* script = world.GetComponent<Scriptable>(entity);
-	bump_scripts.at(script->OnBump)(world, entity);
+	bump_scripts.at(script->OnBump)(world, event_manager, sound_manager, entity);
 }
 
 void ScriptSystem::load_update_scripts()
@@ -33,8 +42,8 @@ void ScriptSystem::load_update_scripts()
 
 }
 
-ScriptSystem::ScriptSystem(World& _world, EventManager& _event_manager, WorldMap& _world_map):
-	world(_world), event_manager(_event_manager), world_map(_world_map)
+ScriptSystem::ScriptSystem(World& _world, EventManager& _event_manager, WorldMap& _world_map, SoundManager& _sound_manager):
+	world(_world), event_manager(_event_manager), world_map(_world_map), sound_manager(_sound_manager)
 {
 	event_manager.add_subscriber(EventTypes::BUMP_SCRIPT, *this);
 }
@@ -51,7 +60,7 @@ void ScriptSystem::update(float dt)
 	for (auto e : entities) {
 		auto* script = world.GetComponent<Scriptable>(e);
 		if (script->OnUpdate != "") {
-			update_scripts.at(script->OnUpdate)(world, e);
+			update_scripts.at(script->OnUpdate)(world, event_manager, sound_manager, e);
 		}
 	}
 }

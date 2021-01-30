@@ -23,12 +23,10 @@ void MoveSystem::do_bump_script(uint32_t entity)
 		if (script->OnBump != "") {
 			if (interactable->repeatable) {
 				event_manager.push_event(EventTypes::BUMP_SCRIPT, entity);
-				interactable->triggered = !interactable->triggered;
 			}
 			else {
 				if (!interactable->triggered) {
 					event_manager.push_event(EventTypes::BUMP_SCRIPT, entity);
-					interactable->triggered = true;
 				}
 			}
 		}
@@ -53,6 +51,7 @@ bool MoveSystem::can_move(uint32_t mover, int x, int y)
 	for (auto entity : entities) {
 		auto* blocker = world.GetComponent<Blocker>(entity);
 		if (blocker == nullptr) {
+			do_bump_script(entity);
 			continue;
 		}
 
