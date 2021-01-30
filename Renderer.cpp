@@ -61,68 +61,63 @@ void Renderer::DrawMap(Level& level)
 
 void Renderer::DrawBox(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
 {
-	auto* gui_0 = texture_manager.GetTexture(texture_manager.LoadTexture("./Resources/GUI0.png"));
+	auto* parchment = texture_manager.GetTexture(texture_manager.LoadTexture("./Resources/Parchment.jpg"));
 
-	for (unsigned int i = 0; i < width; i++) {
-		for (unsigned int j = 0; j < height; j++) {
-			SDL_Rect dstrect;
-			dstrect.x = (x + i) * window.GetTileWidth();
-			dstrect.y = (y + j) * window.GetTileHeight();
-			dstrect.w = window.GetTileWidth();
-			dstrect.h = window.GetTileHeight();
-			unsigned int _x{ 2 };
-			unsigned int _y{ 8 };
+	SDL_Rect rect;
+	rect.x = x * window.GetTileWidth();
+	rect.y = y * window.GetTileHeight();
+	rect.w = width * window.GetTileWidth();
+	rect.h = height * window.GetTileHeight();
 
-			if (i == 0 && j == 0) {
-				// top left
-				_x = 1;
-				_y = 7;
-			}
-			else if (i == width - 1 && j == 0) {
-				// top right
-				_x = 3;
-				_y = 7;
-			}
-			else if (i == 0 && j == height - 1) {
-				// bottom left
-				_x = 1;
-				_y = 9;
-			}
-			else if (i == width - 1 && j == height - 1) {
-				// bottom right
-				_x = 3;
-				_y = 9;
-			}
-			else if (j == 0) {
-				// top
-				_x = 2;
-				_y = 7;
-			}
-			else if (j == height - 1) {
-				// bottom
-				_x = 2;
-				_y = 9;
-			}
-			else if (i == 0) {
-				// left
-				_x = 1;
-				_y = 8;
-			}
-			else if (i == width - 1) {
-				// right
-				_x = 3;
-				_y = 8;
-			}
+	auto empty_skill = texture_manager.GetTexture(texture_manager.LoadTexture("./Resources/UniqueBorderV11.png"));
+	SDL_RenderCopy(window.GetRenderer(), empty_skill, nullptr, &rect);
 
-			SDL_Rect srcrect;
-			srcrect.x = _x * window.GetTileWidth();
-			srcrect.y = _y * window.GetTileHeight();
-			srcrect.w = window.GetTileWidth();
-			srcrect.h = window.GetTileHeight();
+	rect.x = x * window.GetTileWidth() + window.GetTileWidth() / 2;
+	rect.y = y * window.GetTileHeight() + window.GetTileHeight() / 2;
+	rect.w = width * window.GetTileWidth() - window.GetTileWidth();
+	rect.h = height * window.GetTileHeight() - window.GetTileHeight();
 
-			SDL_RenderCopy(window.GetRenderer(), gui_0, &srcrect, &dstrect);
+	SDL_RenderCopy(window.GetRenderer(), parchment, nullptr, &rect);
+}
+
+void Renderer::DrawMiniMap(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
+{
+	SDL_Rect rect;
+	rect.x = x * window.GetTileWidth();
+	rect.y = y * window.GetTileHeight();
+	rect.w = width * window.GetTileWidth();
+	rect.h = height * window.GetTileHeight();
+
+	auto empty_skill = texture_manager.GetTexture(texture_manager.LoadTexture("./Resources/UniqueBorderV11.png"));
+	SDL_RenderCopy(window.GetRenderer(), empty_skill, nullptr, &rect);
+
+	rect.x = x * window.GetTileWidth() + window.GetTileWidth() / 2;
+	rect.y = y * window.GetTileHeight() + window.GetTileHeight() / 2;
+	rect.w = width * window.GetTileWidth() - window.GetTileWidth();
+	rect.h = height * window.GetTileHeight() - window.GetTileHeight();
+
+	SDL_RenderCopy(window.GetRenderer(), map_texture.get(), nullptr, &rect);
+}
+
+void Renderer::DrawSkills()
+{
+	auto skill = texture_manager.GetTexture(texture_manager.LoadTexture("./Resources/Skills/fireball.png"));
+	auto empty_skill = texture_manager.GetTexture(texture_manager.LoadTexture("./Resources/Skills/EmptyButton.png"));
+	for (int i = 0; i < 9; i++) {
+		SDL_Rect rect;
+		rect.x = i * window.GetTileWidth() * 4;
+		rect.y = (window.GetHeight() - 4) * window.GetTileHeight();
+		rect.w = window.GetTileWidth() * 4;
+		rect.h = window.GetTileHeight() * 4;
+
+		if (i == 0) {
+			SDL_RenderCopy(window.GetRenderer(), skill, nullptr, &rect);
+		}
+		else {
+			SDL_RenderCopy(window.GetRenderer(), empty_skill, nullptr, &rect);
 		}
 	}
+
 }
 
 void Renderer::DrawFPS(uint32_t fps)
@@ -149,10 +144,9 @@ void Renderer::DrawFPS(uint32_t fps)
 
 void Renderer::DrawMapTexture(int x, int y)
 {
-	
 	SDL_Rect dstrect;
-	dstrect.x = 0;
-	dstrect.y = 0;
+	dstrect.x = x * window.GetTileWidth();;
+	dstrect.y = y * window.GetTileHeight();;
 	dstrect.w = camera.get_width() * window.GetTileWidth();
 	dstrect.h = camera.get_height() * window.GetTileHeight();
 
@@ -185,11 +179,13 @@ void Renderer::DrawSprite(Position* pos, Sprite* sprite)
 	SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(sprite->id), &srcrect, &dstrect);
 }
 
-void Renderer::DrawSplash(unsigned int tex_id, const uint32_t fps)
+void Renderer::DrawSplash(unsigned int tex_id, const uint32_t fps, float dt)
 {
 	Clear();
+
 	SDL_SetTextureColorMod(texture_manager.GetTexture(tex_id), 128, 0, 0);
 	SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(tex_id), nullptr, nullptr);
+
 	DrawFPS(fps);
 	Update();
 }
@@ -199,7 +195,8 @@ void Renderer::DrawScene(uint32_t fps, WorldMap& world_map)
 	Clear();
 	
 	DrawMapTexture(0, 0);
-	DrawBox(camera.get_width(), 0, window.GetWidth() - camera.get_width(), window.GetHeight());
+	DrawBox(camera.get_width(), 0, window.GetWidth() - camera.get_width(), window.GetHeight() - (window.GetWidth() - camera.get_width()));
+	DrawMiniMap(camera.get_width(), camera.get_height() - (window.GetWidth() - camera.get_width()), window.GetWidth() - camera.get_width(), window.GetWidth() - camera.get_width());
 
 	auto components = world.GetComponents<Position, Sprite>();
 	// sort the entities based on the sprite depth value.
@@ -213,6 +210,7 @@ void Renderer::DrawScene(uint32_t fps, WorldMap& world_map)
 		return std::get<0>(a)->z != world_map.get_current_depth();
 		}
 	), components.end());
+	
 	auto& grid = world_map.get_level(world_map.get_current_depth()).get_grid();
 	for (auto& [pos, sprite] : components) {
 		if (grid.get_tile(pos->x, pos->y).visible) {
@@ -221,7 +219,8 @@ void Renderer::DrawScene(uint32_t fps, WorldMap& world_map)
 	}
 
 	DrawFPS(fps);
-	
+	DrawSkills();
+
 	Update();
 }
 

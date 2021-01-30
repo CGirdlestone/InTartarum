@@ -33,9 +33,9 @@ void SplashScreen::update(float dt)
 
 }
 
-void SplashScreen::draw_scene(Renderer& renderer, const uint32_t fps) const
+void SplashScreen::draw_scene(Renderer& renderer, const uint32_t fps, float dt) const
 {
-	renderer.DrawSplash(splash_id, fps);
+	renderer.DrawSplash(splash_id, fps, dt);
 }
 
 void SplashScreen::on_entrance(Renderer& renderer) const

@@ -6,6 +6,7 @@ void ScriptSystem::load_bump_scripts()
 		auto* anim = world.GetComponent<Animation>(entity);
 		auto* sprite = world.GetComponent<Sprite>(entity);
 		auto* interactable = world.GetComponent<Interactable>(entity);
+
 		if (!interactable->triggered){
 			event_manager.push_event(EventTypes::PLAY_CHUNK, sound_manager.LoadChunk("./Resources/Sounds/SFX/doorOpen_2.ogg"));
 			interactable->triggered = true;
@@ -31,6 +32,7 @@ void ScriptSystem::load_bump_scripts()
 		auto* anim = world.GetComponent<Animation>(entity);
 		auto* sprite = world.GetComponent<Sprite>(entity);
 		auto* interactable = world.GetComponent<Interactable>(entity);
+
 		if (!interactable->triggered) {
 			event_manager.push_event(EventTypes::PLAY_CHUNK, sound_manager.LoadChunk("./Resources/Sounds/SFX/doorOpen_2.ogg"));
 			interactable->triggered = true;
@@ -50,8 +52,6 @@ void ScriptSystem::load_bump_scripts()
 		sprite->clip_y = state.clip_y;
 		sprite->width = state.width;
 		sprite->height = state.height;
-
-
 	};
 
 	bump_scripts.insert({ "OPEN_CHEST", open_chest_script });

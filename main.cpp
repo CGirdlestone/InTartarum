@@ -188,11 +188,16 @@ int main(int argc, char* argv[])
 		auto door_0 = tex_manager.LoadTexture("./Resources/Door0.png");
 		auto door_1 = tex_manager.LoadTexture("./Resources/Door1.png");
 
+		auto empty_skill = tex_manager.LoadTexture("./Resources/Skills/EmptyButton.png");
+		auto fireball = tex_manager.LoadTexture("./Resources/Skills/fireball.png");
+
 		auto kenny_tileset = tex_manager.LoadTexture("./Resources/colored_packed.png");
 		auto kenny_transparent = tex_manager.LoadTexture("./Resources/colored_transparent_packed.png");
 		
 		auto fire_tex = tex_manager.LoadTexture("./Resources/CampFireFinished.png");
 		auto exp_tex = tex_manager.LoadTexture("./Resources/exp2_0.png");
+
+		auto parchment = tex_manager.LoadTexture("./Resources/Parchment.jpg");
 
 
 		auto sound_manager = SoundManager();
@@ -307,7 +312,7 @@ int main(int argc, char* argv[])
 			dt = static_cast<float>(current_time - last_time) / 1000.0f;
 			last_time = current_time;
 
-			state_manager.draw_scene(fps);
+			state_manager.draw_scene(fps, dt);
 			state_manager.handle_input(event);
 			state_manager.update(dt);
 

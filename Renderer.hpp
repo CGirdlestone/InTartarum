@@ -27,13 +27,15 @@ private:
 	void DrawFPS(uint32_t fps);
 	void DrawSprite(Position* pos, Sprite* sprite);
 	void DrawBox(unsigned int x, unsigned int y, unsigned int width, unsigned int height);
+	void DrawMiniMap(unsigned int x, unsigned int y, unsigned int width, unsigned int height);
+	void DrawSkills();
 public:
 	Renderer(World& _world, Window& _window, TextureManager& _tex_manager, Camera& _camera);
 	virtual ~Renderer() {};
 	inline void AddTile(TileType type, Sprite tile) { tile_sprites.insert({ type, tile }); };
 
 	void DrawScene(uint32_t fps, WorldMap& world_map);
-	void DrawSplash(unsigned int tex_id, const uint32_t fps);
+	void DrawSplash(unsigned int tex_id, const uint32_t fps, float dt);
 	void DrawMap(Level& level);
 };
 

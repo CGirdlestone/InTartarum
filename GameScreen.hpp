@@ -25,7 +25,7 @@ public:
 	virtual void handle_input(SDL_Event& event) override;
 	virtual void on_tick() override;
 	virtual void update(float dt) override;
-	virtual void draw_scene(Renderer& renderer, const uint32_t fps) const override;
+	virtual void draw_scene(Renderer& renderer, const uint32_t fps, float dt) const override;
 	inline virtual bool render_previous() const override { return render_prev; };
 	inline virtual GameState get_state() const override { return state; };
 	virtual void on_entrance(Renderer& renderer) const;

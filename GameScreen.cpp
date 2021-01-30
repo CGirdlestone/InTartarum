@@ -120,7 +120,7 @@ void GameScreen::update(float dt)
 	
 }
 
-void GameScreen::draw_scene(Renderer& renderer, const uint32_t fps) const
+void GameScreen::draw_scene(Renderer& renderer, const uint32_t fps, float dt) const
 {
 	renderer.DrawScene(fps, world_map);
 }

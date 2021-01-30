@@ -21,7 +21,7 @@ public:
 	void push(GameState state);
 	void pop(unsigned int n);
 	void handle_input(SDL_Event& event);
-	void draw_scene(uint32_t dt);
+	void draw_scene(uint32_t fps, float dt);
 	void update(float dt);
 	inline std::reference_wrapper<BaseState> get_state(GameState state) const { return states.at(state); };
 	inline const bool is_playing() const { return playing; };

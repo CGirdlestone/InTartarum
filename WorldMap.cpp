@@ -55,9 +55,9 @@ void WorldMap::ray_cast(int x, int y, int radius)
 			}
 
 			if (grid.in_bounds(ray_pos_x, ray_pos_y)) {
+				
 				grid.get_tile(ray_pos_x, ray_pos_y).visible = true;
 				grid.get_tile(ray_pos_x, ray_pos_y).explored = true;
-
 				bool object_blocker{ false };
 				
 				auto entities = get_entity_grid().get(ray_pos_x, ray_pos_y);
