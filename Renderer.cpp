@@ -120,6 +120,28 @@ void Renderer::DrawSkills()
 
 }
 
+void Renderer::DrawText(const std::string& text, int x, int y)
+{
+	auto x_start{ x * window.GetTileWidth() };
+	auto offset{ 0 };
+	SDL_SetTextureColorMod(texture_manager.GetTexture(font_id), 0, 0, 0);
+	for (char c : text) {
+		SDL_Rect dstrect;
+		dstrect.x = x_start + (offset++) * font_width;
+		dstrect.y = y * window.GetTileHeight();
+		dstrect.w = font_width;
+		dstrect.h = font_height;
+		
+		SDL_Rect srcrect;
+		srcrect.x = (static_cast<int>(c) % 16) * font_width;
+		srcrect.y = (static_cast<int>(c) / 16) * font_height;
+		srcrect.w = font_width;
+		srcrect.h = font_height;
+
+		SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(font_id), &srcrect, &dstrect);
+	}
+}
+
 void Renderer::DrawFPS(uint32_t fps)
 {
 	std::string fps_str = std::to_string(fps);
@@ -195,9 +217,8 @@ void Renderer::DrawScene(uint32_t fps, WorldMap& world_map)
 	Clear();
 	
 	DrawMapTexture(0, 0);
-	DrawBox(camera.get_width(), 0, window.GetWidth() - camera.get_width(), window.GetHeight() - (window.GetWidth() - camera.get_width()));
-	DrawMiniMap(camera.get_width(), camera.get_height() - (window.GetWidth() - camera.get_width()), window.GetWidth() - camera.get_width(), window.GetWidth() - camera.get_width());
-
+	
+	
 	auto components = world.GetComponents<Position, Sprite>();
 	// sort the entities based on the sprite depth value.
 	std::sort(components.begin(), components.end(), [](const std::tuple<Position*, Sprite*>& a, const std::tuple<Position*, Sprite*>& b) {
@@ -220,6 +241,11 @@ void Renderer::DrawScene(uint32_t fps, WorldMap& world_map)
 
 	DrawFPS(fps);
 	DrawSkills();
+	DrawBox(camera.get_width(), 0, window.GetWidth() - camera.get_width(), window.GetHeight() - (window.GetWidth() - camera.get_width()));
+	DrawMiniMap(camera.get_width(), camera.get_height() - (window.GetWidth() - camera.get_width()), window.GetWidth() - camera.get_width(), window.GetWidth() - camera.get_width());
+	
+	std::string depth = "Dungeon depth: " + std::to_string(world_map.get_current_depth());
+	DrawText(depth, camera.get_width() + 1, 1);
 
 	Update();
 }

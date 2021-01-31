@@ -18,6 +18,10 @@ private:
 	SmartTexture map_texture;
 	std::map<TileType, Sprite> tile_sprites;
 
+	unsigned int font_id{ 0 };
+	int font_width{ 0 };
+	int font_height{ 0 };
+
 	void Update() { SDL_RenderPresent(window.GetRenderer()); };
 	void Clear() { SDL_RenderClear(window.GetRenderer()); };
 
@@ -29,6 +33,7 @@ private:
 	void DrawBox(unsigned int x, unsigned int y, unsigned int width, unsigned int height);
 	void DrawMiniMap(unsigned int x, unsigned int y, unsigned int width, unsigned int height);
 	void DrawSkills();
+	void DrawText(const std::string& text, int x, int y);
 public:
 	Renderer(World& _world, Window& _window, TextureManager& _tex_manager, Camera& _camera);
 	virtual ~Renderer() {};
@@ -37,5 +42,5 @@ public:
 	void DrawScene(uint32_t fps, WorldMap& world_map);
 	void DrawSplash(unsigned int tex_id, const uint32_t fps, float dt);
 	void DrawMap(Level& level);
+	void SetFont(unsigned int id, int width, int height) { font_id = id; font_width = width; font_height = height; };
 };
-

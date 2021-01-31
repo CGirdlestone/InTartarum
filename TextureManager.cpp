@@ -1,6 +1,6 @@
 #include "TextureManager.hpp"
 
-unsigned int TextureManager::LoadTexture(const std::string& texture_path)
+unsigned int TextureManager::LoadTexture(const std::string& texture_path, bool set_colour_key)
 {
 	/* Loads a texture in, checking for whether it has already been loaded. */
 
@@ -14,6 +14,12 @@ unsigned int TextureManager::LoadTexture(const std::string& texture_path)
 	auto surface = IMG_Load(texture_path.c_str());
 	if (surface == nullptr) {
 		exit(1); // fix error handling
+	}
+
+	// If the colour key is to be set, make the colour of the (0,0) pixel transparent.
+	if (set_colour_key) {
+		uint32_t* pixels = static_cast<uint32_t*>(surface->pixels); 
+		SDL_SetColorKey(surface, SDL_TRUE, pixels[0]);
 	}
 
 	// Convert the temporary surface to a texture

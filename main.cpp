@@ -198,7 +198,7 @@ int main(int argc, char* argv[])
 		auto exp_tex = tex_manager.LoadTexture("./Resources/exp2_0.png");
 
 		auto parchment = tex_manager.LoadTexture("./Resources/Parchment.jpg");
-
+		auto font = tex_manager.LoadTexture("./Resources/Kyzers_thin.png", true);
 
 		auto sound_manager = SoundManager();
 		auto intro_music = sound_manager.LoadMusic("./Resources/Sounds/bleeding_out2.ogg");
@@ -209,6 +209,7 @@ int main(int argc, char* argv[])
 
 		auto renderer = Renderer(world, window, tex_manager, camera);
 		load_tiles(renderer, tex_manager, TILE_SIZE);
+		renderer.SetFont(font, 10, 12);
 
 
 		auto town = Level(MAP_WIDTH, MAP_HEIGHT);

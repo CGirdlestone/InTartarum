@@ -15,7 +15,7 @@ private:
 public:
 	TextureManager(Window & _window):window(_window) {};
 	~TextureManager() {};
-	unsigned int LoadTexture(const std::string & texture_path);
+	unsigned int LoadTexture(const std::string & texture_path, bool set_colour_key = false);
 	inline SDL_Texture* GetTexture(const unsigned int index) const { return textures.find(index) != textures.end() ? textures.at(index).get() : nullptr; };
 };
 
