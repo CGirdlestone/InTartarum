@@ -104,8 +104,9 @@ struct Particle {
 
 struct Scriptable {
 	Scriptable(uint32_t entity) : owner(entity) {};
-	std::string Init{ "" };
+	std::string OnInit{ "" };
 	std::string OnUpdate{ "" };
 	std::string OnBump{ "" };
+	std::string OnDeath{ "" };
 	uint32_t owner;
 };

@@ -2,7 +2,7 @@
 
 void ScriptSystem::load_bump_scripts()
 {
-	auto open_chest_script = [](World& world, EventManager& event_manager, SoundManager& sound_manager, uint32_t entity) {
+	auto open_chest_script = [](World& world, EventManager& event_manager, SoundManager& sound_manager, TextureManager& texture_manager, int tile_width, int tile_height, uint32_t entity, uint32_t target) {
 		auto* anim = world.GetComponent<Animation>(entity);
 		auto* sprite = world.GetComponent<Sprite>(entity);
 		auto* interactable = world.GetComponent<Interactable>(entity);
@@ -28,7 +28,7 @@ void ScriptSystem::load_bump_scripts()
 		
 	};
 
-	auto open_door_script = [](World& world, EventManager& event_manager, SoundManager& sound_manager, uint32_t entity) {
+	auto open_door_script = [](World& world, EventManager& event_manager, SoundManager& sound_manager, TextureManager& texture_manager, int tile_width, int tile_height, uint32_t entity, uint32_t target) {
 		auto* anim = world.GetComponent<Animation>(entity);
 		auto* sprite = world.GetComponent<Sprite>(entity);
 		auto* interactable = world.GetComponent<Interactable>(entity);
@@ -61,16 +61,34 @@ void ScriptSystem::load_bump_scripts()
 void ScriptSystem::do_bump(uint32_t entity)
 {
 	auto* script = world.GetComponent<Scriptable>(entity);
-	bump_scripts.at(script->OnBump)(world, event_manager, sound_manager, entity);
+	bump_scripts.at(script->OnBump)(world, event_manager, sound_manager, texture_manager, tile_width, tile_height, entity, MAX_ENTITIES + 1);
 }
 
 void ScriptSystem::load_update_scripts()
 {
-
+	
 }
 
-ScriptSystem::ScriptSystem(World& _world, EventManager& _event_manager, WorldMap& _world_map, SoundManager& _sound_manager):
-	world(_world), event_manager(_event_manager), world_map(_world_map), sound_manager(_sound_manager)
+void ScriptSystem::load_death_scripts()
+{
+	auto spawn_explosion_script = [](World& world, EventManager& event_manager, SoundManager& sound_manager, TextureManager& texture_manager, int tile_width, int tile_height, uint32_t entity, uint32_t target) {
+		auto* pos = world.GetComponent<Position>(entity);
+		auto* script = world.GetComponent<Scriptable>(entity);
+		Prefab::create_explosion(world, pos->x * tile_width, pos->y * tile_height, texture_manager.LoadTexture("./Resources/exp2_0.png"));
+		world.KillEntity(entity);
+	};
+
+	bump_scripts.insert({ "SPAWN_EXPLOSION", spawn_explosion_script });
+}
+
+void ScriptSystem::do_death(uint32_t entity)
+{
+	auto* script = world.GetComponent<Scriptable>(entity);
+	death_scripts.at(script->OnDeath)(world, event_manager, sound_manager, texture_manager, tile_width, tile_height, entity, MAX_ENTITIES + 1);
+}
+
+ScriptSystem::ScriptSystem(World& _world, EventManager& _event_manager, WorldMap& _world_map, SoundManager& _sound_manager, TextureManager& _texture_manager, int _tile_width, int _tile_height)
+	: world(_world), event_manager(_event_manager), world_map(_world_map), sound_manager(_sound_manager), texture_manager(_texture_manager), tile_width(_tile_width), tile_height(_tile_height)
 {
 	event_manager.add_subscriber(EventTypes::BUMP_SCRIPT, *this);
 }
@@ -79,6 +97,7 @@ void ScriptSystem::init()
 {
 	load_bump_scripts();
 	load_update_scripts();
+	load_death_scripts();
 }
 
 void ScriptSystem::update(float dt)
@@ -87,7 +106,7 @@ void ScriptSystem::update(float dt)
 	for (auto e : entities) {
 		auto* script = world.GetComponent<Scriptable>(e);
 		if (script->OnUpdate != "") {
-			update_scripts.at(script->OnUpdate)(world, event_manager, sound_manager, e);
+			update_scripts.at(script->OnUpdate)(world, event_manager, sound_manager, texture_manager, tile_width, tile_height, e, MAX_ENTITIES + 1);
 		}
 	}
 }

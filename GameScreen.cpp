@@ -82,6 +82,7 @@ GameScreen::GameScreen(StateManager& _state_manager, World& _world, TextureManag
 void GameScreen::handle_input(SDL_Event& event)
 {
 	auto entity = world.GetEntitiesWith<Player>()[0];
+	auto* pos = world.GetComponent<Position>(entity);
 
 	SDL_PollEvent(&event);
 	if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
@@ -98,6 +99,7 @@ void GameScreen::handle_input(SDL_Event& event)
 		case SDLK_SPACE: event_manager.push_event(EventTypes::DESCEND_DUNGEON); break;
 		case SDLK_BACKSPACE: event_manager.push_event(EventTypes::ASCEND_DUNGEON); break;
 		case SDLK_o: open_doors(); on_tick(); break;
+		case SDLK_1: Prefab::create_explosion(world, pos->x, pos->y, tex_manager.LoadTexture("./Resources/exp2_0.png")); break;
 		}
 	}
 	else if (event.type == SDL_QUIT) {

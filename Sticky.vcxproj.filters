@@ -52,6 +52,9 @@
     <Filter Include="Source Files\Managers">
       <UniqueIdentifier>{67c6f11c-2908-44db-8e75-c0bb44d90a5a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Enums">
+      <UniqueIdentifier>{6e0ee9da-1b3a-4772-9230-b6f2541348d8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -128,9 +131,6 @@
     <ClInclude Include="BaseSystem.hpp">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="EventTypes.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ParticleSystem.hpp">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
@@ -196,6 +196,15 @@
     </ClInclude>
     <ClInclude Include="ScriptSystem.hpp">
       <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="EventTypes.hpp">
+      <Filter>Header Files\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="TileType.hpp">
+      <Filter>Header Files\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="Environment.hpp">
+      <Filter>Header Files\Enums</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

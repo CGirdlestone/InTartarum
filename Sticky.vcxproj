@@ -173,6 +173,7 @@
     <ClInclude Include="Common.hpp" />
     <ClInclude Include="Components.hpp" />
     <ClInclude Include="EntityGrid.hpp" />
+    <ClInclude Include="Environment.hpp" />
     <ClInclude Include="EventManager.hpp" />
     <ClInclude Include="EventTypes.hpp" />
     <ClInclude Include="GameScreen.hpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="StateManager.hpp" />
     <ClInclude Include="TextureManager.hpp" />
     <ClInclude Include="Tile.hpp" />
+    <ClInclude Include="TileType.hpp" />
     <ClInclude Include="Utils.hpp" />
     <ClInclude Include="Window.hpp" />
     <ClInclude Include="World.hpp" />

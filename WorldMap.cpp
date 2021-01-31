@@ -1,6 +1,30 @@
 #include "WorldMap.hpp"
 #include <iostream>
 
+void WorldMap::__create_dungeon()
+{
+	auto level = std::make_unique<Level>(map_width, map_height);
+	auto& grid = level.get()->get_grid();
+
+	// place holder - full dungeon generation to go here.
+	for (int i = 0; i < grid.get_width(); i++) {
+		for (int j = 0; j < grid.get_height(); j++) {
+			auto& tile = grid.get_tile(i, j);
+			auto roll = rand() % 100;
+			if (roll < 10) {
+				tile.set(false, false, TileType::WATER);
+			}
+			else if (roll < 20) {
+				tile.set(false, true, TileType::TREE_01);
+			}
+			else {
+				tile.set(true, false, TileType::GRASS_MIDDLE);
+			}
+		}
+	}
+	dungeon.swap(level);
+}
+
 void WorldMap::populate_town()
 {
 
@@ -87,6 +111,12 @@ void WorldMap::ray_cast(int x, int y, int radius)
 	}
 }
 
+void WorldMap::set_seed()
+{
+	level_seed = static_cast<uint64_t>(time(0));
+	srand(level_seed);
+}
+
 WorldMap::WorldMap(Level& _town, World& _world, int _width, int _height) :town(_town), world(_world),
 map_width(_width), map_height(_height), dungeon(nullptr), entity_grid(nullptr)
 {
@@ -105,28 +135,14 @@ map_width(_width), map_height(_height), dungeon(nullptr), entity_grid(nullptr)
 
 void WorldMap::create_dungeon()
 {
-	auto level = std::make_unique<Level>(map_width, map_height);
-	auto& grid = level.get()->get_grid();
+	set_seed();
+	__create_dungeon();
+}
 
-	// place holder - full dungeon generation to go here.
-	for (int i = 0; i < grid.get_width(); i++) {
-		for (int j = 0; j < grid.get_height(); j++){
-			auto& tile = grid.get_tile(i, j);
-			auto roll = rand() % 100;
-			if (roll < 10) {
-				tile.set(false, false, TileType::WATER);
-			}
-			else if (roll < 20) {
-				tile.set(false, true, TileType::TREE_01);
-			}
-			else {
-				tile.set(true, false, TileType::GRASS_MIDDLE);
-			}
-		}
-	}
-	dungeon.swap(level);
-
-	// create mobs & items here.
+void WorldMap::create_dungeon(uint64_t seed)
+{
+	srand(seed);
+	__create_dungeon();
 }
 
 void WorldMap::populate_entity_grid()

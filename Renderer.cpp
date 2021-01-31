@@ -16,7 +16,8 @@ void Renderer::DrawMap(Level& level)
 
 	for (int j = 0; j < camera.get_map_height(); j++) {
 		for (int i = 0; i < camera.get_map_width(); i++) {
-			
+			auto& tile = grid.get_tile(i, j);
+
 			SDL_Rect dstrect;
 			dstrect.x = i * window.GetTileWidth();
 			dstrect.y = j * window.GetTileHeight();
@@ -33,7 +34,7 @@ void Renderer::DrawMap(Level& level)
 
 			SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(sprite.id), &srcrect, &dstrect);
 
-			auto& tile = grid.get_tile(i, j);
+			
 
 			sprite = tile_sprites.at(tile.type);
 

@@ -1,29 +1,6 @@
 #pragma once
 
-enum class TileType {
-	EMPTY,
-	STONE_01,
-	STONE_02,
-	STAIRS,
-	DIRT_LOOSE,
-	DIRT_MED,
-	DIRT_HEAVY,
-	DIRT_PACKED,
-	GRASS_MIDDLE,
-	GRASS_LEFT,
-	GRASS_RIGHT,
-	GRASS_TOP,
-	GRASS_BOTTOM,
-	GRASS_TL,
-	GRASS_TR,
-	GRASS_BL,
-	GRASS_BR,
-	WATER,
-	TREE_01,
-	TREE_02,
-	TREE_03,
-	TREE_04,
-};
+#include "TileType.hpp"
 
 struct Tile {
 	bool walkable{ true };

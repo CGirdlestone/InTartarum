@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Prefabs.hpp"
 #include "StateManager.hpp"
 #include "EventManager.hpp"
 #include "WorldMap.hpp"

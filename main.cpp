@@ -124,6 +124,8 @@ void build_town(Level& level, World& world, TextureManager& texture_manager, con
 
 	auto door0 = texture_manager.LoadTexture("./Resources/Door0.png");
 	auto door1 = texture_manager.LoadTexture("./Resources/Door1.png");
+
+
 	auto door = world.CreateEntity();
 	world.AddComponent<Position>(door, 15, 15, 0);
 	world.AddComponent<Sprite>(door, door0, 0 * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE, 0);
@@ -149,6 +151,35 @@ void build_town(Level& level, World& world, TextureManager& texture_manager, con
 	world.AddComponent<Animation>(npc, 0.2f, player_0, 0 * TILE_SIZE, 8 * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 	auto* npc_animation = world.GetComponent<Animation>(npc);
 	npc_animation->animations.at(state::IDLE).push_back(AnimFrame(player_1, 0 * TILE_SIZE, 8 * TILE_SIZE, TILE_SIZE, TILE_SIZE));
+
+
+	auto chest0_tex = texture_manager.LoadTexture("./Resources/Chest0.png");
+	auto chest1_tex = texture_manager.LoadTexture("./Resources/Chest1.png");
+
+	auto chest = world.CreateEntity();
+	world.AddComponent<Position>(chest, 15, 20, 0);
+	world.AddComponent<Sprite>(chest, chest0_tex, 1 * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE, 0);
+	world.AddComponent<Animation>(chest, 0.1f, chest1_tex, 1 * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE, false);
+	world.AddComponent<Blocker>(chest);
+	world.AddComponent<Interactable>(chest);
+	auto* chest_animation = world.GetComponent<Animation>(chest);
+	chest_animation->animations.at(state::IDLE).push_back(AnimFrame(chest0_tex, 1 * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE));
+
+	world.AddComponent<Scriptable>(chest, chest);
+	script = world.GetComponent<Scriptable>(chest);
+	script->OnBump = "OPEN_CHEST";
+
+
+	auto effect_0 = texture_manager.LoadTexture("./Resources/Effect0.png");
+	auto effect_1 = texture_manager.LoadTexture("./Resources/Effect1.png");
+
+	auto fire = world.CreateEntity();
+	world.AddComponent<Position>(fire, 23, 23, 0);
+	world.AddComponent<Sprite>(fire, effect_0, 1 * TILE_SIZE, 21 * TILE_SIZE, TILE_SIZE, TILE_SIZE, 0);
+	world.AddComponent<Animation>(fire, 0.1f, effect_1, 1 * TILE_SIZE, 21 * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+	auto fire_animation = world.GetComponent<Animation>(fire);
+	fire_animation->animations.at(state::IDLE).push_back(AnimFrame(effect_0, 1 * TILE_SIZE, 21 * TILE_SIZE, TILE_SIZE, TILE_SIZE));
+	world.AddComponent<LightSource>(fire, 10);
 }
 
 int main(int argc, char* argv[])
@@ -187,6 +218,8 @@ int main(int argc, char* argv[])
 		auto tile = tex_manager.LoadTexture("./Resources/Tile.png");
 		auto door_0 = tex_manager.LoadTexture("./Resources/Door0.png");
 		auto door_1 = tex_manager.LoadTexture("./Resources/Door1.png");
+		auto effect_0 = tex_manager.LoadTexture("./Resources/Effect0.png");
+		auto effect_1 = tex_manager.LoadTexture("./Resources/Effect1.png");
 
 		auto empty_skill = tex_manager.LoadTexture("./Resources/Skills/EmptyButton.png");
 		auto fireball = tex_manager.LoadTexture("./Resources/Skills/fireball.png");
@@ -234,7 +267,7 @@ int main(int argc, char* argv[])
 		auto move_system = MoveSystem(world, event_manager, camera, world_map);
 		systems.push_back(std::reference_wrapper(move_system));
 
-		auto script_system = ScriptSystem(world, event_manager, world_map, sound_manager);
+		auto script_system = ScriptSystem(world, event_manager, world_map, sound_manager, tex_manager, TILE_SIZE, TILE_SIZE);
 		script_system.init();
 		systems.push_back(std::reference_wrapper(script_system));
 		
@@ -259,27 +292,7 @@ int main(int argc, char* argv[])
 		auto* entity_animation = world.GetComponent<Animation>(entity);
 		entity_animation->animations.at(state::IDLE).push_back(AnimFrame(player_1, 1 * TILE_SIZE, 11 * TILE_SIZE, TILE_SIZE, TILE_SIZE));
 
-		auto chest = world.CreateEntity();
-		world.AddComponent<Position>(chest, 15, 20, 0);
-		world.AddComponent<Sprite>(chest, chest0_tex, 1 * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE, 0);
-		world.AddComponent<Animation>(chest, 0.1f, chest1_tex, 1 * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE, false);
-		world.AddComponent<Blocker>(chest);
-		world.AddComponent<Interactable>(chest);
-		auto* chest_animation = world.GetComponent<Animation>(chest);
-		chest_animation->animations.at(state::IDLE).push_back(AnimFrame(chest0_tex, 1 * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE));
 		
-		world.AddComponent<Scriptable>(chest, chest);
-		auto* script = world.GetComponent<Scriptable>(chest);
-		script->OnBump = "OPEN_CHEST";
-
-
-		auto fire = world.CreateEntity();
-		world.AddComponent<Position>(fire, 25, 25, 0);
-		world.AddComponent<Sprite>(fire, fire_tex, 0, 0, 64, 64, 0);
-		world.AddComponent<Animation>(fire, 0.1f, fire_tex, 0, 0, 64, 64);
-		auto fire_animation = world.GetComponent<Animation>(fire);
-		for (int i = 1; i < 5; i++) { fire_animation->animations.at(state::IDLE).push_back(AnimFrame(fire_tex, 64 * i, 0, 64, 64)); }
-		world.AddComponent<LightSource>(fire, 10);
 
 		world_map.populate_entity_grid();
 

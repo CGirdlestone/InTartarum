@@ -14,13 +14,16 @@ private:
 	int map_width;
 	int map_height;
 	bool fov_update_needed{ false };
+	uint64_t level_seed{ 0 };
 
 	std::vector<double> sin;
 	std::vector<double> cos;
 
+	void __create_dungeon();
 	void populate_town();
 	void populate_level();
 	void ray_cast(int x, int y, int radius);
+	void set_seed();
 public:
 	WorldMap(Level& _town, World& _world, int _width, int _height);
 	~WorldMap() {};
@@ -30,6 +33,7 @@ public:
 	inline int get_current_depth() const { return dungeon_depth; };
 	inline void set_depth(int depth) { dungeon_depth = depth; };
 	void create_dungeon();
+	void create_dungeon(uint64_t);
 	inline EntityGrid& get_entity_grid() { return *(entity_grid.get()); };
 	void populate_entity_grid();
 	void update_fov(int x, int y, int radius);
