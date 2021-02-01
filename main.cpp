@@ -67,6 +67,7 @@ void load_tiles(Renderer& renderer, TextureManager& tex_manager, unsigned int ti
 	auto tree = tex_manager.LoadTexture("./Resources/Tree0.png");
 	auto water = tex_manager.LoadTexture("./Resources/Pit0.png");
 	auto tile = tex_manager.LoadTexture("./Resources/Tile.png");
+	auto wall = tex_manager.LoadTexture("./Resources/Wall.png");
 	renderer.AddTile(TileType::EMPTY,		Sprite(floor, 10 * tile_size, 0 * tile_size, tile_size, tile_size, 0));
 	renderer.AddTile(TileType::DIRT_LOOSE,	Sprite(floor, 1 * tile_size, 0 * tile_size, tile_size, tile_size, 0));
 	renderer.AddTile(TileType::DIRT_MED,	Sprite(floor, 2 * tile_size, 0 * tile_size, tile_size, tile_size, 0));
@@ -89,6 +90,14 @@ void load_tiles(Renderer& renderer, TextureManager& tex_manager, unsigned int ti
 	renderer.AddTile(TileType::STAIRS,		Sprite(tile,  7 * tile_size, 3 * tile_size, tile_size, tile_size, 0));
 	renderer.AddTile(TileType::STONE_01,	Sprite(floor, 1 * tile_size, 7 * tile_size, tile_size, tile_size, 0));
 	renderer.AddTile(TileType::STONE_02,	Sprite(floor, 8 * tile_size, 19 * tile_size, tile_size, tile_size, 0));
+	renderer.AddTile(TileType::WALL_TL,		Sprite(wall,  0 * tile_size, 3 * tile_size, tile_size, tile_size, 0));
+	renderer.AddTile(TileType::WALL_TOP,	Sprite(wall,  1 * tile_size, 3 * tile_size, tile_size, tile_size, 0));
+	renderer.AddTile(TileType::WALL_TR,		Sprite(wall,  2 * tile_size, 3 * tile_size, tile_size, tile_size, 0));
+	renderer.AddTile(TileType::WALL_LEFT,	Sprite(wall,  0 * tile_size, 4 * tile_size, tile_size, tile_size, 0));
+	renderer.AddTile(TileType::WALL_RIGHT,	Sprite(wall,  0 * tile_size, 4 * tile_size, tile_size, tile_size, 0));
+	renderer.AddTile(TileType::WALL_BL,		Sprite(wall,  0 * tile_size, 5 * tile_size, tile_size, tile_size, 0));
+	renderer.AddTile(TileType::WALL_BR,		Sprite(wall,  2 * tile_size, 5 * tile_size, tile_size, tile_size, 0));
+	renderer.AddTile(TileType::WALL_BOTTOM,	Sprite(wall,  4 * tile_size, 5 * tile_size, tile_size, tile_size, 0));
 }
 
 void build_town(Level& level, World& world, TextureManager& texture_manager, const int TILE_SIZE) {
@@ -97,8 +106,23 @@ void build_town(Level& level, World& world, TextureManager& texture_manager, con
 
 	for (int i = 0; i < grid.get_width(); i++) {
 		for (int j = 0; j < grid.get_height(); j++) {
-			if ((i == 0 || i == grid.get_width() - 1) || (j == 0 || j == grid.get_height() - 1)) {
-				grid.set_tile(i, j, false, true, TileType::STONE_01);
+			if (i == 0 && j ==0) {
+				grid.set_tile(i, j, false, true, TileType::WALL_TL);
+			}
+			else if (i == grid.get_width() - 1 && j ==0) {
+				grid.set_tile(i, j, false, true, TileType::WALL_TR);
+			}
+			else if (i == 0 && j == grid.get_height() - 1) {
+				grid.set_tile(i, j, false, true, TileType::WALL_BL);
+			}
+			else if (i == grid.get_width() - 1 && j == grid.get_height() - 1) {
+				grid.set_tile(i, j, false, true, TileType::WALL_BR);
+			}
+			else if (i == 0 || i == grid.get_width() - 1) {
+				grid.set_tile(i, j, false, true, TileType::WALL_LEFT);
+			}
+			else if (j == 0 || j == grid.get_height() - 1) {
+				grid.set_tile(i, j, false, true, TileType::WALL_TOP);
 			}
 			else {
 				grid.set_tile(i, j, true, false, TileType::GRASS_MIDDLE);
@@ -112,11 +136,27 @@ void build_town(Level& level, World& world, TextureManager& texture_manager, con
 				grid.set_tile(i, j, true, false, TileType::STONE_02);
 				continue;
 			}
-			if ((i == 10 || i == 19) || (j == 10 || j == 15)) {
-				grid.set_tile(i, j, false, true, TileType::STONE_01);
-				continue;
+			if (i == 10 && j == 10) {
+				grid.set_tile(i, j, false, true, TileType::WALL_TL);
 			}
-			grid.set_tile(i, j, true, false, TileType::STONE_02);
+			else if (i == 20 - 1 && j == 10) {
+				grid.set_tile(i, j, false, true, TileType::WALL_TR);
+			}
+			else if (i == 10 && j == 16 - 1) {
+				grid.set_tile(i, j, false, true, TileType::WALL_BL);
+			}
+			else if (i == 20 - 1 && j == 16 - 1) {
+				grid.set_tile(i, j, false, true, TileType::WALL_BR);
+			}
+			else if (i == 10 || i == 20 - 1) {
+				grid.set_tile(i, j, false, true, TileType::WALL_LEFT);
+			}
+			else if (j == 10 || j == 16 - 1) {
+				grid.set_tile(i, j, false, true, TileType::WALL_TOP);
+			}
+			else {
+				grid.set_tile(i, j, true, false, TileType::STONE_02);
+			}
 		}
 	}
 
@@ -221,6 +261,7 @@ int main(int argc, char* argv[])
 		auto door_1 = tex_manager.LoadTexture("./Resources/Door1.png");
 		auto effect_0 = tex_manager.LoadTexture("./Resources/Effect0.png");
 		auto effect_1 = tex_manager.LoadTexture("./Resources/Effect1.png");
+		auto walls = tex_manager.LoadTexture("./Resources/Wall.png");
 
 		auto empty_skill = tex_manager.LoadTexture("./Resources/Skills/EmptyButton.png");
 		auto fireball = tex_manager.LoadTexture("./Resources/Skills/fireball.png");

@@ -23,4 +23,12 @@ enum class TileType {
 	TREE_02,
 	TREE_03,
 	TREE_04,
+	WALL_TL,
+	WALL_TOP,
+	WALL_TR,
+	WALL_LEFT,
+	WALL_RIGHT,
+	WALL_BL,
+	WALL_BR,
+	WALL_BOTTOM,
 };

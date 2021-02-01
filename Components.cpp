@@ -28,12 +28,12 @@ void Player::deserialise(const char* buffer, size_t& offset)
 
 void Actor::serialise(std::ofstream& file)
 {
-	// nothing
+	// nothing yet
 }
 
 void Actor::deserialise(const char* buffer, size_t& offset)
 {
-	// nothing
+	// nothing yet
 }
 
 void Blocker::serialise(std::ofstream& file)
