@@ -106,7 +106,7 @@ void AnimFrame::deserialise(const char* buffer, size_t& offset)
 
 void Animation::serialise(std::ofstream& file)
 {
-	utils::serialiseUint32(file, static_cast<uint32_t>(lifetime));
+	utils::serialiseUint32(file, static_cast<uint32_t>(lifetime * 1000.0f));
 	utils::serialiseUint32(file, static_cast<uint32_t>(dynamic));
 	utils::serialiseUint32(file, static_cast<uint32_t>(_state));
 
@@ -120,7 +120,7 @@ void Animation::serialise(std::ofstream& file)
 
 void Animation::deserialise(const char* buffer, size_t& offset)
 {
-	lifetime = static_cast<float>(utils::deserialiseUint32(buffer, offset));
+	lifetime = static_cast<float>(utils::deserialiseUint32(buffer, offset)) / 1000.0f;
 	dynamic = static_cast<bool>(utils::deserialiseUint32(buffer, offset));
 	_state = static_cast<state>(utils::deserialiseUint32(buffer, offset));
 

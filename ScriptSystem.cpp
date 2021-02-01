@@ -74,7 +74,7 @@ void ScriptSystem::load_death_scripts()
 	auto spawn_explosion_script = [](World& world, EventManager& event_manager, SoundManager& sound_manager, TextureManager& texture_manager, int tile_width, int tile_height, uint32_t entity, uint32_t target) {
 		auto* pos = world.GetComponent<Position>(entity);
 		auto* script = world.GetComponent<Scriptable>(entity);
-		Prefab::create_explosion(world, pos->x * tile_width, pos->y * tile_height, texture_manager.LoadTexture("./Resources/exp2_0.png"));
+		Prefab::create_explosion(world, pos->x * tile_width, pos->y * tile_height, pos->z, texture_manager.LoadTexture("./Resources/exp2_0.png"));
 		world.KillEntity(entity);
 	};
 

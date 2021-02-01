@@ -100,7 +100,7 @@ void GameScreen::handle_input(SDL_Event& event)
 		case SDLK_SPACE: event_manager.push_event(EventTypes::DESCEND_DUNGEON); break;
 		case SDLK_BACKSPACE: event_manager.push_event(EventTypes::ASCEND_DUNGEON); break;
 		case SDLK_o: open_doors(); on_tick(); break;
-		case SDLK_1: Prefab::create_explosion(world, pos->x, pos->y, tex_manager.LoadTexture("./Resources/exp2_0.png")); break;
+		case SDLK_1: Prefab::create_explosion(world, pos->x, pos->y, pos->z, tex_manager.LoadTexture("./Resources/exp2_0.png")); break;
 		}
 	}
 	else if (event.type == SDL_QUIT) {

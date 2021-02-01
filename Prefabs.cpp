@@ -1,11 +1,11 @@
 
 #include "Prefabs.hpp"
 
-void Prefab::create_explosion(World& world, int x, int y, unsigned int tex)
+void Prefab::create_explosion(World& world, int x, int y, int z, unsigned int tex)
 {
 	float dt = 0.05f;
 	auto exp = world.CreateEntity();
-	world.AddComponent<Position>(exp, x - 1, y - 1, 0);
+	world.AddComponent<Position>(exp, x - 1, y - 1, z);
 	world.AddComponent<Sprite>(exp, tex, 0, 0, 64, 64, 10);
 	world.AddComponent<Animation>(exp, dt, tex, 0, 0, 64, 64);
 	auto exp_animation = world.GetComponent<Animation>(exp);

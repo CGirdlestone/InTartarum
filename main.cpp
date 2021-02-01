@@ -205,6 +205,7 @@ int main(int argc, char* argv[])
 
 		auto tex_manager = TextureManager(window);
 		auto splash = tex_manager.LoadTexture("./Resources/fog01.png");
+		auto title = tex_manager.LoadTexture("./Resources/In_Tartarum.png");
 		auto chest0_tex = tex_manager.LoadTexture("./Resources/Chest0.png");
 		auto chest1_tex = tex_manager.LoadTexture("./Resources/Chest1.png");
 		auto gui_0 = tex_manager.LoadTexture("./Resources/GUI0.png");

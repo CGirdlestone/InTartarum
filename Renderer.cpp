@@ -209,6 +209,15 @@ void Renderer::DrawSplash(unsigned int tex_id, const uint32_t fps, float dt)
 	SDL_SetTextureColorMod(texture_manager.GetTexture(tex_id), 128, 0, 0);
 	SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(tex_id), nullptr, nullptr);
 
+	auto* title = texture_manager.GetTexture(texture_manager.LoadTexture("./Resources/In_Tartarum.png"));
+	SDL_Rect dstrect;
+	SDL_QueryTexture(title, nullptr, nullptr, &dstrect.w, &dstrect.h);
+	dstrect.x = window.GetWidth() / 2 * window.GetTileWidth() - dstrect.w / 2;
+	dstrect.y = window.GetTileHeight() * 4;
+	
+
+	SDL_RenderCopy(window.GetRenderer(), title, nullptr, &dstrect);
+
 	DrawFPS(fps);
 	Update();
 }

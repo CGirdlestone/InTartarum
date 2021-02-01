@@ -188,7 +188,6 @@ void WorldMap::update_fov(int x, int y, int radius)
 void WorldMap::serialise(std::ofstream& file)
 {
 	utils::serialiseUint32(file, static_cast<uint32_t>(dungeon_depth));
-	printf("dungeon_depth: %i\n", dungeon_depth);
 	utils::serialiseUint64(file, level_seed);
 
 	auto& grid = get_level(dungeon_depth).get_grid();
@@ -217,7 +216,4 @@ void WorldMap::deserialise(const char* buffer, size_t& offset)
 			tile.explored = static_cast<bool>(utils::deserialiseUint32(buffer, offset));
 		}
 	}
-
-	printf("dungeon_depth: %i\n", dungeon_depth);
-
 }

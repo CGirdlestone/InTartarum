@@ -542,13 +542,12 @@ public:
 		}
 		auto& _packed = m_packed.at(id);
 		utils::serialiseUint32(file, static_cast<uint32_t>(_packed.size()));
-		printf("Serialise packed size: %i\n", _packed.size());
 		std::for_each(_packed.begin(), _packed.end(), [&file](uint16_t e) {utils::serialiseUint32(file, static_cast<uint32_t>(e)); });
 	}
 
 	template <typename Component>
 	void Deserialise(const char* buffer, size_t& offset) {
-		// serialise component-type specific data (component pool, sparse array and packed array)
+		// deserialise component-type specific data (component pool, sparse array and packed array)
 		auto id = GetID<Component>();
 
 		auto& pool = m_component_pools[id];

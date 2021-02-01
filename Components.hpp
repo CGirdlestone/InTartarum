@@ -6,7 +6,6 @@
 struct ISerializeable {
 	virtual void serialise(std::ofstream& file) = 0;
 	virtual void deserialise(const char* buffer, size_t& offset) = 0;
-
 };
 
 // forward declaration
