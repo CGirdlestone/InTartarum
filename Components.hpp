@@ -1,57 +1,81 @@
 #pragma once
 
 #include "Common.hpp"
+#include "Utils.hpp"
+
+struct ISerializeable {
+	virtual void serialise(std::ofstream& file) = 0;
+	virtual void deserialise(const char* buffer, size_t& offset) = 0;
+
+};
 
 // forward declaration
 class World;
 
 enum class state { IDLE, WALK_LEFT, WALK_RIGHT, WALK_UP, WALK_DOWN };
 
-struct Position {
+struct Position : public ISerializeable {
 	Position() {};
 	Position(int _x, int _y, int _z) : x(_x), y(_y), z(_z) { };
 	~Position() {};
 	int x{ 0 };
 	int y{ 0 };
 	int z{ 0 };
+
+	virtual void serialise(std::ofstream& file) override;
+	virtual void deserialise(const char* buffer, size_t& offset) override;
 };
 
-struct Player {
+struct Player : public ISerializeable {
 	Player() {};
 	Player(int _vision) : vision(_vision) {};
 	~Player() {};
 	int level{ 1 };
 	int vision{ 10 };
+
+	virtual void serialise(std::ofstream& file) override;
+	virtual void deserialise(const char* buffer, size_t& offset) override;
 };
 
-struct Actor {
+struct Actor : public ISerializeable {
 
+	virtual void serialise(std::ofstream& file) override;
+	virtual void deserialise(const char* buffer, size_t& offset) override;
 };
 
-struct Blocker {
+struct Blocker : public ISerializeable {
 	Blocker() {};
 	Blocker(bool _blocks_view) : blocks_view(_blocks_view) {};
 	~Blocker();
 	bool blocks_view{ false };
+
+	virtual void serialise(std::ofstream& file) override;
+	virtual void deserialise(const char* buffer, size_t& offset) override;
 };
 
-struct LightSource {
+struct LightSource : public ISerializeable {
 	LightSource() {};
 	LightSource(int _radius) : radius(_radius) {};
 	~LightSource() {};
 	int radius;
+
+	virtual void serialise(std::ofstream& file) override;
+	virtual void deserialise(const char* buffer, size_t& offset) override;
 };
 
-struct Interactable {
+struct Interactable : public ISerializeable {
 	Interactable() {};
 	Interactable(bool repeat) : repeatable(repeat) {};
 	~Interactable() {};
 	bool repeatable{ true };
 	bool triggered{ false };
+
+	virtual void serialise(std::ofstream& file) override;
+	virtual void deserialise(const char* buffer, size_t& offset) override;
 };
 
 
-struct Sprite {
+struct Sprite : public ISerializeable {
 	Sprite() {};
 	Sprite(unsigned int _id, unsigned int _clip_x, unsigned int _clip_y, unsigned int _width, unsigned int _height, unsigned int _depth) :
 		id(_id), clip_x(_clip_x), clip_y(_clip_y), width(_width), height(_height), depth(_depth) {};
@@ -62,11 +86,15 @@ struct Sprite {
 	unsigned int width{ 0 };
 	unsigned int height{ 0 };
 	unsigned int depth{ 0 };
+
+	virtual void serialise(std::ofstream& file) override;
+	virtual void deserialise(const char* buffer, size_t& offset) override;
 };
 
 
 // A helper struct for the Animation Component
-struct AnimFrame {
+struct AnimFrame : public ISerializeable {
+	AnimFrame() {};
 	AnimFrame(unsigned int _id, unsigned int _clip_x, unsigned int _clip_y, unsigned int _width, unsigned int _height) :
 		id(_id), clip_x(_clip_x), clip_y(_clip_y), width(_width), height(_height) {};
 	unsigned int id{ 0 };
@@ -74,10 +102,13 @@ struct AnimFrame {
 	unsigned int clip_y{ 0 };
 	unsigned int width{ 0 };
 	unsigned int height{ 0 };
+
+	virtual void serialise(std::ofstream& file) override;
+	virtual void deserialise(const char* buffer, size_t& offset) override;
 };
 
 
-struct Animation {
+struct Animation : public ISerializeable {
 	Animation() {
 		animations.insert({ state::IDLE, {} });
 	};
@@ -91,22 +122,32 @@ struct Animation {
 	state _state{ state::IDLE };
 	std::map<state, std::deque<AnimFrame>> animations;
 	bool dynamic{ true };
+
+	virtual void serialise(std::ofstream& file) override;
+	virtual void deserialise(const char* buffer, size_t& offset) override;
 };
 
 
-struct Particle {
+struct Particle : public ISerializeable {
 	Particle() {};
 	Particle(float _lifetime) :lifetime(_lifetime) {};
 	~Particle() {};
 	float lifetime{ 0.0f };
+
+	virtual void serialise(std::ofstream& file) override;
+	virtual void deserialise(const char* buffer, size_t& offset) override;
 };
 
 
-struct Scriptable {
+struct Scriptable : public ISerializeable {
+	Scriptable() {};
 	Scriptable(uint32_t entity) : owner(entity) {};
 	std::string OnInit{ "" };
 	std::string OnUpdate{ "" };
 	std::string OnBump{ "" };
 	std::string OnDeath{ "" };
 	uint32_t owner;
+
+	virtual void serialise(std::ofstream& file) override;
+	virtual void deserialise(const char* buffer, size_t& offset) override;
 };

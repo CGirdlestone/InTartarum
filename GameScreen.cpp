@@ -71,12 +71,13 @@ void GameScreen::open_doors()
 	}
 }
 
-GameScreen::GameScreen(StateManager& _state_manager, World& _world, TextureManager& _tex_manager, EventManager& _event_manager, WorldMap& _world_map, bool _render_prev, unsigned int _id) :
-	state_manager(_state_manager), world(_world), tex_manager(_tex_manager), event_manager(_event_manager), world_map(_world_map), render_prev(_render_prev), id(_id)
+GameScreen::GameScreen(StateManager& _state_manager, World& _world, TextureManager& _tex_manager, EventManager& _event_manager, WorldMap& _world_map, Renderer& _renderer, Camera& _camera, bool _render_prev, unsigned int _id) :
+	state_manager(_state_manager), world(_world), tex_manager(_tex_manager), event_manager(_event_manager), world_map(_world_map), renderer(_renderer), camera(_camera), render_prev(_render_prev), id(_id)
 {
 	event_manager.add_subscriber(EventTypes::ASCEND_DUNGEON, *this); // required to allow teleporting back to town.
 	event_manager.add_subscriber(EventTypes::DESCEND_DUNGEON, *this);
 	event_manager.add_subscriber(EventTypes::TICK, *this);
+	event_manager.add_subscriber(EventTypes::LOAD_GAME, *this);
 }
 
 void GameScreen::handle_input(SDL_Event& event)
@@ -104,6 +105,7 @@ void GameScreen::handle_input(SDL_Event& event)
 	}
 	else if (event.type == SDL_QUIT) {
 		state_manager.stop_playing();
+		save_game();
 	}
 	SDL_PumpEvents();
 }
@@ -144,6 +146,7 @@ void GameScreen::receive(EventTypes event)
 	case EventTypes::ASCEND_DUNGEON: return_to_safe_zone(); break;
 	case EventTypes::DESCEND_DUNGEON: descend_dungeon(); break;
 	case EventTypes::TICK: on_tick(); break;
+	case EventTypes::LOAD_GAME: load_game();
 	}
 }
 
@@ -160,4 +163,62 @@ void GameScreen::receive(EventTypes event, uint32_t actor, uint32_t target)
 void GameScreen::receive(EventTypes event, uint32_t actor, uint32_t target, uint32_t item)
 {
 
+}
+
+void GameScreen::load_game()
+{
+	std::ifstream file("save.txt", std::ios::binary | std::ios::ate);
+
+	file.seekg(0, std::ios::end);
+	std::fstream::pos_type length = file.tellg();
+	file.seekg(0, std::ios::beg);
+
+	auto buffer = std::make_unique<char[]>(length);
+
+	file.read(buffer.get(), length);
+
+	file.close();
+
+	size_t offset{ 0 };
+
+	world.Deserialise(buffer.get(), offset);
+
+	world.Deserialise<Position>(buffer.get(), offset);
+	world.Deserialise<Sprite>(buffer.get(), offset);
+	world.Deserialise<Animation>(buffer.get(), offset);
+	world.Deserialise<Scriptable>(buffer.get(), offset);
+	world.Deserialise<Particle>(buffer.get(), offset);
+	world.Deserialise<Player>(buffer.get(), offset);
+	world.Deserialise<Actor>(buffer.get(), offset);
+	world.Deserialise<Blocker>(buffer.get(), offset);
+	world.Deserialise<Interactable>(buffer.get(), offset);
+	world.Deserialise<LightSource>(buffer.get(), offset);
+
+	world_map.deserialise(buffer.get(), offset);
+
+	camera.deserialise(buffer.get(), offset);
+
+	renderer.DrawMap(world_map.get_level(world_map.get_current_depth()));
+}
+
+void GameScreen::save_game()
+{
+	std::ofstream file("save.txt", std::ios::binary);
+
+	world.Serialise(file);
+	
+	world.Serialise<Position>(file);
+	world.Serialise<Sprite>(file);
+	world.Serialise<Animation>(file);
+	world.Serialise<Scriptable>(file);
+	world.Serialise<Particle>(file);
+	world.Serialise<Player>(file);
+	world.Serialise<Actor>(file);
+	world.Serialise<Blocker>(file);
+	world.Serialise<Interactable>(file);
+	world.Serialise<LightSource>(file);
+
+	world_map.serialise(file);
+
+	camera.serialise(file);
 }

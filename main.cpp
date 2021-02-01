@@ -277,7 +277,7 @@ int main(int argc, char* argv[])
 		auto splash_screen = SplashScreen(state_manager, world, tex_manager, event_manager, false, splash, intro_music);
 		state_manager.add_state(splash_screen.get_state(), splash_screen);
 
-		auto game_screen = GameScreen(state_manager, world, tex_manager, event_manager, world_map, false, wind);
+		auto game_screen = GameScreen(state_manager, world, tex_manager, event_manager, world_map, renderer, camera, false, wind);
 		state_manager.add_state(GameState::GAME, game_screen);
 
 

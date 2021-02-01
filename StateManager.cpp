@@ -1,5 +1,11 @@
 #include "StateManager.hpp"
 
+StateManager::StateManager(World& _world, Renderer& _renderer, EventManager& _event_manager) 
+	: world(_world), renderer(_renderer), event_manager(_event_manager)
+{
+	
+}
+
 void StateManager::add_state(GameState state, BaseState& state_instance)
 {
 	states.insert({ state, std::reference_wrapper(state_instance) });

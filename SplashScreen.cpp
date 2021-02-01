@@ -19,6 +19,10 @@ void SplashScreen::handle_input(SDL_Event& event)
 			event_manager.push_event(EventTypes::BUTTON_CLICK);
 			break;
 		}
+		case SDLK_KP_ENTER: {
+			state_manager.push(GameState::GAME);
+			event_manager.push_event(EventTypes::LOAD_GAME);
+		}
 		}
 	}
 }

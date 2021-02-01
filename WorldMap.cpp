@@ -184,3 +184,40 @@ void WorldMap::update_fov(int x, int y, int radius)
 		ray_cast(pos->x, pos->y, ls->radius);
 	}
 }
+
+void WorldMap::serialise(std::ofstream& file)
+{
+	utils::serialiseUint32(file, static_cast<uint32_t>(dungeon_depth));
+	printf("dungeon_depth: %i\n", dungeon_depth);
+	utils::serialiseUint64(file, level_seed);
+
+	auto& grid = get_level(dungeon_depth).get_grid();
+
+	for (int i = 0; i < grid.get_width(); i++) {
+		for (int j = 0; j < grid.get_height(); j++) {
+			auto& tile = grid.get_tile(i, j);
+			utils::serialiseUint32(file, static_cast<uint32_t>(tile.visible));
+			utils::serialiseUint32(file, static_cast<uint32_t>(tile.explored));
+		}
+	}
+}
+
+void WorldMap::deserialise(const char* buffer, size_t& offset)
+{
+	dungeon_depth = static_cast<int>(utils::deserialiseUint32(buffer, offset));
+	level_seed = utils::deserialiseUint64(buffer, offset);
+	
+	create_dungeon(level_seed);
+	auto& grid = get_level(dungeon_depth).get_grid();
+
+	for (int i = 0; i < grid.get_width(); i++) {
+		for (int j = 0; j < grid.get_height(); j++) {
+			auto& tile = grid.get_tile(i, j);
+			tile.visible = static_cast<bool>(utils::deserialiseUint32(buffer, offset));
+			tile.explored = static_cast<bool>(utils::deserialiseUint32(buffer, offset));
+		}
+	}
+
+	printf("dungeon_depth: %i\n", dungeon_depth);
+
+}

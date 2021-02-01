@@ -5,7 +5,7 @@
 #include "Renderer.hpp"
 #include "EventManager.hpp"
 
-class StateManager {
+class StateManager{
 private:
 	std::map<GameState, std::reference_wrapper<BaseState> > states;
 	std::vector<std::reference_wrapper<BaseState> > stack;
@@ -14,7 +14,7 @@ private:
 	EventManager& event_manager;
 	bool playing{ true };
 public:
-	StateManager(World& _world, Renderer& _renderer, EventManager& _event_manager) : world(_world), renderer(_renderer), event_manager(_event_manager) {};
+	StateManager(World& _world, Renderer& _renderer, EventManager& _event_manager);
 	~StateManager() {};
 
 	void add_state(GameState state, BaseState& state_instance);

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Common.hpp"
+#include "Utils.hpp"
 
 class Camera
 {
@@ -25,5 +26,7 @@ public:
 		y = std::min(std::max(_y - height / zoom / 2, 0), map_height - height / zoom);
 	};
 	inline const int get_zoom() const { return zoom; };
+	void serialise(std::ofstream& file);
+	void deserialise(const char* buffer, size_t offset);
 };
 

@@ -2,6 +2,7 @@
 
 #include "Level.hpp"
 #include "World.hpp"
+#include "Utils.hpp"
 
 class WorldMap
 {
@@ -37,5 +38,8 @@ public:
 	inline EntityGrid& get_entity_grid() { return *(entity_grid.get()); };
 	void populate_entity_grid();
 	void update_fov(int x, int y, int radius);
+	inline uint64_t get_seed() const { return level_seed; };
+	void serialise(std::ofstream& file);
+	void deserialise(const char* buffer, size_t& offset);
 };
 
