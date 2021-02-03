@@ -121,11 +121,11 @@ void Renderer::DrawSkills()
 
 }
 
-void Renderer::DrawText(const std::string& text, int x, int y)
+void Renderer::DrawText(const std::string& text, int x, int y, uint8_t r, uint8_t g, uint8_t b)
 {
 	auto x_start{ x * window.GetTileWidth() };
 	auto offset{ 0 };
-	SDL_SetTextureColorMod(texture_manager.GetTexture(font_id), 0, 0, 0);
+	SDL_SetTextureColorMod(texture_manager.GetTexture(font_id), r, g, b);
 	for (char c : text) {
 		SDL_Rect dstrect;
 		dstrect.x = x_start + (offset++) * font_width;
@@ -141,6 +141,42 @@ void Renderer::DrawText(const std::string& text, int x, int y)
 
 		SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(font_id), &srcrect, &dstrect);
 	}
+}
+
+std::vector<std::string> Renderer::WrapText(const std::string& text, int line_width)
+{
+	std::vector<std::string> lines;
+	int last_space{ 0 };
+	int line_start{ 0 };
+
+	// no need to wrap so push single line and return 
+	if (text.length() < line_width) {
+		lines.push_back(text);
+		return lines;
+	}
+
+	for (uint32_t i = 0; i < text.length(); ++i) {
+		if (text[i] == ' ') {
+			last_space = i;
+		}
+
+		if (i == text.length() - 1) {
+			lines.push_back(text.substr(line_start + 1, i + 1 - line_start));
+			break;
+		}
+
+		if (i % line_width == line_width - 1) {
+			if (line_start == 0) {
+				lines.push_back(text.substr(line_start, last_space - line_start));
+			}
+			else {
+				lines.push_back(text.substr(line_start + 1, last_space - line_start));
+			}
+			line_start = last_space;
+		}
+	}
+
+	return lines;
 }
 
 void Renderer::DrawFPS(uint32_t fps)
@@ -219,6 +255,30 @@ void Renderer::DrawSplash(unsigned int tex_id, const uint32_t fps, float dt)
 	SDL_RenderCopy(window.GetRenderer(), title, nullptr, &dstrect);
 
 	DrawFPS(fps);
+	Update();
+}
+
+void Renderer::DrawCharacterSelectionScene(const uint32_t, const std::map<int, CharacterClass>& character_options, int selected)
+{
+	Clear();
+
+	auto it = character_options.begin();
+	DrawBox(2, 1, 10, 10);
+	for (int j = 0; it != character_options.end(); it++) {
+		if (j == selected) {
+			DrawText(it->second.name, 4, 2 * (j++ + 1), 200, 0, 0);
+		}
+		else {
+			DrawText(it->second.name, 4, 2 * (j++ + 1), 0, 0, 0);
+		}
+	}
+
+	auto description = WrapText(character_options.at(selected).description, 30);
+
+	DrawBox(28, 1, 25, 10);
+	int j{ 0 };
+	std::for_each(description.cbegin(), description.cend(), [&j, this](const std::string& line) {this->DrawText(line, 30, 2 + j++, 0, 0, 0); });
+
 	Update();
 }
 

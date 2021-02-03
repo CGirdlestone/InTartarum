@@ -146,6 +146,7 @@
   <ItemGroup>
     <ClCompile Include="Animator.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CharacterCreationScreen.cpp" />
     <ClCompile Include="Components.cpp" />
     <ClCompile Include="GameScreen.cpp" />
     <ClCompile Include="Grid.cpp" />
@@ -171,6 +172,8 @@
     <ClInclude Include="BaseState.hpp" />
     <ClInclude Include="BaseSystem.hpp" />
     <ClInclude Include="Camera.hpp" />
+    <ClInclude Include="CharacterClass.hpp" />
+    <ClInclude Include="CharacterCreationScreen.hpp" />
     <ClInclude Include="Common.hpp" />
     <ClInclude Include="Components.hpp" />
     <ClInclude Include="EntityGrid.hpp" />

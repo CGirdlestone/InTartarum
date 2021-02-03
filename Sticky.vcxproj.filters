@@ -120,6 +120,9 @@
     <ClCompile Include="Components.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CharacterCreationScreen.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.hpp">
@@ -208,6 +211,12 @@
     </ClInclude>
     <ClInclude Include="Environment.hpp">
       <Filter>Header Files\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterCreationScreen.hpp">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterClass.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

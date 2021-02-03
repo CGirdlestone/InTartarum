@@ -18,7 +18,6 @@ private:
 	Camera& camera;
 	bool render_prev{ false };
 	unsigned int id;
-	GameState state{ GameState::GAME };
 
 	void descend_dungeon();
 	void return_to_safe_zone();
@@ -30,7 +29,7 @@ public:
 	virtual void update(float dt) override;
 	virtual void draw_scene(Renderer& renderer, const uint32_t fps, float dt) const override;
 	inline virtual bool render_previous() const override { return render_prev; };
-	inline virtual GameState get_state() const override { return state; };
+	inline virtual GameState get_state() const override { return GameState::GAME; };
 	virtual void on_entrance(Renderer& renderer) const;
 	virtual void on_bury() const;
 	virtual void receive(EventTypes event) override;

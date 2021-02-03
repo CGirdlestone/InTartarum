@@ -15,7 +15,7 @@ void SplashScreen::handle_input(SDL_Event& event)
 	else if (event.type == SDL_KEYDOWN) {
 		switch (event.key.keysym.sym) {
 		case SDLK_RETURN: {
-			state_manager.push(GameState::GAME);  
+			state_manager.push(GameState::CHARACTER_CREATION);  
 			event_manager.push_event(EventTypes::BUTTON_CLICK);
 			break;
 		}
