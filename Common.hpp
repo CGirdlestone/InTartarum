@@ -18,5 +18,7 @@
 #include <math.h>
 #include <deque>
 #include <set>
+#include <unordered_map>
+#include <queue>
 #include <thread>
 #include <random>
