@@ -225,7 +225,9 @@ void build_town(Level& level, World& world, TextureManager& texture_manager, con
 
 int main(int argc, char* argv[])
 {
-	srand(time(0));
+	std::random_device seed_generator;
+	std::mt19937 random_number_generator;
+
 	// create a new scope so all the SDL allocated objects are destroyed before the SDL quit functions are called. 
 	{
 		const int TILE_SIZE{ 16 };

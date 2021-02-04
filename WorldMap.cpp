@@ -113,12 +113,11 @@ void WorldMap::ray_cast(int x, int y, int radius)
 
 void WorldMap::set_seed()
 {
-	level_seed = static_cast<uint64_t>(time(0));
-	srand(level_seed);
+	randomiser.new_seed();
 }
 
-WorldMap::WorldMap(Level& _town, World& _world, int _width, int _height) :town(_town), world(_world),
-map_width(_width), map_height(_height), dungeon(nullptr), entity_grid(nullptr)
+WorldMap::WorldMap(Level& _town, World& _world, int _width, int _height) 
+	:town(_town), world(_world), randomiser(), map_width(_width), map_height(_height), dungeon(nullptr), entity_grid(nullptr)
 {
 	auto e_grid = std::make_unique<EntityGrid>(_width, _height);
 	entity_grid.swap(e_grid);
@@ -139,9 +138,8 @@ void WorldMap::create_dungeon()
 	__create_dungeon();
 }
 
-void WorldMap::create_dungeon(uint64_t seed)
+void WorldMap::load_dungeon()
 {
-	srand(seed);
 	__create_dungeon();
 }
 
@@ -188,7 +186,7 @@ void WorldMap::update_fov(int x, int y, int radius)
 void WorldMap::serialise(std::ofstream& file)
 {
 	utils::serialiseUint32(file, static_cast<uint32_t>(dungeon_depth));
-	utils::serialiseUint64(file, level_seed);
+	utils::serialiseUint64(file, static_cast<uint64_t>(randomiser.seed));
 
 	auto& grid = get_level(dungeon_depth).get_grid();
 
@@ -204,9 +202,11 @@ void WorldMap::serialise(std::ofstream& file)
 void WorldMap::deserialise(const char* buffer, size_t& offset)
 {
 	dungeon_depth = static_cast<int>(utils::deserialiseUint32(buffer, offset));
-	level_seed = utils::deserialiseUint64(buffer, offset);
+	auto level_seed = utils::deserialiseUint64(buffer, offset);
 	
-	create_dungeon(level_seed);
+	randomiser.set_seed(static_cast<unsigned int>(level_seed));
+	load_dungeon();
+	
 	auto& grid = get_level(dungeon_depth).get_grid();
 
 	for (int i = 0; i < grid.get_width(); i++) {

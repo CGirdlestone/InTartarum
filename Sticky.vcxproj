@@ -186,6 +186,7 @@
     <ClInclude Include="MoveSystem.hpp" />
     <ClInclude Include="ParticleSystem.hpp" />
     <ClInclude Include="Prefabs.hpp" />
+    <ClInclude Include="RandomNumberGenerator.hpp" />
     <ClInclude Include="Renderer.hpp" />
     <ClInclude Include="ScriptSystem.hpp" />
     <ClInclude Include="SoundManager.hpp" />

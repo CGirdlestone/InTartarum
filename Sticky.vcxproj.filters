@@ -55,6 +55,9 @@
     <Filter Include="Header Files\Enums">
       <UniqueIdentifier>{6e0ee9da-1b3a-4772-9230-b6f2541348d8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\RandomGenerators">
+      <UniqueIdentifier>{4aba3d21-bb19-4b3b-b03f-78a9fd33803c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -217,6 +220,9 @@
     </ClInclude>
     <ClInclude Include="CharacterClass.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RandomNumberGenerator.hpp">
+      <Filter>Header Files\RandomGenerators</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
