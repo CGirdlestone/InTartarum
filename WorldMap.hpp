@@ -34,12 +34,13 @@ public:
 	inline Level& get_level(int depth) { return depth == 0 ? town : *(dungeon.get()); };
 	inline int get_current_depth() const { return dungeon_depth; };
 	inline void set_depth(int depth) { dungeon_depth = depth; };
+	inline EntityGrid& get_entity_grid() { return *(entity_grid.get()); };
+	inline unsigned int get_seed() const { return randomiser.seed; };
+
 	void create_dungeon();
 	void load_dungeon();
-	inline EntityGrid& get_entity_grid() { return *(entity_grid.get()); };
 	void populate_entity_grid();
 	void update_fov(int x, int y, int radius);
-	inline unsigned int get_seed() const { return randomiser.seed; };
 	void serialise(std::ofstream& file);
 	void deserialise(const char* buffer, size_t& offset);
 };

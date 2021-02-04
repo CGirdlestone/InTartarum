@@ -10,7 +10,7 @@ void WorldMap::__create_dungeon()
 	for (int i = 0; i < grid.get_width(); i++) {
 		for (int j = 0; j < grid.get_height(); j++) {
 			auto& tile = grid.get_tile(i, j);
-			auto roll = rand() % 100;
+			auto roll = randomiser.sample(1, 100);
 			if (roll < 10) {
 				tile.set(false, false, TileType::WATER);
 			}
