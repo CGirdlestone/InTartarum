@@ -240,8 +240,6 @@ void Renderer::DrawSprite(Position* pos, Sprite* sprite)
 
 void Renderer::DrawSplash(unsigned int tex_id, const uint32_t fps, float dt)
 {
-	Clear();
-
 	SDL_SetTextureColorMod(texture_manager.GetTexture(tex_id), 128, 0, 0);
 	SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(tex_id), nullptr, nullptr);
 
@@ -255,53 +253,59 @@ void Renderer::DrawSplash(unsigned int tex_id, const uint32_t fps, float dt)
 	SDL_RenderCopy(window.GetRenderer(), title, nullptr, &dstrect);
 
 	DrawFPS(fps);
-	Update();
 }
 
-void Renderer::DrawCharacterSelectionScene(const uint32_t, const std::map<int, CharacterClass>& character_options, int selected)
+void Renderer::DrawCharacterSelectionScene(const uint32_t fps, const std::map<int, CharacterClass>& character_options, int selected, const std::vector<std::string>& stats)
 {
-	Clear();
+	int num_options{ static_cast<int>(character_options.size()) };
+	DrawBox(1, 1, 10, 2 * num_options + 1);
 
-	auto it = character_options.begin();
-	DrawBox(2, 1, 10, 10);
-	for (int j = 0; it != character_options.end(); it++) {
+	int j{ 0 };
+	for (auto& [id, character] : character_options) {
 		if (j == selected) {
-			DrawText(it->second.name, 4, 2 * (j++ + 1), 200, 0, 0);
+			DrawText(character.name, 2, 2 * (j++ + 1), 200, 0, 0);
 		}
 		else {
-			DrawText(it->second.name, 4, 2 * (j++ + 1), 0, 0, 0);
+			DrawText(character.name, 2, 2 * (j++ + 1), 0, 0, 0);
 		}
 	}
 
 	auto description = WrapText(character_options.at(selected).description, 30);
 
-	DrawBox(28, 1, 25, 10);
-	int j{ 0 };
-	std::for_each(description.cbegin(), description.cend(), [&j, this](const std::string& line) {this->DrawText(line, 30, 2 + j++, 0, 0, 0); });
+	j = 1;
+	//j = 2 * num_options + 1 + 2;
+	DrawBox(12, j, 20, 11);
 
-	Update();
+	std::for_each(description.cbegin(), description.cend(), [&j, this](const std::string& line) {this->DrawText(line, 13, 2 + j++, 0, 0, 0); });
+
+	DrawBox(12, 12, 30, 5);
+	j = 7;
+	int i{ 12 };
+	for (size_t k = 0; k < stats.size(); k++) {
+		DrawText(stats[k], i + 1, j + 1, 0, 0, 0);
+		DrawText(std::to_string(character_options.at(selected).stats[k]), i + 1, j + 3, 0, 0, 0);
+		i += 3;
+	}
 }
 
 void Renderer::DrawScene(uint32_t fps, WorldMap& world_map)
 {
-	Clear();
-	
 	DrawMapTexture(0, 0);
 	
 	
 	auto components = world.GetComponents<Position, Sprite>();
-	// sort the entities based on the sprite depth value.
-	std::sort(components.begin(), components.end(), [](const std::tuple<Position*, Sprite*>& a, const std::tuple<Position*, Sprite*>& b) {
-		return std::get<1>(a)->depth < std::get<1>(b)->depth;
-		}
-	);
-
-	// only draw those that are on the same dungeon depth.
+	// remove the entities that are not on this depth level.
 	components.erase(std::remove_if(components.begin(), components.end(), [&world_map](const std::tuple<Position*, Sprite*>& a) {
 		return std::get<0>(a)->z != world_map.get_current_depth();
 		}
 	), components.end());
 	
+	// sort the remaining entities based on the sprite depth value.
+	std::sort(components.begin(), components.end(), [](const std::tuple<Position*, Sprite*>& a, const std::tuple<Position*, Sprite*>& b) {
+		return std::get<1>(a)->depth < std::get<1>(b)->depth;
+		}
+	);
+
 	auto& grid = world_map.get_level(world_map.get_current_depth()).get_grid();
 	for (auto& [pos, sprite] : components) {
 		if (grid.get_tile(pos->x, pos->y).visible) {
@@ -316,8 +320,6 @@ void Renderer::DrawScene(uint32_t fps, WorldMap& world_map)
 	
 	std::string depth = "Dungeon depth: " + std::to_string(world_map.get_current_depth());
 	DrawText(depth, camera.get_width() + 1, 1);
-
-	Update();
 }
 
 

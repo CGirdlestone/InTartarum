@@ -23,9 +23,6 @@ private:
 	int font_width{ 0 };
 	int font_height{ 0 };
 
-	void Update() { SDL_RenderPresent(window.GetRenderer()); };
-	void Clear() { SDL_RenderClear(window.GetRenderer()); };
-
 	inline void SetTarget(SDL_Texture* target) const { SDL_SetRenderTarget(window.GetRenderer(), target); };
 	inline void ResetTarget() const { SDL_SetRenderTarget(window.GetRenderer(), nullptr); };
 	void DrawMapTexture(int x, int y);
@@ -41,9 +38,11 @@ public:
 	virtual ~Renderer() {};
 	inline void AddTile(TileType type, Sprite tile) { tile_sprites.insert({ type, tile }); };
 
+	inline void Update() { SDL_RenderPresent(window.GetRenderer()); };
+	inline void Clear() { SDL_RenderClear(window.GetRenderer()); };
 	void DrawScene(const uint32_t fps, WorldMap& world_map);
 	void DrawSplash(unsigned int tex_id, const uint32_t fps, float dt);
-	void DrawCharacterSelectionScene(const uint32_t, const std::map<int, CharacterClass>& character_options, int selected);
+	void DrawCharacterSelectionScene(const uint32_t, const std::map<int, CharacterClass>& character_options, int selected, const std::vector<std::string>& stats);
 	void DrawMap(Level& level);
 	void SetFont(unsigned int id, int width, int height) { font_id = id; font_width = width; font_height = height; };
 };

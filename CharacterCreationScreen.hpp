@@ -14,9 +14,10 @@ private:
 	World& world;
 	TextureManager& tex_manager;
 	EventManager& event_manager;
-	bool render_prev{ false };
+	bool render_prev{ true };
 	std::string player_name{ "" };
 	std::map<int, CharacterClass> char_options;
+	std::vector<std::string> stats;
 	int selection{ 0 };
 
 public:

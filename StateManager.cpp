@@ -34,6 +34,7 @@ void StateManager::handle_input(SDL_Event& event)
 
 void StateManager::draw_scene(uint32_t fps, float dt)
 {
+	renderer.Clear();
 	if (stack.size() > 1) {
 		auto it = stack.end() - 2;
 		if (stack.back().get().render_previous()) {
@@ -41,6 +42,7 @@ void StateManager::draw_scene(uint32_t fps, float dt)
 		}
 	}
 	stack.back().get().draw_scene(renderer, fps, dt);
+	renderer.Update();
 }
 
 void StateManager::update(float dt)

@@ -3,6 +3,8 @@
 CharacterCreationScreen::CharacterCreationScreen(StateManager& _state_manager, World& _world, TextureManager& _tex_manager, EventManager& _event_manager):
 	state_manager(_state_manager), world(_world), tex_manager(_tex_manager), event_manager(_event_manager)
 {
+	stats = { "STR", "DEX", "CON", "WIS", "INT", "CHA" };
+
 	std::string warrior_name = "Warrior";
 	std::string warrior_desc = "A battle-hardened warrior who excels with close combat weapons.";
 	std::vector<int> warrior_stats = { 12, 10, 12, 10, 8, 8 };
@@ -15,7 +17,7 @@ CharacterCreationScreen::CharacterCreationScreen(StateManager& _state_manager, W
 
 	std::string archer_name = "Archer";
 	std::string archer_desc = "You never much liked the idea of getting stabbed, so you decided to kill from afar.";
-	std::vector<int> archer_stats = { 8, 10, 8, 12, 12, 10 };
+	std::vector<int> archer_stats = { 8, 12, 10, 12, 9, 9 };
 	char_options.insert({ 2, CharacterClass(archer_name, archer_desc, archer_stats) });
 }
 
@@ -52,7 +54,7 @@ void CharacterCreationScreen::update(float dt)
 
 void CharacterCreationScreen::draw_scene(Renderer& renderer, const uint32_t fps, float dt) const
 {
-	renderer.DrawCharacterSelectionScene(fps, char_options, selection);
+	renderer.DrawCharacterSelectionScene(fps, char_options, selection, stats);
 }
 
 void CharacterCreationScreen::on_entrance(Renderer& renderer) const

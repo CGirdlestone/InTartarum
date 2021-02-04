@@ -5,6 +5,7 @@ struct CharacterClass {
 	CharacterClass(std::string& _name, std::string& _desc, std::vector<int>& _stats) :
 		name(_name), description(_desc), stats(_stats)
 	{
+
 	};
 
 	~CharacterClass() {};
