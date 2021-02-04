@@ -35,7 +35,7 @@ void MoveSystem::do_bump_script(uint32_t entity)
 
 bool MoveSystem::can_move(uint32_t mover, int x, int y)
 {
-	auto& level = world_map.get_level(world_map.get_current_depth());
+	auto& level = world_map.get_level();
 	auto& tile = level.get_grid().get_tile(x, y);
 	
 	if (!tile.walkable) {

@@ -37,7 +37,7 @@ void WorldMap::populate_level()
 
 void WorldMap::ray_cast(int x, int y, int radius)
 {
-	auto& grid = get_level(get_current_depth()).get_grid();
+	auto& grid = get_level().get_grid();
 	grid.get_tile(x, y).visible = true;
 	grid.get_tile(x, y).explored = true;
 
@@ -163,7 +163,7 @@ void WorldMap::populate_entity_grid()
 
 void WorldMap::update_fov(int x, int y, int radius)
 {
-	auto& grid = get_level(get_current_depth()).get_grid();
+	auto& grid = get_level().get_grid();
 	for (int i = 0; i < grid.get_width(); i++) {
 		for (int j = 0; j < grid.get_height(); j++) {
 			grid.get_tile(i, j).visible = false;
@@ -188,7 +188,7 @@ void WorldMap::serialise(std::ofstream& file)
 	utils::serialiseUint32(file, static_cast<uint32_t>(dungeon_depth));
 	utils::serialiseUint64(file, static_cast<uint64_t>(randomiser.seed));
 
-	auto& grid = get_level(dungeon_depth).get_grid();
+	auto& grid = get_level().get_grid();
 
 	for (int i = 0; i < grid.get_width(); i++) {
 		for (int j = 0; j < grid.get_height(); j++) {
@@ -207,7 +207,7 @@ void WorldMap::deserialise(const char* buffer, size_t& offset)
 	randomiser.set_seed(static_cast<unsigned int>(level_seed));
 	load_dungeon();
 	
-	auto& grid = get_level(dungeon_depth).get_grid();
+	auto& grid = get_level().get_grid();
 
 	for (int i = 0; i < grid.get_width(); i++) {
 		for (int j = 0; j < grid.get_height(); j++) {

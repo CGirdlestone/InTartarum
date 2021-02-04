@@ -31,7 +31,7 @@ public:
 	~WorldMap() {};
 	WorldMap(const WorldMap&) = delete;
 
-	inline Level& get_level(int depth) { return depth == 0 ? town : *(dungeon.get()); };
+	inline Level& get_level() { return dungeon_depth == 0 ? town : *(dungeon.get()); };
 	inline int get_current_depth() const { return dungeon_depth; };
 	inline void set_depth(int depth) { dungeon_depth = depth; };
 	inline EntityGrid& get_entity_grid() { return *(entity_grid.get()); };

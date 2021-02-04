@@ -306,7 +306,7 @@ void Renderer::DrawScene(uint32_t fps, WorldMap& world_map)
 		}
 	);
 
-	auto& grid = world_map.get_level(world_map.get_current_depth()).get_grid();
+	auto& grid = world_map.get_level().get_grid();
 	for (auto& [pos, sprite] : components) {
 		if (grid.get_tile(pos->x, pos->y).visible) {
 			DrawSprite(pos, sprite);

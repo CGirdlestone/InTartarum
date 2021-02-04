@@ -10,7 +10,7 @@ void GameScreen::descend_dungeon()
 	world_map.update_fov(pos->x, pos->y, player->vision);
 
 	auto& renderer = state_manager.get_renderer();
-	renderer.DrawMap(world_map.get_level(world_map.get_current_depth()));
+	renderer.DrawMap(world_map.get_level());
 
 	pos->z++;
 }
@@ -25,14 +25,14 @@ void GameScreen::return_to_safe_zone()
 	world_map.update_fov(pos->x, pos->y, player->vision);
 
 	auto& renderer = state_manager.get_renderer();
-	renderer.DrawMap(world_map.get_level(world_map.get_current_depth()));
+	renderer.DrawMap(world_map.get_level());
 	
 	pos->z = 0;
 }
 
 void GameScreen::open_doors()
 {
-	auto& grid = world_map.get_level(world_map.get_current_depth()).get_grid();
+	auto& grid = world_map.get_level().get_grid();
 	auto player = world.GetEntitiesWith<Player>()[0];
 	auto* pos = world.GetComponent<Position>(player);
 
@@ -116,7 +116,7 @@ void GameScreen::on_tick()
 	auto& [player, pos] = components[0];
 	world_map.update_fov(pos->x, pos->y, player->vision);
 	auto& renderer = state_manager.get_renderer();
-	renderer.DrawMap(world_map.get_level(world_map.get_current_depth()));
+	renderer.DrawMap(world_map.get_level());
 }
 
 void GameScreen::update(float dt)
@@ -132,7 +132,7 @@ void GameScreen::draw_scene(Renderer& renderer, const uint32_t fps, float dt) co
 void GameScreen::on_entrance(Renderer& renderer) const
 {
 	event_manager.push_event(EventTypes::PLAY_SOUND, id);
-	renderer.DrawMap(world_map.get_level(world_map.get_current_depth()));
+	renderer.DrawMap(world_map.get_level());
 }
 
 void GameScreen::on_bury() const
@@ -198,7 +198,7 @@ void GameScreen::load_game()
 
 	camera.deserialise(buffer.get(), offset);
 
-	renderer.DrawMap(world_map.get_level(world_map.get_current_depth()));
+	renderer.DrawMap(world_map.get_level());
 }
 
 void GameScreen::save_game()
