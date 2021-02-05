@@ -117,7 +117,7 @@ void WorldMap::set_seed()
 }
 
 WorldMap::WorldMap(Level& _town, World& _world, int _width, int _height) 
-	:town(_town), world(_world), randomiser(), map_width(_width), map_height(_height), dungeon(nullptr), entity_grid(nullptr)
+	:town(_town), world(_world), randomiser(), player_smells(_width, _height), map_width(_width), map_height(_height), dungeon(nullptr), entity_grid(nullptr)
 {
 	auto e_grid = std::make_unique<EntityGrid>(_width, _height);
 	entity_grid.swap(e_grid);
@@ -181,6 +181,13 @@ void WorldMap::update_fov(int x, int y, int radius)
 	for (auto& [ls, pos] : lights) {
 		ray_cast(pos->x, pos->y, ls->radius);
 	}
+}
+
+void WorldMap::update_scent_trail(int stinkyness)
+{
+	auto components = world.GetComponents<Player, Position>();
+	auto& [player, pos] = components[0];
+	player_smells = Path::scent_map(get_level(), pos->x, pos->y, stinkyness);
 }
 
 void WorldMap::serialise(std::ofstream& file)

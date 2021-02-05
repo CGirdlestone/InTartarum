@@ -103,6 +103,21 @@ void GameScreen::handle_input(SDL_Event& event)
 		case SDLK_1: Prefab::create_explosion(world, pos->x, pos->y, pos->z, tex_manager.LoadTexture("./Resources/exp2_0.png")); break;
 		}
 	}
+	else if (event.type == SDL_MOUSEBUTTONDOWN) {
+		auto components = world.GetComponents<Player, Position>();
+		auto& [player, pos] = components[0];
+		int mouse_x, mouse_y;
+		SDL_GetMouseState(&mouse_x, &mouse_y);
+		auto mouse_cam_x = mouse_x / (renderer.GetTileWidth() * camera.get_zoom());
+		auto mouse_cam_y = mouse_y / (renderer.GetTileHeight() * camera.get_zoom());
+		auto [cam_x, cam_y] = camera.get_position();
+		auto mouse_world_x = mouse_cam_x + cam_x;
+		auto mouse_world_y = mouse_cam_y + cam_y;
+
+		if (Path::raycast(world_map.get_level(), pos->x, pos->y, mouse_world_x, mouse_world_y)) {
+			Prefab::create_explosion(world, mouse_world_x, mouse_world_y, pos->z, tex_manager.LoadTexture("./Resources/exp2_0.png"));
+		}
+	}
 	else if (event.type == SDL_QUIT) {
 		state_manager.stop_playing();
 		save_game();
@@ -115,6 +130,7 @@ void GameScreen::on_tick()
 	auto components = world.GetComponents<Player, Position>();
 	auto& [player, pos] = components[0];
 	world_map.update_fov(pos->x, pos->y, player->vision);
+	world_map.update_scent_trail(10);
 	auto& renderer = state_manager.get_renderer();
 	renderer.DrawMap(world_map.get_level());
 }

@@ -40,6 +40,8 @@ public:
 
 	inline void Update() { SDL_RenderPresent(window.GetRenderer()); };
 	inline void Clear() { SDL_RenderClear(window.GetRenderer()); };
+	inline const int GetTileWidth() const { return window.GetTileWidth(); };
+	inline const int GetTileHeight() const { return window.GetTileHeight(); };
 	void DrawScene(const uint32_t fps, WorldMap& world_map);
 	void DrawSplash(unsigned int tex_id, const uint32_t fps, float dt);
 	void DrawCharacterSelectionScene(const uint32_t, const std::map<int, CharacterClass>& character_options, int selected, const std::vector<std::string>& stats);

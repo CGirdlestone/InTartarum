@@ -56,7 +56,7 @@ struct LightSource : public ISerializeable {
 	LightSource() {};
 	LightSource(int _radius) : radius(_radius) {};
 	~LightSource() {};
-	int radius;
+	int radius{ 8 };
 
 	virtual void serialise(std::ofstream& file) override;
 	virtual void deserialise(const char* buffer, size_t& offset) override;
@@ -145,7 +145,7 @@ struct Scriptable : public ISerializeable {
 	std::string OnUpdate{ "" };
 	std::string OnBump{ "" };
 	std::string OnDeath{ "" };
-	uint32_t owner;
+	uint32_t owner{ 0 };
 
 	virtual void serialise(std::ofstream& file) override;
 	virtual void deserialise(const char* buffer, size_t& offset) override;

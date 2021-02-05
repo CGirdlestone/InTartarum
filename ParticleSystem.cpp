@@ -13,6 +13,9 @@ void ParticleSystem::update(float dt)
 	auto particles = world.GetEntitiesWith<Particle>();
 	for (auto entity : particles) {
 		auto* p = world.GetComponent<Particle>(entity);
+		if (p == nullptr) {
+			continue;
+		}
 		p->lifetime -= dt;
 		if (p->lifetime < 0.0f) {
 			world.KillEntity(entity);

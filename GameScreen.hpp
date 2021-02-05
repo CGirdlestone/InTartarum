@@ -5,6 +5,7 @@
 #include "EventManager.hpp"
 #include "WorldMap.hpp"
 #include "Camera.hpp"
+#include "Pathfinding.hpp"
 
 class GameScreen : public BaseState, BaseSystem
 {
