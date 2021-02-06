@@ -142,6 +142,21 @@ void Renderer::DrawText(const std::string& text, int x, int y, uint8_t r, uint8_
 	}
 }
 
+void Renderer::DrawMessageLog(MessageLog& message_log)
+{
+	auto& messages = message_log.get_messages();
+	auto it = messages.rbegin();
+	int j{ 3 };
+	for (int i = 0; i < 10; i++) {
+		const auto& msg = *(it + i + message_log.get_offset());
+		auto & [r, g, b] = msg.get_colour();
+		DrawText(msg.text, camera.get_width() + 1, j++, r, g, b);
+		if ((it + i + message_log.get_offset()) + 1 == messages.rend()) {
+			break;
+		}
+	}
+}
+
 std::vector<std::string> Renderer::WrapText(const std::string& text, int line_width)
 {
 	std::vector<std::string> lines;
@@ -286,17 +301,17 @@ void Renderer::DrawCharacterSelectionScene(const uint32_t fps, const std::map<in
 	}
 }
 
-void Renderer::DrawScene(uint32_t fps, WorldMap& world_map)
+void Renderer::DrawScene(uint32_t fps, WorldMap& world_map, MessageLog& message_log)
 {
 	DrawMapTexture(0, 0);
-	
+
 	auto components = world.GetComponents<Position, Sprite>();
 	// remove the entities that are not on this depth level.
 	components.erase(std::remove_if(components.begin(), components.end(), [&world_map](const std::tuple<Position*, Sprite*>& a) {
 		return std::get<0>(a)->z != world_map.get_current_depth();
 		}
 	), components.end());
-	
+
 	// sort the remaining entities based on the sprite depth value.
 	std::sort(components.begin(), components.end(), [](const std::tuple<Position*, Sprite*>& a, const std::tuple<Position*, Sprite*>& b) {
 		return std::get<1>(a)->depth < std::get<1>(b)->depth;
@@ -313,21 +328,26 @@ void Renderer::DrawScene(uint32_t fps, WorldMap& world_map)
 	DrawFPS(fps);
 	DrawSkills();
 	auto y = window.GetHeight() * 5 / 8;
-	DrawBox(camera.get_width(), 
-			0, 
-			window.GetWidth() - camera.get_width(), 
-			y
+	DrawBox(camera.get_width(),
+		0,
+		window.GetWidth() - camera.get_width(),
+		y
 	);
 
 	y = y + window.GetHeight() * 3 / 8 == window.GetHeight() ? window.GetHeight() * 3 / 8 : window.GetHeight() * 3 / 8 + 1;
-	DrawMiniMap(camera.get_width(), 
-				window.GetHeight() * 5 / 8,
-				window.GetWidth() - camera.get_width(), 
-				y
+	DrawMiniMap(camera.get_width(),
+		window.GetHeight() * 5 / 8,
+		window.GetWidth() - camera.get_width(),
+		y
 	);
-	
+
 	std::string depth = "Dungeon depth: " + std::to_string(world_map.get_current_depth());
 	DrawText(depth, camera.get_width() + 1, 1);
+
+	if (!message_log.get_messages().empty()){
+		DrawMessageLog(message_log);
+
+	}
 }
 
 

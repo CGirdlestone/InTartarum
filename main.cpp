@@ -312,6 +312,9 @@ int main(int argc, char* argv[])
 		auto move_system = MoveSystem(world, event_manager, camera, world_map);
 		systems.push_back(std::reference_wrapper(move_system));
 
+		auto message_log = MessageLog(world, event_manager, 20, 20);
+		systems.push_back(std::reference_wrapper(message_log));
+
 		auto script_system = ScriptSystem(world, event_manager, world_map, sound_manager, tex_manager, TILE_SIZE, TILE_SIZE);
 		script_system.init();
 		systems.push_back(std::reference_wrapper(script_system));
@@ -325,7 +328,7 @@ int main(int argc, char* argv[])
 		auto creation_screen = CharacterCreationScreen(state_manager, world, tex_manager, event_manager);
 		state_manager.add_state(creation_screen.get_state(), creation_screen);
 
-		auto game_screen = GameScreen(state_manager, world, tex_manager, event_manager, world_map, renderer, camera, false, wind);
+		auto game_screen = GameScreen(state_manager, world, tex_manager, event_manager, world_map, renderer, camera, message_log, false, wind);
 		state_manager.add_state(GameState::GAME, game_screen);
 
 

@@ -8,6 +8,8 @@
 #include "Camera.hpp"
 #include "WorldMap.hpp"
 #include "CharacterClass.hpp"
+#include "MessageLog.hpp"
+
 
 class Renderer
 {
@@ -31,7 +33,8 @@ private:
 	void DrawBox(int x, int y, int width, int height);
 	void DrawMiniMap(int x, int y, int width, int height);
 	void DrawSkills();
-	void DrawText(const std::string& text, int x, int y, uint8_t r = 255, uint8_t g = 255, uint8_t b = 255);
+	void DrawText(const std::string& text, int x, int y, uint8_t r = 0, uint8_t g = 0, uint8_t b = 0);
+	void DrawMessageLog(MessageLog& message_log);
 	std::vector<std::string> WrapText(const std::string& text, int line_width);
 public:
 	Renderer(World& _world, Window& _window, TextureManager& _tex_manager, Camera& _camera);
@@ -41,8 +44,7 @@ public:
 	inline void Clear() { SDL_RenderClear(window.GetRenderer()); };
 	inline const int GetTileWidth() const { return window.GetTileWidth(); };
 	inline const int GetTileHeight() const { return window.GetTileHeight(); };
-	void ToggleFullscreen();
-	void DrawScene(const uint32_t fps, WorldMap& world_map);
+	void DrawScene(const uint32_t fps, WorldMap& world_map, MessageLog& message_log);
 	void DrawSplash(unsigned int tex_id, const uint32_t fps, float dt);
 	void DrawCharacterSelectionScene(const uint32_t, const std::map<int, CharacterClass>& character_options, int selected, const std::vector<std::string>& stats);
 	void DrawMap(Level& level);

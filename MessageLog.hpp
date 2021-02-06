@@ -13,25 +13,28 @@ enum class MessageTopic {
 
 struct Message
 {
-	Message(std::string _text);
+	Message(std::string _text) : text(_text) { };
+	Message(const char* _text) : text(_text) { };
 	Message(std::string _text, uint8_t _r, uint8_t _g, uint8_t _b) : text(_text), r(_r), g(_g), b(_b) { };
+	const std::tuple<uint8_t, uint8_t, uint8_t> get_colour() const { return std::make_tuple(r, g, b); };
 	std::string text{ "" };
-	uint8_t r{ 255 };
-	uint8_t g{ 255 };
-	uint8_t b{ 255 };
+	uint8_t r{ 0 };
+	uint8_t g{ 0 };
+	uint8_t b{ 0 };
 };
 
 class MessageLog : public BaseSystem
 {
 public:
-	MessageLog(World& _world, EventManager& _event_manager, int _width, int _height) 
-		: world(_world), event_manager(_event_manager), randomiser(), width(_width), height(_height) { };
+	MessageLog(World& _world, EventManager& _event_manager, int _width, int _height);
 	~MessageLog() { };
 	
-	inline const std::vector<Message>& get_messages() const { return message_queue; };
-
+	inline const std::deque<Message>& get_messages() const { return message_queue; };
+	inline const int get_offset() const { return offset; };
+	inline void scroll_up() { offset = std::max(0, offset - 1); };
+	inline void scroll_down() { offset = std::min(num_lines, offset + 1); };
 	virtual void update(float dt) override;
-	virtual void on_tick() override;
+	virtual void on_tick() override;	
 	virtual void receive(EventTypes event) override;
 	virtual void receive(EventTypes event, uint32_t actor) override;
 	virtual void receive(EventTypes event, uint32_t actor, uint32_t target) override;
@@ -42,13 +45,14 @@ public:
 private:
 	World& world;
 	EventManager& event_manager;
-	std::vector<Message> message_queue;
+	std::deque<Message> message_queue;
 	RandomNumber randomiser;
 	std::map<MessageTopic, std::vector<std::string> > descriptions;
 	int width{ 0 };
 	int height{ 0 };
-	int message_history{ 100 };
+	uint32_t message_history{ 100 };
 	int offset{ 0 };
+	int num_lines{ 20 };
 
 	void load_descriptions(const char* path);
 	void add_message(Message& message);

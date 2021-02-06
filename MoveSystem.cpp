@@ -80,8 +80,15 @@ void MoveSystem::move(std::tuple<int, int> direction, uint32_t actor)
 		world_map.get_entity_grid().add_entity(actor, pos->x, pos->y);
 		auto player = world.GetComponent<Player>(actor);
 		if (player != nullptr) {
+			event_manager.push_event(EventTypes::MELEE_HIT);
 			camera.follow(pos->x, pos->y);
 			event_manager.push_event(EventTypes::TICK);
+		}
+	}
+	else {
+		auto player = world.GetComponent<Player>(actor);
+		if (player != nullptr) {
+			event_manager.push_event(EventTypes::BLOCKED_MOVEMENT);
 		}
 	}
 

@@ -17,6 +17,7 @@ private:
 	WorldMap& world_map;
 	Renderer& renderer;
 	Camera& camera;
+	MessageLog& message_log;
 	bool render_prev{ false };
 	unsigned int id;
 	unsigned int num_turns{ 0 };
@@ -25,7 +26,10 @@ private:
 	void return_to_safe_zone();
 	void open_doors();
 public:
-	GameScreen(StateManager& _state_manager, World& _world, TextureManager& _tex_manager, EventManager& _event_manager, WorldMap& _world_map, Renderer& _renderer, Camera& _camera, bool _render_prev, unsigned int _id);
+	GameScreen(	StateManager& _state_manager, World& _world, TextureManager& _tex_manager, 
+				EventManager& _event_manager, WorldMap& _world_map, Renderer& _renderer, 
+				Camera& _camera, MessageLog& _message_log, bool _render_prev, unsigned int _id);
+	
 	virtual void handle_input(SDL_Event& event) override;
 	virtual void on_tick() override;
 	virtual void update(float dt) override;
