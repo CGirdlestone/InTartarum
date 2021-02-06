@@ -32,7 +32,7 @@ public:
 	inline const std::deque<Message>& get_messages() const { return message_queue; };
 	inline const int get_offset() const { return offset; };
 	inline void scroll_up() { offset = std::max(0, offset - 1); };
-	inline void scroll_down() { offset = std::min(num_lines, offset + 1); };
+	inline void scroll_down() { offset = static_cast<int>(message_queue.size()) > num_lines ? std::min(static_cast<int>(message_queue.size()) - num_lines, offset + 1) : offset; };
 	virtual void update(float dt) override;
 	virtual void on_tick() override;	
 	virtual void receive(EventTypes event) override;
@@ -52,7 +52,7 @@ private:
 	int height{ 0 };
 	uint32_t message_history{ 100 };
 	int offset{ 0 };
-	int num_lines{ 20 };
+	int num_lines{ 10 };
 
 	void load_descriptions(const char* path);
 	void add_message(Message& message);
