@@ -6,6 +6,7 @@
 #include "WorldMap.hpp"
 #include "Camera.hpp"
 #include "Pathfinding.hpp"
+#include "Keyboard.hpp"
 
 class GameScreen : public BaseState, BaseSystem
 {
@@ -18,6 +19,7 @@ private:
 	Renderer& renderer;
 	Camera& camera;
 	MessageLog& message_log;
+	Keyboard& keyboard;
 	bool render_prev{ false };
 	unsigned int id;
 	unsigned int num_turns{ 0 };
@@ -28,7 +30,8 @@ private:
 public:
 	GameScreen(	StateManager& _state_manager, World& _world, TextureManager& _tex_manager, 
 				EventManager& _event_manager, WorldMap& _world_map, Renderer& _renderer, 
-				Camera& _camera, MessageLog& _message_log, bool _render_prev, unsigned int _id);
+				Camera& _camera, MessageLog& _message_log, Keyboard& _keyboard, 
+				bool _render_prev, unsigned int _id);
 	
 	virtual void handle_input(SDL_Event& event) override;
 	virtual void on_tick() override;

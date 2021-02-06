@@ -71,8 +71,11 @@ void GameScreen::open_doors()
 	}
 }
 
-GameScreen::GameScreen(StateManager& _state_manager, World& _world, TextureManager& _tex_manager, EventManager& _event_manager, WorldMap& _world_map, Renderer& _renderer, Camera& _camera, MessageLog& _message_log,  bool _render_prev, unsigned int _id) :
-	state_manager(_state_manager), world(_world), tex_manager(_tex_manager), event_manager(_event_manager), world_map(_world_map), renderer(_renderer), camera(_camera), message_log(_message_log), render_prev(_render_prev), id(_id)
+GameScreen::GameScreen(	StateManager& _state_manager, World& _world, TextureManager& _tex_manager, EventManager& _event_manager, 
+						WorldMap& _world_map, Renderer& _renderer, Camera& _camera, MessageLog& _message_log, Keyboard& _keyboard, 
+						bool _render_prev, unsigned int _id) 
+	: state_manager(_state_manager), world(_world), tex_manager(_tex_manager), event_manager(_event_manager), world_map(_world_map), renderer(_renderer), 
+		camera(_camera), message_log(_message_log), keyboard(_keyboard), render_prev(_render_prev), id(_id)
 {
 	event_manager.add_subscriber(EventTypes::ASCEND_DUNGEON, *this); // required to allow teleporting back to town.
 	event_manager.add_subscriber(EventTypes::DESCEND_DUNGEON, *this);
@@ -86,45 +89,32 @@ void GameScreen::handle_input(SDL_Event& event)
 	auto* pos = world.GetComponent<Position>(entity);
 
 	SDL_PollEvent(&event);
-	if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
-		switch (event.key.keysym.sym) {
-		case SDLK_KP_1: event_manager.push_event(EventTypes::MOVE_SOUTH_WEST, entity); break;
-		case SDLK_KP_2: event_manager.push_event(EventTypes::MOVE_SOUTH, entity); break;
-		case SDLK_KP_3: event_manager.push_event(EventTypes::MOVE_SOUTH_EAST, entity); break;
-		case SDLK_KP_4: event_manager.push_event(EventTypes::MOVE_WEST, entity); break;
-		case SDLK_KP_5: break;
-		case SDLK_KP_6: event_manager.push_event(EventTypes::MOVE_EAST, entity); break;
-		case SDLK_KP_7: event_manager.push_event(EventTypes::MOVE_NORTH_WEST, entity); break;
-		case SDLK_KP_8: event_manager.push_event(EventTypes::MOVE_NORTH, entity); break;
-		case SDLK_KP_9: event_manager.push_event(EventTypes::MOVE_NORTH_EAST, entity); break;
-		case SDLK_SPACE: event_manager.push_event(EventTypes::DESCEND_DUNGEON); break;
-		case SDLK_BACKSPACE: event_manager.push_event(EventTypes::ASCEND_DUNGEON); break;
-		case SDLK_UP: message_log.scroll_up(); break;
-		case SDLK_DOWN: message_log.scroll_down(); break;
-		case SDLK_o: open_doors(); event_manager.push_event(EventTypes::TICK); break;
-		case SDLK_1: Prefab::create_explosion(world, pos->x, pos->y, pos->z, tex_manager.LoadTexture("./Resources/exp2_0.png")); break;
-		}
-	}
-	else if (event.type == SDL_MOUSEBUTTONDOWN) {
-		auto components = world.GetComponents<Player, Position>();
-		auto& [player, pos] = components[0];
-		int mouse_x, mouse_y;
-		SDL_GetMouseState(&mouse_x, &mouse_y);
-		auto mouse_cam_x = mouse_x / (renderer.GetTileWidth() * camera.get_zoom());
-		auto mouse_cam_y = mouse_y / (renderer.GetTileHeight() * camera.get_zoom());
-		auto [cam_x, cam_y] = camera.get_position();
-		auto mouse_world_x = mouse_cam_x + cam_x;
-		auto mouse_world_y = mouse_cam_y + cam_y;
 
-		if (Path::raycast(world_map.get_level(), pos->x, pos->y, mouse_world_x, mouse_world_y)) {
-			Prefab::create_explosion(world, mouse_world_x, mouse_world_y, pos->z, tex_manager.LoadTexture("./Resources/exp2_0.png"));
-		}
-	}
-	else if (event.type == SDL_QUIT) {
+	if (event.type == SDL_QUIT) {
 		state_manager.stop_playing();
 		save_game();
+		return;
 	}
-	SDL_PumpEvents();
+
+	auto key = keyboard.handle_input(event);
+	
+	switch (key) {
+	case SDLK_KP_1: event_manager.push_event(EventTypes::MOVE_SOUTH_WEST, entity); break;
+	case SDLK_KP_2: event_manager.push_event(EventTypes::MOVE_SOUTH, entity); break;
+	case SDLK_KP_3: event_manager.push_event(EventTypes::MOVE_SOUTH_EAST, entity); break;
+	case SDLK_KP_4: event_manager.push_event(EventTypes::MOVE_WEST, entity); break;
+	case SDLK_KP_5: break;
+	case SDLK_KP_6: event_manager.push_event(EventTypes::MOVE_EAST, entity); break;
+	case SDLK_KP_7: event_manager.push_event(EventTypes::MOVE_NORTH_WEST, entity); break;
+	case SDLK_KP_8: event_manager.push_event(EventTypes::MOVE_NORTH, entity); break;
+	case SDLK_KP_9: event_manager.push_event(EventTypes::MOVE_NORTH_EAST, entity); break;
+	case SDLK_SPACE: event_manager.push_event(EventTypes::DESCEND_DUNGEON); break;
+	case SDLK_BACKSPACE: event_manager.push_event(EventTypes::ASCEND_DUNGEON); break;
+	case SDLK_UP: message_log.scroll_up(); break;
+	case SDLK_DOWN: message_log.scroll_down(); break;
+	case SDLK_o: open_doors(); event_manager.push_event(EventTypes::TICK); break;
+	case SDLK_1: Prefab::create_explosion(world, pos->x, pos->y, pos->z, tex_manager.LoadTexture("./Resources/exp2_0.png")); break;
+	}
 }
 
 void GameScreen::on_tick()

@@ -148,10 +148,10 @@ void Renderer::DrawMessageLog(MessageLog& message_log)
 	auto it = messages.rbegin();
 	int j{ 3 };
 	for (int i = 0; i < 10; i++) {
-		const auto& msg = *(it + i + message_log.get_offset());
+		const auto& msg = *(it + message_log.get_offset() + i);
 		auto & [r, g, b] = msg.get_colour();
 		DrawText(msg.text, camera.get_width() + 1, j++, r, g, b);
-		if ((it + i + message_log.get_offset()) + 1 == messages.rend()) {
+		if ((it + message_log.get_offset()) + i + 1 == messages.rend()) {
 			break;
 		}
 	}

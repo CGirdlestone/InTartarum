@@ -5,6 +5,7 @@
 #include <SDL_ttf.h>
 
 #include "Components.hpp"
+#include "Keyboard.hpp"
 #include "Window.hpp"
 #include "TextureManager.hpp"
 #include "SoundManager.hpp"
@@ -241,6 +242,7 @@ int main(int argc, char* argv[])
 		auto world = World();
 		RegisterComponents(world);
 
+		auto keyboard = Keyboard();
 
 		auto window = Window("Sticky", WIDTH, HEIGHT, TILE_SIZE, TILE_SIZE);
 		auto camera = Camera(0, 0, WIDTH - 20, HEIGHT, MAP_WIDTH, MAP_HEIGHT, 2);
@@ -328,7 +330,7 @@ int main(int argc, char* argv[])
 		auto creation_screen = CharacterCreationScreen(state_manager, world, tex_manager, event_manager);
 		state_manager.add_state(creation_screen.get_state(), creation_screen);
 
-		auto game_screen = GameScreen(state_manager, world, tex_manager, event_manager, world_map, renderer, camera, message_log, false, wind);
+		auto game_screen = GameScreen(state_manager, world, tex_manager, event_manager, world_map, renderer, camera, message_log, keyboard, false, wind);
 		state_manager.add_state(GameState::GAME, game_screen);
 
 
