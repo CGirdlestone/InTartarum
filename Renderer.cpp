@@ -34,7 +34,6 @@ void Renderer::DrawMap(Level& level)
 
 			SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(sprite.id), &srcrect, &dstrect);
 
-			
 
 			sprite = tile_sprites.at(tile.type);
 
@@ -60,7 +59,7 @@ void Renderer::DrawMap(Level& level)
 	ResetTarget();
 }
 
-void Renderer::DrawBox(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
+void Renderer::DrawBox(int x, int y, int width, int height)
 {
 	auto* parchment = texture_manager.GetTexture(texture_manager.LoadTexture("./Resources/Parchment.jpg"));
 
@@ -81,7 +80,7 @@ void Renderer::DrawBox(unsigned int x, unsigned int y, unsigned int width, unsig
 	SDL_RenderCopy(window.GetRenderer(), parchment, nullptr, &rect);
 }
 
-void Renderer::DrawMiniMap(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
+void Renderer::DrawMiniMap(int x, int y, int width, int height)
 {
 	SDL_Rect rect;
 	rect.x = x * window.GetTileWidth();
@@ -204,8 +203,8 @@ void Renderer::DrawFPS(uint32_t fps)
 void Renderer::DrawMapTexture(int x, int y)
 {
 	SDL_Rect dstrect;
-	dstrect.x = x * window.GetTileWidth();;
-	dstrect.y = y * window.GetTileHeight();;
+	dstrect.x = x * window.GetTileWidth();
+	dstrect.y = y * window.GetTileHeight();
 	dstrect.w = camera.get_width() * window.GetTileWidth();
 	dstrect.h = camera.get_height() * window.GetTileHeight();
 
@@ -278,7 +277,6 @@ void Renderer::DrawCharacterSelectionScene(const uint32_t fps, const std::map<in
 
 	std::for_each(description.cbegin(), description.cend(), [&j, this](const std::string& line) {this->DrawText(line, 13, 2 + j++, 0, 0, 0); });
 
-	DrawBox(12, 12, 30, 5);
 	j = 7;
 	int i{ 12 };
 	for (size_t k = 0; k < stats.size(); k++) {
@@ -291,7 +289,6 @@ void Renderer::DrawCharacterSelectionScene(const uint32_t fps, const std::map<in
 void Renderer::DrawScene(uint32_t fps, WorldMap& world_map)
 {
 	DrawMapTexture(0, 0);
-	
 	
 	auto components = world.GetComponents<Position, Sprite>();
 	// remove the entities that are not on this depth level.
@@ -315,8 +312,19 @@ void Renderer::DrawScene(uint32_t fps, WorldMap& world_map)
 
 	DrawFPS(fps);
 	DrawSkills();
-	DrawBox(camera.get_width(), 0, window.GetWidth() - camera.get_width(), window.GetHeight() - (window.GetWidth() - camera.get_width()));
-	DrawMiniMap(camera.get_width(), camera.get_height() - (window.GetWidth() - camera.get_width()), window.GetWidth() - camera.get_width(), window.GetWidth() - camera.get_width());
+	auto y = window.GetHeight() * 5 / 8;
+	DrawBox(camera.get_width(), 
+			0, 
+			window.GetWidth() - camera.get_width(), 
+			y
+	);
+
+	y = y + window.GetHeight() * 3 / 8 == window.GetHeight() ? window.GetHeight() * 3 / 8 : window.GetHeight() * 3 / 8 + 1;
+	DrawMiniMap(camera.get_width(), 
+				window.GetHeight() * 5 / 8,
+				window.GetWidth() - camera.get_width(), 
+				y
+	);
 	
 	std::string depth = "Dungeon depth: " + std::to_string(world_map.get_current_depth());
 	DrawText(depth, camera.get_width() + 1, 1);

@@ -129,6 +129,9 @@
     <ClCompile Include="Pathfinding.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MessageLog.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.hpp">
@@ -229,6 +232,9 @@
     </ClInclude>
     <ClInclude Include="Pathfinding.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageLog.hpp">
+      <Filter>Header Files\Systems</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

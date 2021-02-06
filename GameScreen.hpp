@@ -19,6 +19,7 @@ private:
 	Camera& camera;
 	bool render_prev{ false };
 	unsigned int id;
+	unsigned int num_turns{ 0 };
 
 	void descend_dungeon();
 	void return_to_safe_zone();

@@ -151,6 +151,7 @@
     <ClCompile Include="GameScreen.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="Level.cpp" />
+    <ClCompile Include="MessageLog.cpp" />
     <ClCompile Include="MoveSystem.cpp" />
     <ClCompile Include="Pathfinding.cpp" />
     <ClCompile Include="ScriptSystem.cpp" />
@@ -184,6 +185,7 @@
     <ClInclude Include="GameScreen.hpp" />
     <ClInclude Include="Grid.hpp" />
     <ClInclude Include="Level.hpp" />
+    <ClInclude Include="MessageLog.hpp" />
     <ClInclude Include="MoveSystem.hpp" />
     <ClInclude Include="ParticleSystem.hpp" />
     <ClInclude Include="Pathfinding.hpp" />

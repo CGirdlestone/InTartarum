@@ -28,8 +28,8 @@ private:
 	void DrawMapTexture(int x, int y);
 	void DrawFPS(uint32_t fps);
 	void DrawSprite(Position* pos, Sprite* sprite);
-	void DrawBox(unsigned int x, unsigned int y, unsigned int width, unsigned int height);
-	void DrawMiniMap(unsigned int x, unsigned int y, unsigned int width, unsigned int height);
+	void DrawBox(int x, int y, int width, int height);
+	void DrawMiniMap(int x, int y, int width, int height);
 	void DrawSkills();
 	void DrawText(const std::string& text, int x, int y, uint8_t r = 255, uint8_t g = 255, uint8_t b = 255);
 	std::vector<std::string> WrapText(const std::string& text, int line_width);
@@ -37,11 +37,11 @@ public:
 	Renderer(World& _world, Window& _window, TextureManager& _tex_manager, Camera& _camera);
 	virtual ~Renderer() {};
 	inline void AddTile(TileType type, Sprite tile) { tile_sprites.insert({ type, tile }); };
-
 	inline void Update() { SDL_RenderPresent(window.GetRenderer()); };
 	inline void Clear() { SDL_RenderClear(window.GetRenderer()); };
 	inline const int GetTileWidth() const { return window.GetTileWidth(); };
 	inline const int GetTileHeight() const { return window.GetTileHeight(); };
+	void ToggleFullscreen();
 	void DrawScene(const uint32_t fps, WorldMap& world_map);
 	void DrawSplash(unsigned int tex_id, const uint32_t fps, float dt);
 	void DrawCharacterSelectionScene(const uint32_t, const std::map<int, CharacterClass>& character_options, int selected, const std::vector<std::string>& stats);

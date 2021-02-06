@@ -99,7 +99,7 @@ void GameScreen::handle_input(SDL_Event& event)
 		case SDLK_KP_9: event_manager.push_event(EventTypes::MOVE_NORTH_EAST, entity); break;
 		case SDLK_SPACE: event_manager.push_event(EventTypes::DESCEND_DUNGEON); break;
 		case SDLK_BACKSPACE: event_manager.push_event(EventTypes::ASCEND_DUNGEON); break;
-		case SDLK_o: open_doors(); on_tick(); break;
+		case SDLK_o: open_doors(); event_manager.push_event(EventTypes::TICK); break;
 		case SDLK_1: Prefab::create_explosion(world, pos->x, pos->y, pos->z, tex_manager.LoadTexture("./Resources/exp2_0.png")); break;
 		}
 	}
@@ -130,7 +130,10 @@ void GameScreen::on_tick()
 	auto components = world.GetComponents<Player, Position>();
 	auto& [player, pos] = components[0];
 	world_map.update_fov(pos->x, pos->y, player->vision);
-	world_map.update_scent_trail(10);
+	if (num_turns++ % 3 == 0) {
+		world_map.update_scent_trail(5);
+	}
+
 	auto& renderer = state_manager.get_renderer();
 	renderer.DrawMap(world_map.get_level());
 }

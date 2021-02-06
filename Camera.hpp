@@ -17,6 +17,8 @@ public:
 
 	inline const int get_width() const { return width; };
 	inline const int get_height() const { return height; };
+	inline void set_width(int _width) { width = _width; };
+	inline void set_height(int _height) { width = _height; };
 	inline const int get_map_width() const { return map_width; };
 	inline const int get_map_height() const { return map_height; };
 	inline const std::tuple<int, int> get_position() const { return std::make_tuple(x, y); };
