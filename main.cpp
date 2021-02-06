@@ -324,10 +324,10 @@ int main(int argc, char* argv[])
 
 		auto state_manager = StateManager(world, renderer, event_manager);
 
-		auto splash_screen = SplashScreen(state_manager, world, tex_manager, event_manager, false, splash, intro_music);
+		auto splash_screen = SplashScreen(state_manager, world, tex_manager, event_manager, keyboard, false, splash, intro_music);
 		state_manager.add_state(splash_screen.get_state(), splash_screen);
 
-		auto creation_screen = CharacterCreationScreen(state_manager, world, tex_manager, event_manager);
+		auto creation_screen = CharacterCreationScreen(state_manager, world, tex_manager, event_manager, keyboard);
 		state_manager.add_state(creation_screen.get_state(), creation_screen);
 
 		auto game_screen = GameScreen(state_manager, world, tex_manager, event_manager, world_map, renderer, camera, message_log, keyboard, false, wind);

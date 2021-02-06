@@ -1,7 +1,7 @@
 #include "CharacterCreationScreen.hpp"
 
-CharacterCreationScreen::CharacterCreationScreen(StateManager& _state_manager, World& _world, TextureManager& _tex_manager, EventManager& _event_manager):
-	state_manager(_state_manager), world(_world), tex_manager(_tex_manager), event_manager(_event_manager)
+CharacterCreationScreen::CharacterCreationScreen(StateManager& _state_manager, World& _world, TextureManager& _tex_manager, EventManager& _event_manager, Keyboard& _keyboard):
+	state_manager(_state_manager), world(_world), tex_manager(_tex_manager), event_manager(_event_manager), keyboard(_keyboard)
 {
 	stats = { "STR", "DEX", "CON", "WIS", "INT", "CHA" };
 
@@ -27,18 +27,18 @@ void CharacterCreationScreen::handle_input(SDL_Event& event)
 	if (event.type == SDL_QUIT) {
 		state_manager.stop_playing();
 	}
-	else if (event.type == SDL_KEYDOWN) {
-		auto* state = SDL_GetKeyboardState(nullptr);
-		if (state[SDL_SCANCODE_UP]) {
-			selection = selection - 1 < 0 ? static_cast<int>(char_options.size()) - 1 : selection - 1;
-		}
-		else if (state[SDL_SCANCODE_DOWN]) {
-			selection = selection + 1 > static_cast<int>(char_options.size()) - 1 ? 0 : selection + 1;
-		}
-		else if (state[SDL_SCANCODE_SPACE]) {
-			state_manager.push(GameState::GAME);
-		}
-		SDL_PumpEvents();	
+
+	auto key = keyboard.handle_input(event);
+
+	switch (key) {
+	case SDLK_UP: {
+		selection = selection - 1 < 0 ? static_cast<int>(char_options.size()) - 1 : selection - 1;
+		break;
+	}
+	case SDLK_DOWN: {
+		selection = selection + 1 > static_cast<int>(char_options.size()) - 1 ? 0 : selection + 1;
+		break;
+	}
 	}
 }
 

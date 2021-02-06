@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Common.hpp"
+#include "Keyboard.hpp"
 #include "BaseState.hpp"
 #include "StateManager.hpp"
 #include "World.hpp"
@@ -14,6 +15,7 @@ private:
 	World& world;
 	TextureManager& tex_manager;
 	EventManager& event_manager;
+	Keyboard& keyboard;
 	bool render_prev{ true };
 	std::string player_name{ "" };
 	std::map<int, CharacterClass> char_options;
@@ -21,7 +23,7 @@ private:
 	int selection{ 0 };
 
 public:
-	CharacterCreationScreen(StateManager& _state_manager, World& _world, TextureManager& _tex_manager, EventManager& _event_manager);
+	CharacterCreationScreen(StateManager& _state_manager, World& _world, TextureManager& _tex_manager, EventManager& _event_manager, Keyboard& _keyboard);
 	~CharacterCreationScreen() {};
 	virtual void handle_input(SDL_Event& event) override;
 	virtual void on_tick() override;
