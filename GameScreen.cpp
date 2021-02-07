@@ -132,7 +132,17 @@ void GameScreen::on_tick()
 
 void GameScreen::update(float dt)
 {
-	
+	current += dt;
+	if (current > lifetime) {
+		current = 0.0f;
+		if (keyboard.is_pressed(SDLK_UP)) {
+			message_log.scroll_up();
+		}
+		else if (keyboard.is_pressed(SDLK_DOWN)) {
+			message_log.scroll_down();
+		}
+
+	}
 }
 
 void GameScreen::draw_scene(Renderer& renderer, const uint32_t fps, float dt) const

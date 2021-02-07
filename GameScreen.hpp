@@ -23,6 +23,8 @@ private:
 	bool render_prev{ false };
 	unsigned int id;
 	unsigned int num_turns{ 0 };
+	float lifetime{ 0.15f };
+	float current{ 0.0f };
 
 	void descend_dungeon();
 	void return_to_safe_zone();
