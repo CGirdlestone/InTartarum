@@ -18,4 +18,8 @@ namespace utils {
 	uint64_t				deserialiseUint64(const char* buffer, size_t& offset);
 	std::string				deserialiseString(const char* buffer, size_t& offset);
 	std::vector<uint32_t>	deserialiseVector(const char* buffer, size_t& offset);
+
+	int read_lua_int(SmartLuaVM& vm, const char* key, int index);
+	int read_lua_int(SmartLuaVM& vm, int key, int index);
+	std::string read_lua_string(SmartLuaVM& vm, const char* key, int index);
 }

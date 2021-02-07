@@ -170,5 +170,47 @@ namespace utils {
 
         return contents;
     }
+
+    int read_lua_int(SmartLuaVM& vm, const char* key, int index)
+    {
+        lua_pushstring(vm.get(), key);
+        lua_gettable(vm.get(), index);
+        if (!lua_isnumber(vm.get(), index + 1)) {
+            printf("Expected number!");
+            return 0;
+        }
+        auto val = lua_tointeger(vm.get(), index + 1);
+        lua_pop(vm.get(), 1);
+
+        return val;
+    }
+
+    int read_lua_int(SmartLuaVM& vm, int key, int index)
+    {
+        lua_pushnumber(vm.get(), key);
+        lua_gettable(vm.get(), index);
+        if (!lua_isnumber(vm.get(), index + 1)) {
+            printf("Expected number!");
+            return 0;
+        }
+        auto val = lua_tointeger(vm.get(), index + 1);
+        lua_pop(vm.get(), 1);
+
+        return val;
+    }
+
+    std::string read_lua_string(SmartLuaVM& vm, const char* key, int index)
+    {
+        lua_pushstring(vm.get(), key);
+        lua_gettable(vm.get(), index);
+        if (!lua_isstring(vm.get(), index + 1)) {
+            printf("Expected string!");
+            return std::string("");
+        }
+        auto s = std::string(lua_tostring(vm.get(), index + 1));
+        lua_pop(vm.get(), 1);
+
+        return s;
+    }
 };
 

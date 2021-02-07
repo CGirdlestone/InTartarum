@@ -16,31 +16,23 @@ void CharacterCreationScreen::load_character_classes()
 			for (int i = 1; i < num_classes + 1; i++) {
 				lua_pushnumber(vm.get(), i); // push table index
 				lua_gettable(vm.get(), -2); // retrieve sub-table 
+
 				if (lua_istable(vm.get(), -1)) {
-					lua_pushstring(vm.get(), "name");
-					lua_gettable(vm.get(), -2);
-					auto name = std::string(lua_tostring(vm.get(), -1));
-					lua_pop(vm.get(), 1); // pop name
+					auto name = utils::read_lua_string(vm, "name", -2);
 
-					lua_pushstring(vm.get(), "description");
-					lua_gettable(vm.get(), -2);
-					auto description = std::string(lua_tostring(vm.get(), -1));
-					lua_pop(vm.get(), 1); // pop description
+					auto description = utils::read_lua_string(vm, "description", -2);
 
+					std::vector<int> stats;
 					lua_pushstring(vm.get(), "stats");
 					lua_gettable(vm.get(), -2);
-					std::vector<int> stats;
-					auto num_stats = lua_rawlen(vm.get(), -1);
 					if (!lua_istable(vm.get(), -1)) {
 						printf("Missing stat array");
 						return;
 					}
+					auto num_stats = lua_rawlen(vm.get(), -1);
 					for (int j = 1; j < num_stats + 1; j++) {
-						lua_pushnumber(vm.get(), j);
-						lua_gettable(vm.get(), -2);
-						auto stat = lua_tointeger(vm.get(), -1);
+						auto stat = utils::read_lua_int(vm, j, -2);
 						stats.push_back(stat);
-						lua_pop(vm.get(), 1); // pop stat
 					}
 					lua_pop(vm.get(), 1); // pop stat table
 
@@ -51,34 +43,12 @@ void CharacterCreationScreen::load_character_classes()
 						return;
 					}
 
-					lua_pushstring(vm.get(), "tilesheet");
-					lua_gettable(vm.get(), -2);
-					if (!lua_isstring(vm.get(), -1)) {
-						printf("Should be sprite file path!");
-						return;
-					}
-					std::string tilesheet = std::string(lua_tostring(vm.get(), -1));
+					auto tilesheet = utils::read_lua_string(vm, "tilesheet", -2);
 					auto path = "./Resources/" + tilesheet;
 					auto sprite_id = tex_manager.LoadTexture(path);
-					lua_pop(vm.get(), 1); // pop sprite path
 
-					lua_pushstring(vm.get(), "clip_x");
-					lua_gettable(vm.get(), -2);
-					if (!lua_isnumber(vm.get(), -1)) {
-						printf("Should be clip x!");
-						return;
-					}
-					auto clip_x = lua_tointeger(vm.get(), -1);
-					lua_pop(vm.get(), 1); // pop clip x
-
-					lua_pushstring(vm.get(), "clip_y");
-					lua_gettable(vm.get(), -2);
-					if (!lua_isnumber(vm.get(), -1)) {
-						printf("Should be clip y!");
-						return;
-					}
-					auto clip_y = lua_tointeger(vm.get(), -1);
-					lua_pop(vm.get(), 1); // pop clip y
+					auto clip_x = utils::read_lua_int(vm, "clip_x", -2);
+					auto clip_y = utils::read_lua_int(vm, "clip_y", -2);
 
 					lua_pop(vm.get(), 1); // pop the sprite array
 
@@ -104,7 +74,6 @@ CharacterCreationScreen::CharacterCreationScreen(StateManager& _state_manager, W
 	state_manager(_state_manager), world(_world), tex_manager(_tex_manager), event_manager(_event_manager), keyboard(_keyboard)
 {
 	stats = { "STR", "DEX", "CON", "WIS", "INT", "CHA" };
-	auto id = tex_manager.LoadTexture("./Resources/Player0.png");
 
 	load_character_classes();
 }
