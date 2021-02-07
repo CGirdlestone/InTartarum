@@ -231,7 +231,6 @@ int main(int argc, char* argv[])
 
 	// create a new scope so all the SDL allocated objects are destroyed before the SDL quit functions are called. 
 	{
-		const int TILE_SIZE{ 16 };
 		const int WIDTH{ 90 };
 		const int HEIGHT{ 46 };
 		const int MAP_WIDTH{ 110 };
@@ -333,22 +332,6 @@ int main(int argc, char* argv[])
 		auto game_screen = GameScreen(state_manager, world, tex_manager, event_manager, world_map, renderer, camera, message_log, keyboard, false, wind);
 		state_manager.add_state(GameState::GAME, game_screen);
 
-
-		auto entity = world.CreateEntity();
-		int start_x{ 19 }, start_y{ 19 };
-		world.AddComponent<Position>(entity, start_x, start_y, 0);
-		world.AddComponent<Sprite>(entity, player_0, 1 * TILE_SIZE, 11 * TILE_SIZE, TILE_SIZE, TILE_SIZE, 1);
-		world.AddComponent<Player>(entity, 8);
-		auto* p = world.GetComponent<Player>(entity);
-		world.AddComponent<Blocker>(entity);
-		world.AddComponent<Animation>(entity, 0.2f, player_0, 1 * TILE_SIZE, 11 * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-		auto* entity_animation = world.GetComponent<Animation>(entity);
-		entity_animation->animations.at(state::IDLE).push_back(AnimFrame(player_1, 1 * TILE_SIZE, 11 * TILE_SIZE, TILE_SIZE, TILE_SIZE));
-
-		
-
-		world_map.populate_entity_grid();
-
 		SDL_Event event;
 
 		uint32_t current_time{ 0 };
@@ -359,12 +342,7 @@ int main(int argc, char* argv[])
 		uint32_t fps{ 0 };
 		uint32_t frames{ 0 };
 
-		bool playing{ true };
-
 		state_manager.push(GameState::SPLASH_MENU);
-
-		camera.follow(start_x, start_y);
-		world_map.update_fov(start_x, start_y, p->vision);
 
 		while (state_manager.is_playing()) {
 

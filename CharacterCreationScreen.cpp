@@ -40,6 +40,21 @@ void CharacterCreationScreen::handle_input(SDL_Event& event)
 		selection = selection + 1 > static_cast<int>(char_options.size()) - 1 ? 0 : selection + 1;
 		break;
 	}
+	case SDLK_RETURN: {
+		auto entity = world.CreateEntity();
+		int start_x{ 19 }, start_y{ 19 };
+		world.AddComponent<Position>(entity, start_x, start_y, 0);
+		world.AddComponent<Sprite>(entity, char_options.at(selection).id, char_options.at(selection).clip_x * TILE_SIZE, char_options.at(selection).clip_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, 1);
+		world.AddComponent<Player>(entity, 8);
+		auto* p = world.GetComponent<Player>(entity);
+		world.AddComponent<Blocker>(entity);
+		world.AddComponent<Animation>(entity, 0.2f, char_options.at(selection).id, char_options.at(selection).clip_x * TILE_SIZE, char_options.at(selection).clip_y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+		auto* entity_animation = world.GetComponent<Animation>(entity);
+		entity_animation->animations.at(state::IDLE).push_back(AnimFrame(char_options.at(selection).id + 1, char_options.at(selection).clip_x * TILE_SIZE, char_options.at(selection).clip_y * TILE_SIZE, TILE_SIZE, TILE_SIZE));
+
+		state_manager.push(GameState::GAME);
+		return;
+	}
 	}
 }
 

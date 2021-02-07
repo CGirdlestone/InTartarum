@@ -31,8 +31,8 @@ void SplashScreen::handle_input(SDL_Event& event)
 		switch (option) {
 		case 0: {
 			if (save_game) {
-				state_manager.push(GameState::GAME);
 				event_manager.push_event(EventTypes::LOAD_GAME);
+				state_manager.push(GameState::GAME);
 			}
 			else {
 				state_manager.push(GameState::CHARACTER_CREATION);

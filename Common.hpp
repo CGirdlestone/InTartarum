@@ -22,3 +22,5 @@
 #include <queue>
 #include <thread>
 #include <random>
+
+const int TILE_SIZE{ 16 };

@@ -153,6 +153,11 @@ void GameScreen::draw_scene(Renderer& renderer, const uint32_t fps, float dt) co
 void GameScreen::on_entrance(Renderer& renderer) const
 {
 	event_manager.push_event(EventTypes::PLAY_SOUND, id);
+	auto components = world.GetComponents<Player, Position>();
+	auto& [p, pos] = components[0];
+	camera.follow(pos->x, pos->y);
+	world_map.populate_entity_grid();
+	world_map.update_fov(pos->x, pos->y, p->vision);
 	renderer.DrawMap(world_map.get_level());
 }
 
