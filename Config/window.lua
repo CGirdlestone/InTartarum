@@ -1,5 +1,5 @@
 -- config data for the SDL window.
-title = "Sticky";
+title = "In Tartarum";
 width = 90;
 height = 46;
 tile_width = 16;
