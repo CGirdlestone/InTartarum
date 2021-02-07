@@ -35,6 +35,7 @@ private:
 	void DrawSkills();
 	void DrawText(const std::string& text, int x, int y, uint8_t r = 0, uint8_t g = 0, uint8_t b = 0);
 	void DrawMessageLog(MessageLog& message_log);
+	void LoadFont();
 	std::vector<std::string> WrapText(const std::string& text, int line_width);
 public:
 	Renderer(World& _world, Window& _window, TextureManager& _tex_manager, Camera& _camera);

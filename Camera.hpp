@@ -11,8 +11,7 @@ private:
 	int map_width, map_height;
 	int zoom{ 1 };
 public:
-	Camera(int _x, int _y, int _width, int _height, int _map_width, int _map_height, int _zoom) :
-		x(_x), y(_y), width(_width), height(_height), map_width(_map_width), map_height(_map_height), zoom(_zoom) { };
+	Camera();
 	~Camera() { };
 
 	inline const int get_width() const { return width; };

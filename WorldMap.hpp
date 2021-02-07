@@ -29,7 +29,7 @@ private:
 	void ray_cast(int x, int y, int radius);
 	void set_seed();
 public:
-	WorldMap(Level& _town, World& _world, int _width, int _height);
+	WorldMap(Level& _town, World& _world);
 	~WorldMap() {};
 	WorldMap& operator=(const WorldMap&) = delete;
 

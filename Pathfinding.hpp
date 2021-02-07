@@ -17,12 +17,7 @@ namespace Path {
 
     class ScentMap {
     public:   
-        ScentMap(int _width, int _height) : width(_width), height(_height) {
-            for (int i = 0; i < width * height; i++) {
-                // -1 represents either a wall OR a tile with no scent - either way, for the purposes of this, -1 is a tile which cannot be moved into or out of.
-                map.push_back(-1); 
-            }
-        };
+        ScentMap();
         inline const int scent(int x, int y) const { return map[x + y * width]; };
         inline void mark_tile(int x, int y, int scent_strength) { map[x + y * width] = scent_strength; };
         inline const bool is_marked(int x, int y) const { return map[x + y * width] != -1; };

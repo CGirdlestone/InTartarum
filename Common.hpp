@@ -23,4 +23,7 @@
 #include <thread>
 #include <random>
 
+#include "Lua542/include/lua.hpp"
+
 const int TILE_SIZE{ 16 };
+using SmartLuaVM = std::unique_ptr<lua_State, decltype(&lua_close)>;

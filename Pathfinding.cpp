@@ -185,7 +185,7 @@ Path::ScentMap scent_map(Level& level, int xi, int yi, int num_steps)
     auto& grid = level.get_grid();
     std::deque<std::shared_ptr<Node> > open_queue;
 
-    auto scent_map = ScentMap(grid.get_width(), grid.get_height());
+    ScentMap scent_map;
 
     auto start = std::make_shared<Node>(xi, yi, 0, 0, nullptr);
     open_queue.push_back(start);
@@ -278,6 +278,33 @@ bool raycast(Level& level, int xi, int yi, int xf, int yf)
         }
     }
     return true;
+}
+
+ScentMap::ScentMap()
+{
+    SmartLuaVM vm(nullptr, &lua_close);
+    vm.reset(luaL_newstate());
+    auto result = luaL_dofile(vm.get(), "./Config/window.lua");
+
+    if (result == LUA_OK) {
+        lua_getglobal(vm.get(), "map_width");
+        if (lua_isnumber(vm.get(), -1)) {
+            width = static_cast<int>(lua_tonumber(vm.get(), -1));
+        }
+        lua_getglobal(vm.get(), "map_height");
+        if (lua_isnumber(vm.get(), -1)) {
+            height = static_cast<int>(lua_tonumber(vm.get(), -1));
+        }
+    }
+    else {
+        std::string error_msg = lua_tostring(vm.get(), -1);
+        printf(error_msg.c_str());
+    }
+
+    for (int i = 0; i < width * height; i++) {
+        // -1 represents either a wall OR a tile with no scent - either way, for the purposes of this, -1 is a tile which cannot be moved into or out of.
+        map.push_back(-1);
+    }
 }
 
 } //end Path

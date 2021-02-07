@@ -226,25 +226,16 @@ void build_town(Level& level, World& world, TextureManager& texture_manager, con
 
 int main(int argc, char* argv[])
 {
-	std::random_device seed_generator;
-	std::mt19937 random_number_generator;
-
 	// create a new scope so all the SDL allocated objects are destroyed before the SDL quit functions are called. 
 	{
-		const int WIDTH{ 90 };
-		const int HEIGHT{ 46 };
-		const int MAP_WIDTH{ 110 };
-		const int MAP_HEIGHT{ 60 };
-
 		initialise_SDL();
 
 		auto world = World();
 		RegisterComponents(world);
 
 		auto keyboard = Keyboard();
-
-		auto window = Window("Sticky", WIDTH, HEIGHT, TILE_SIZE, TILE_SIZE);
-		auto camera = Camera(0, 0, WIDTH - 20, HEIGHT, MAP_WIDTH, MAP_HEIGHT, 2);
+		auto window = Window();
+		auto camera = Camera();
 
 
 		auto tex_manager = TextureManager(window);
@@ -277,8 +268,7 @@ int main(int argc, char* argv[])
 		auto exp_tex = tex_manager.LoadTexture("./Resources/exp2_0.png");
 
 		auto parchment = tex_manager.LoadTexture("./Resources/Parchment.jpg");
-		auto font = tex_manager.LoadTexture("./Resources/Kyzers_thin.png", true);
-
+		
 		auto sound_manager = SoundManager();
 		auto intro_music = sound_manager.LoadMusic("./Resources/Sounds/bleeding_out2.ogg");
 		auto button_click = sound_manager.LoadChunk("./Resources/Sounds/SFX/click3.wav");
@@ -288,14 +278,11 @@ int main(int argc, char* argv[])
 
 		auto renderer = Renderer(world, window, tex_manager, camera);
 		load_tiles(renderer, tex_manager, TILE_SIZE);
-		renderer.SetFont(font, 10, 12);
-
-
-		auto town = Level(MAP_WIDTH, MAP_HEIGHT);
+		
+		auto town = Level();
 		build_town(town, world, tex_manager, TILE_SIZE);
 
-		auto world_map = WorldMap(town, world, MAP_WIDTH, MAP_HEIGHT);
-
+		auto world_map = WorldMap(town, world);
 
 		auto event_manager = EventManager(world);
 		
@@ -313,10 +300,10 @@ int main(int argc, char* argv[])
 		auto move_system = MoveSystem(world, event_manager, camera, world_map);
 		systems.push_back(std::reference_wrapper(move_system));
 
-		auto message_log = MessageLog(world, event_manager, 20, 20);
+		auto message_log = MessageLog(world, event_manager);
 		systems.push_back(std::reference_wrapper(message_log));
 
-		auto script_system = ScriptSystem(world, event_manager, world_map, sound_manager, tex_manager, TILE_SIZE, TILE_SIZE);
+		auto script_system = ScriptSystem(world, event_manager, world_map, sound_manager, tex_manager);
 		script_system.init();
 		systems.push_back(std::reference_wrapper(script_system));
 		

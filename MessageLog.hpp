@@ -26,7 +26,7 @@ struct Message
 class MessageLog : public BaseSystem
 {
 public:
-	MessageLog(World& _world, EventManager& _event_manager, int _width, int _height);
+	MessageLog(World& _world, EventManager& _event_manager);
 	~MessageLog() { };
 	
 	inline const std::deque<Message>& get_messages() const { return message_queue; };
@@ -50,9 +50,9 @@ private:
 	std::map<MessageTopic, std::vector<std::string> > descriptions;
 	int width{ 0 };
 	int height{ 0 };
-	uint32_t message_history{ 100 };
+	uint32_t message_history{ 0 };
 	int offset{ 0 };
-	int num_lines{ 10 };
+	int num_lines{ 0 };
 
 	void load_descriptions(const char* path);
 	void add_message(Message& message);

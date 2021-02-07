@@ -7,15 +7,16 @@ class Window
 private:
 	std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)> context;
 	std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)> renderer;
-	int width;
-	int height;
-	int default_width;
-	int default_height;
-	int tile_width;
-	int tile_height;
+	std::string title{ "" };
+	int width{ 0 };
+	int height{ 0 };
+	int default_width{ 0 };
+	int default_height{ 0 };
+	int tile_width{ 0 };
+	int tile_height{ 0 };
 
 public:
-	Window(const char* title, int _width, int _height, int _tile_width, int _tile_height);
+	Window();
 	~Window();
 	
 	inline SDL_Renderer* GetRenderer() const { return renderer.get(); };

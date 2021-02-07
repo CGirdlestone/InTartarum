@@ -1,8 +1,31 @@
 #include "MessageLog.hpp"
 
-MessageLog::MessageLog(World& _world, EventManager& _event_manager, int _width, int _height)
-	: world(_world), event_manager(_event_manager), randomiser(), width(_width), height(_height) 
-{ 
+MessageLog::MessageLog(World& _world, EventManager& _event_manager)
+	: world(_world), event_manager(_event_manager), randomiser(), width(0), height(0)
+{
+	SmartLuaVM vm(nullptr, &lua_close);
+	vm.reset(luaL_newstate());
+	auto result = luaL_dofile(vm.get(), "./Config/window.lua");
+
+	if (result == LUA_OK) {
+		lua_getglobal(vm.get(), "message_log_width");
+		if (lua_isnumber(vm.get(), -1)) {
+			width = static_cast<int>(lua_tonumber(vm.get(), -1));
+		}
+		lua_getglobal(vm.get(), "message_log_height");
+		if (lua_isnumber(vm.get(), -1)) {
+			height = static_cast<int>(lua_tonumber(vm.get(), -1));
+		}
+		lua_getglobal(vm.get(), "message_log_number_msgs");
+		if (lua_isnumber(vm.get(), -1)) {
+			message_history = static_cast<uint32_t>(lua_tonumber(vm.get(), -1));
+		}
+		lua_getglobal(vm.get(), "message_log_num_lines");
+		if (lua_isnumber(vm.get(), -1)) {
+			num_lines = static_cast<uint32_t>(lua_tonumber(vm.get(), -1));
+		}
+	}
+
 	event_manager.add_subscriber(EventTypes::MELEE_HIT, *this);
 	event_manager.add_subscriber(EventTypes::RANGED_HIT, *this);
 	event_manager.add_subscriber(EventTypes::SPELL_HIT, *this);

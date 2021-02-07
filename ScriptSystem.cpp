@@ -87,21 +87,28 @@ void ScriptSystem::do_death(uint32_t entity)
 	death_scripts.at(script->OnDeath)(world, event_manager, sound_manager, texture_manager, tile_width, tile_height, entity, MAX_ENTITIES + 1);
 }
 
-ScriptSystem::ScriptSystem(World& _world, EventManager& _event_manager, WorldMap& _world_map, SoundManager& _sound_manager, TextureManager& _texture_manager, int _tile_width, int _tile_height)
+ScriptSystem::ScriptSystem(World& _world, EventManager& _event_manager, WorldMap& _world_map, SoundManager& _sound_manager, TextureManager& _texture_manager)
 	: world(_world), event_manager(_event_manager), world_map(_world_map), sound_manager(_sound_manager), texture_manager(_texture_manager),
-	tile_width(_tile_width), tile_height(_tile_height), Lua_VM(nullptr, lua_close)
+	tile_width(0), tile_height(0), Lua_VM(nullptr, lua_close)
 {
+	SmartLuaVM vm(nullptr, &lua_close);
+	vm.reset(luaL_newstate());
+	auto result = luaL_dofile(vm.get(), "./Config/window.lua");
+	std::string _font{ "" };
+
+	if (result == LUA_OK) {
+		lua_getglobal(vm.get(), "tile_width");
+		if (lua_isnumber(vm.get(), -1)) {
+			tile_width = static_cast<int>(lua_tonumber(vm.get(), -1));
+		}
+		lua_getglobal(vm.get(), "tile_height");
+		if (lua_isnumber(vm.get(), -1)) {
+			tile_height = static_cast<int>(lua_tonumber(vm.get(), -1));
+		}
+	}
+
 	event_manager.add_subscriber(EventTypes::BUMP_SCRIPT, *this);
 	Lua_VM.reset(luaL_newstate());
-	std::string script = "a = 2 + 2";
-	auto r = luaL_dostring(Lua_VM.get(), script.c_str());
-	if (r == LUA_OK) {
-
-	}
-	else {
-		auto error_msg = lua_tostring(Lua_VM.get(), -1);
-		printf(error_msg);
-	}
 }
 
 ScriptSystem::~ScriptSystem()

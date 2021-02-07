@@ -3,7 +3,7 @@
 
 void WorldMap::__create_dungeon()
 {
-	auto level = std::make_unique<Level>(map_width, map_height);
+	auto level = std::make_unique<Level>();
 	auto& grid = level.get()->get_grid();
 
 	// place holder - full dungeon generation to go here.
@@ -116,10 +116,28 @@ void WorldMap::set_seed()
 	randomiser.new_seed();
 }
 
-WorldMap::WorldMap(Level& _town, World& _world, int _width, int _height) 
-	:town(_town), world(_world), randomiser(), player_smells(_width, _height), map_width(_width), map_height(_height), dungeon(nullptr), entity_grid(nullptr)
+WorldMap::WorldMap(Level& _town, World& _world): town(_town), world(_world), randomiser(), player_smells(), dungeon(nullptr), entity_grid(nullptr)
 {
-	auto e_grid = std::make_unique<EntityGrid>(_width, _height);
+	SmartLuaVM vm(nullptr, &lua_close);
+	vm.reset(luaL_newstate());
+	auto result = luaL_dofile(vm.get(), "./Config/window.lua");
+
+	if (result == LUA_OK) {
+		lua_getglobal(vm.get(), "map_width");
+		if (lua_isnumber(vm.get(), -1)) {
+			map_width = static_cast<int>(lua_tonumber(vm.get(), -1));
+		}
+		lua_getglobal(vm.get(), "map_height");
+		if (lua_isnumber(vm.get(), -1)) {
+			map_height = static_cast<int>(lua_tonumber(vm.get(), -1));
+		}
+	}
+	else {
+		std::string error_msg = lua_tostring(vm.get(), -1);
+		printf(error_msg.c_str());
+	}
+
+	auto e_grid = std::make_unique<EntityGrid>(map_width, map_height);
 	entity_grid.swap(e_grid);
 
 	double pi = 3.141592;

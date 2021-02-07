@@ -12,6 +12,7 @@ private:
 	int width;
 	int height;
 public:
+	Level();
 	Level(int _width, int _height): grid(std::make_unique<Grid>(_width, _height)), width(_width), height(_height) {};
 	~Level() {};
 

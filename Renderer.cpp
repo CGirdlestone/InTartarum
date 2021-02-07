@@ -5,6 +5,7 @@ Renderer::Renderer(World& _world, Window& _window, TextureManager& _tex_manager,
 {
 	auto tex = SDL_CreateTexture(window.GetRenderer(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, camera.get_map_width() * window.GetTileWidth(), camera.get_map_height() * window.GetTileHeight());
 	map_texture.reset(tex);
+	LoadFont();
 };
 
 void Renderer::DrawMap(Level& level)
@@ -155,6 +156,36 @@ void Renderer::DrawMessageLog(MessageLog& message_log)
 			break;
 		}
 	}
+}
+
+void Renderer::LoadFont()
+{
+	SmartLuaVM vm(nullptr, &lua_close);
+	vm.reset(luaL_newstate());
+	auto result = luaL_dofile(vm.get(), "./Config/window.lua");
+	std::string _font{ "" };
+
+	if (result == LUA_OK) {
+		lua_getglobal(vm.get(), "font_path");
+		if (lua_isstring(vm.get(), -1)) {
+			_font = std::string(lua_tostring(vm.get(), -1));
+		}
+		lua_getglobal(vm.get(), "font_width");
+		if (lua_isnumber(vm.get(), -1)) {
+			font_width = static_cast<int>(lua_tonumber(vm.get(), -1));
+		}
+		lua_getglobal(vm.get(), "font_height");
+		if (lua_isnumber(vm.get(), -1)) {
+			font_height = static_cast<int>(lua_tonumber(vm.get(), -1));
+		}
+	}
+	else {
+		std::string error_msg = lua_tostring(vm.get(), -1);
+		printf(error_msg.c_str());
+	}
+
+	std::string font = "./Resources/" + _font;
+	font_id = texture_manager.LoadTexture(font, true);
 }
 
 std::vector<std::string> Renderer::WrapText(const std::string& text, int line_width)
