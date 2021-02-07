@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Lua542/include/lua.hpp"
+
 #include "BaseSystem.hpp"
 #include "EventManager.hpp"
 #include "SoundManager.hpp"
@@ -20,6 +22,7 @@ private:
 	TextureManager& texture_manager;
 	int tile_width{ 16 };
 	int tile_height{ 16 };
+	std::unique_ptr<lua_State, decltype(&lua_close)> Lua_VM;
 
 	std::map<std::string, Script> bump_scripts;
 	void load_bump_scripts();
@@ -34,7 +37,7 @@ private:
 	void do_death(uint32_t entity);
 public:
 	ScriptSystem(World& _world, EventManager& _event_manager, WorldMap& _world_map, SoundManager& _sound_manager, TextureManager& _texture_manager, int _tile_width, int _tile_height);
-	~ScriptSystem() { };
+	~ScriptSystem();
 	void init();
 	virtual void update(float dt) override;
 	virtual void on_tick() override;

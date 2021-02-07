@@ -88,9 +88,25 @@ void ScriptSystem::do_death(uint32_t entity)
 }
 
 ScriptSystem::ScriptSystem(World& _world, EventManager& _event_manager, WorldMap& _world_map, SoundManager& _sound_manager, TextureManager& _texture_manager, int _tile_width, int _tile_height)
-	: world(_world), event_manager(_event_manager), world_map(_world_map), sound_manager(_sound_manager), texture_manager(_texture_manager), tile_width(_tile_width), tile_height(_tile_height)
+	: world(_world), event_manager(_event_manager), world_map(_world_map), sound_manager(_sound_manager), texture_manager(_texture_manager),
+	tile_width(_tile_width), tile_height(_tile_height), Lua_VM(nullptr, lua_close)
 {
 	event_manager.add_subscriber(EventTypes::BUMP_SCRIPT, *this);
+	Lua_VM.reset(luaL_newstate());
+	std::string script = "a = 2 + 2";
+	auto r = luaL_dostring(Lua_VM.get(), script.c_str());
+	if (r == LUA_OK) {
+
+	}
+	else {
+		auto error_msg = lua_tostring(Lua_VM.get(), -1);
+		printf(error_msg);
+	}
+}
+
+ScriptSystem::~ScriptSystem()
+{
+
 }
 
 void ScriptSystem::init()
