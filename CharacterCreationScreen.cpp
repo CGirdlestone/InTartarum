@@ -4,21 +4,22 @@ CharacterCreationScreen::CharacterCreationScreen(StateManager& _state_manager, W
 	state_manager(_state_manager), world(_world), tex_manager(_tex_manager), event_manager(_event_manager), keyboard(_keyboard)
 {
 	stats = { "STR", "DEX", "CON", "WIS", "INT", "CHA" };
+	auto id = tex_manager.LoadTexture("./Resources/Player0.png");
 
 	std::string warrior_name = "Warrior";
 	std::string warrior_desc = "A battle-hardened warrior who excels with close combat weapons.";
 	std::vector<int> warrior_stats = { 12, 10, 12, 10, 8, 8 };
-	char_options.insert({ 0, CharacterClass(warrior_name, warrior_desc, warrior_stats) });
+	char_options.insert({ 0, CharacterClass(warrior_name, warrior_desc, warrior_stats, id, 1, 3) });
 
 	std::string wizard_name = "Wizard";
 	std::string wizard_desc = "The wizard might look old and frail, but the space around them crackles with magical energy";
 	std::vector<int> wizard_stats = { 8, 10, 8, 12, 12, 10 };
-	char_options.insert({ 1, CharacterClass(wizard_name, wizard_desc, wizard_stats) });
+	char_options.insert({ 1, CharacterClass(wizard_name, wizard_desc, wizard_stats, id, 7, 3) });
 
 	std::string archer_name = "Archer";
 	std::string archer_desc = "You never much liked the idea of getting stabbed, so you decided to kill from afar.";
 	std::vector<int> archer_stats = { 8, 12, 10, 12, 9, 9 };
-	char_options.insert({ 2, CharacterClass(archer_name, archer_desc, archer_stats) });
+	char_options.insert({ 2, CharacterClass(archer_name, archer_desc, archer_stats, id, 2, 3) });
 }
 
 void CharacterCreationScreen::handle_input(SDL_Event& event)

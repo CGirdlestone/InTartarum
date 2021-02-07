@@ -307,31 +307,50 @@ void Renderer::DrawCharacterSelectionScene(const uint32_t fps, const std::map<in
 	int num_options{ static_cast<int>(character_options.size()) };
 	DrawBox(1, 1, 10, 2 * num_options + 1);
 
-	int j{ 0 };
+	int y{ 0 };
 	for (auto& [id, character] : character_options) {
-		if (j == selected) {
-			DrawText(character.name, 2, 2 * (j++ + 1), 200, 0, 0);
+		if (y == selected) {
+			DrawText(character.name, 2, 2 * (y++ + 1), 200, 0, 0);
 		}
 		else {
-			DrawText(character.name, 2, 2 * (j++ + 1), 0, 0, 0);
+			DrawText(character.name, 2, 2 * (y++ + 1), 0, 0, 0);
 		}
 	}
 
 	auto description = WrapText(character_options.at(selected).description, 30);
 
-	j = 1;
+	int x{ 12 };
+	y = 1;
 	//j = 2 * num_options + 1 + 2;
-	DrawBox(12, j, 20, 11);
+	DrawBox(x, y, 20, 11);
 
-	std::for_each(description.cbegin(), description.cend(), [&j, this](const std::string& line) {this->DrawText(line, 13, 2 + j++, 0, 0, 0); });
+	std::for_each(description.cbegin(), description.cend(), [&y, this](const std::string& line) {this->DrawText(line, 13, 2 + y++, 0, 0, 0); });
 
-	j = 7;
+	y = 7;
 	int i{ 12 };
 	for (size_t k = 0; k < stats.size(); k++) {
-		DrawText(stats[k], i + 1, j + 1, 0, 0, 0);
-		DrawText(std::to_string(character_options.at(selected).stats[k]), i + 1, j + 3, 0, 0, 0);
+		DrawText(stats[k], i + 1, y + 1, 0, 0, 0);
+		DrawText(std::to_string(character_options.at(selected).stats[k]), i + 1, y + 3, 0, 0, 0);
 		i += 3;
 	}
+
+	y += 5;
+	DrawBox(x, y, 11, 11);
+
+	SDL_Rect dstrect;
+	dstrect.x = (x + 1) * window.GetTileWidth();
+	dstrect.y = (y + 1) * window.GetTileHeight();
+	dstrect.w = 9 * window.GetTileWidth();
+	dstrect.h = 9 * window.GetTileWidth();
+
+	SDL_Rect srcrect;
+	srcrect.x = character_options.at(selected).clip_x * window.GetTileWidth();
+	srcrect.y = character_options.at(selected).clip_y * window.GetTileHeight();
+	srcrect.w = window.GetTileWidth();
+	srcrect.h = window.GetTileHeight();
+
+	SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(character_options.at(selected).id), &srcrect, &dstrect);
+
 }
 
 void Renderer::DrawScene(uint32_t fps, WorldMap& world_map, MessageLog& message_log)
