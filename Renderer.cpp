@@ -252,7 +252,7 @@ void Renderer::DrawSprite(Position* pos, Sprite* sprite)
 	SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(sprite->id), &srcrect, &dstrect);
 }
 
-void Renderer::DrawSplash(unsigned int tex_id, const uint32_t fps, float dt)
+void Renderer::DrawSplash(unsigned int tex_id, const uint32_t fps, float dt, int option, bool save_game)
 {
 	SDL_SetTextureColorMod(texture_manager.GetTexture(tex_id), 128, 0, 0);
 	SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(tex_id), nullptr, nullptr);
@@ -262,9 +262,42 @@ void Renderer::DrawSplash(unsigned int tex_id, const uint32_t fps, float dt)
 	SDL_QueryTexture(title, nullptr, nullptr, &dstrect.w, &dstrect.h);
 	dstrect.x = window.GetWidth() / 2 * window.GetTileWidth() - dstrect.w / 2;
 	dstrect.y = window.GetTileHeight() * 4;
-	
-
 	SDL_RenderCopy(window.GetRenderer(), title, nullptr, &dstrect);
+
+	auto y{ window.GetTileHeight() * (window.GetHeight() - 4) / 2 };
+	auto* continue_game = texture_manager.GetTexture(texture_manager.LoadTexture("./Resources/Continue_text.png"));
+	SDL_Rect continue_rect;
+	SDL_QueryTexture(continue_game, nullptr, nullptr, &continue_rect.w, &continue_rect.h);
+	auto x{ window.GetWidth() / 2 * window.GetTileWidth() - continue_rect.w / 2 };
+	continue_rect.x = x;
+	continue_rect.y = y;
+
+	if (save_game) {
+		y += window.GetTileHeight() * 2;
+		SDL_RenderCopy(window.GetRenderer(), continue_game, nullptr, &continue_rect);
+	}
+
+	auto* new_game = texture_manager.GetTexture(texture_manager.LoadTexture("./Resources/New_game_text.png"));
+	SDL_Rect new_game_rect;
+	SDL_QueryTexture(new_game, nullptr, nullptr, &new_game_rect.w, &new_game_rect.h);
+	new_game_rect.x = x;
+	new_game_rect.y = y;
+	y += window.GetTileHeight() * 2;
+	SDL_RenderCopy(window.GetRenderer(), new_game, nullptr, &new_game_rect);
+
+	auto* quit_game = texture_manager.GetTexture(texture_manager.LoadTexture("./Resources/Quit_text.png"));
+	SDL_Rect quit_rect;
+	SDL_QueryTexture(quit_game, nullptr, nullptr, &quit_rect.w, &quit_rect.h);
+	quit_rect.x = x;
+	quit_rect.y = y;
+	SDL_RenderCopy(window.GetRenderer(), quit_game, nullptr, &quit_rect);
+
+	auto* cursor = texture_manager.GetTexture(texture_manager.LoadTexture("./Resources/Cursor.png"));
+	SDL_Rect cursor_rect;
+	SDL_QueryTexture(cursor, nullptr, nullptr, &cursor_rect.w, &cursor_rect.h);
+	cursor_rect.x = x - window.GetTileWidth();
+	cursor_rect.y = (window.GetTileHeight() * (window.GetHeight() - 4) / 2) + window.GetTileHeight() * 2 * option;
+	SDL_RenderCopy(window.GetRenderer(), cursor, nullptr, &cursor_rect);
 
 	DrawFPS(fps);
 }

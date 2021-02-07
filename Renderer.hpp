@@ -45,7 +45,7 @@ public:
 	inline const int GetTileWidth() const { return window.GetTileWidth(); };
 	inline const int GetTileHeight() const { return window.GetTileHeight(); };
 	void DrawScene(const uint32_t fps, WorldMap& world_map, MessageLog& message_log);
-	void DrawSplash(unsigned int tex_id, const uint32_t fps, float dt);
+	void DrawSplash(unsigned int tex_id, const uint32_t fps, float dt, int option, bool save_game);
 	void DrawCharacterSelectionScene(const uint32_t, const std::map<int, CharacterClass>& character_options, int selected, const std::vector<std::string>& stats);
 	void DrawMap(Level& level);
 	void SetFont(unsigned int id, int width, int height) { font_id = id; font_width = width; font_height = height; };

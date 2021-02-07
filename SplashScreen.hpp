@@ -1,8 +1,8 @@
 #pragma once
 
 #include "StateManager.hpp"
-#include "Keyboard.hpp"
 #include "EventManager.hpp"
+#include "Keyboard.hpp"
 
 class SplashScreen : public BaseState
 {
@@ -16,6 +16,8 @@ private:
 	unsigned int splash_id;
 	unsigned int music_id;
 	GameState state{ GameState::SPLASH_MENU };
+	int option{ 0 };
+	bool save_game{ false };
 public:
 	SplashScreen(StateManager& _state_manager, World& _world, TextureManager& _tex_manager, EventManager& _event_manager, Keyboard& _keyboard, bool _render_prev, unsigned int id, unsigned int _music_id);
 	virtual void handle_input(SDL_Event& event) override;
