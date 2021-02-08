@@ -4,9 +4,6 @@
 #include "Components.hpp"
 #include "Utils.hpp"
 
-const int MAX_COMPONENTS{ 40 };
-const int MAX_ENTITIES{ 16382 }; // (2^14 - 1) - 1
-
 /*
 * Entity - 32 bits
 * 
@@ -243,9 +240,6 @@ public:
 		/* Increase the static component counter for each new component 
 		*  type used up to a maximum of MAX_COMPONENTS.
 		*/
-		if (component_counter == MAX_COMPONENTS) {
-			throw std::runtime_error("Max number of components exceeded.");
-		}
 
 		static int component_id = component_counter++;
 		return component_id;

@@ -80,9 +80,14 @@ bool CharacterCreationScreen::load_character_classes()
 
 		lua_pop(vm.get(), 1); // pop the sprite array
 
+		auto hit_die = utils::read_lua_int(vm, "hit_die", -2);
+		if (hit_die == -1) {
+			return false;
+		}
+
 		lua_pop(vm.get(), 1); // pop current sub-table
 
-		char_options.insert({ i - 1, CharacterClass(name, description, stats, sprite_id, clip_x, clip_y) });
+		char_options.insert({ i - 1, CharacterClass(name, description, stats, sprite_id, clip_x, clip_y, hit_die) });
 	}
 	return true;
 }
@@ -93,7 +98,7 @@ CharacterCreationScreen::CharacterCreationScreen(StateManager& _state_manager, W
 	stats = { "STR", "DEX", "CON", "WIS", "INT", "CHA" };
 
 	if (!load_character_classes()) {
-		printf("Error loading lua character classes.\n")
+		printf("Error loading lua character classes.\n");
 		exit(1);
 	}
 }
