@@ -22,7 +22,7 @@ private:
 	std::vector<std::string> stats;
 	int selection{ 0 };
 
-	void load_character_classes();
+	bool load_character_classes();
 
 public:
 	CharacterCreationScreen(StateManager& _state_manager, World& _world, TextureManager& _tex_manager, EventManager& _event_manager, Keyboard& _keyboard);

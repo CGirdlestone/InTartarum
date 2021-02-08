@@ -177,7 +177,7 @@ namespace utils {
         lua_gettable(vm.get(), index);
         if (!lua_isnumber(vm.get(), index + 1)) {
             printf("Expected number!");
-            return 0;
+            return -1;
         }
         auto val = lua_tointeger(vm.get(), index + 1);
         lua_pop(vm.get(), 1);
@@ -191,7 +191,7 @@ namespace utils {
         lua_gettable(vm.get(), index);
         if (!lua_isnumber(vm.get(), index + 1)) {
             printf("Expected number!");
-            return 0;
+            return -1;
         }
         auto val = lua_tointeger(vm.get(), index + 1);
         lua_pop(vm.get(), 1);

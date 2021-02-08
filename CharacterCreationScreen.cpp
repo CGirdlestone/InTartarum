@@ -1,73 +1,90 @@
 #include "CharacterCreationScreen.hpp"
 
-void CharacterCreationScreen::load_character_classes()
+bool CharacterCreationScreen::load_character_classes()
 {
 	SmartLuaVM vm(nullptr, &lua_close);
 	vm.reset(luaL_newstate());
 	auto result = luaL_dofile(vm.get(), "./Resources/Data/PlayerClasses/PlayerClasses.lua");
 
-	if (result == LUA_OK) {
-		// push to character class table to lua stack
-		lua_getglobal(vm.get(), "character_classes");
-
-		if (lua_istable(vm.get(), -1)) {
-			// get the number of defined classes and loop over them extracting the data.
-			auto num_classes = lua_rawlen(vm.get(), -1);
-			for (int i = 1; i < num_classes + 1; i++) {
-				lua_pushnumber(vm.get(), i); // push table index
-				lua_gettable(vm.get(), -2); // retrieve sub-table 
-
-				if (lua_istable(vm.get(), -1)) {
-					auto name = utils::read_lua_string(vm, "name", -2);
-
-					auto description = utils::read_lua_string(vm, "description", -2);
-
-					std::vector<int> stats;
-					lua_pushstring(vm.get(), "stats");
-					lua_gettable(vm.get(), -2);
-					if (!lua_istable(vm.get(), -1)) {
-						printf("Missing stat array");
-						return;
-					}
-					auto num_stats = lua_rawlen(vm.get(), -1);
-					for (int j = 1; j < num_stats + 1; j++) {
-						auto stat = utils::read_lua_int(vm, j, -2);
-						stats.push_back(stat);
-					}
-					lua_pop(vm.get(), 1); // pop stat table
-
-					lua_pushstring(vm.get(), "sprite");
-					lua_gettable(vm.get(), -2);
-					if (!lua_istable(vm.get(), -1)) {
-						printf("Missing sprite array");
-						return;
-					}
-
-					auto tilesheet = utils::read_lua_string(vm, "tilesheet", -2);
-					auto path = "./Resources/" + tilesheet;
-					auto sprite_id = tex_manager.LoadTexture(path);
-
-					auto clip_x = utils::read_lua_int(vm, "clip_x", -2);
-					auto clip_y = utils::read_lua_int(vm, "clip_y", -2);
-
-					lua_pop(vm.get(), 1); // pop the sprite array
-
-					lua_pop(vm.get(), 1); // pop current sub-table
-
-					char_options.insert({ i - 1, CharacterClass(name, description, stats, sprite_id, clip_x, clip_y) });
-				}
-				else {
-					printf("missing sub table!");
-				}
-
-			}
-
-		}
+	if (result != LUA_OK) {
+		return false;
 	}
-	else {
+	// push the character class table to lua stack
+	lua_getglobal(vm.get(), "character_classes");
+
+	if (!lua_istable(vm.get(), -1)) {
 		std::string error_msg = lua_tostring(vm.get(), -1);
 		printf(error_msg.c_str());
+		return false;
 	}
+
+	// get the number of defined classes and loop over them extracting the data.
+	auto num_classes = lua_rawlen(vm.get(), -1);
+	for (int i = 1; i < num_classes + 1; i++) {
+		lua_pushnumber(vm.get(), i); // push table index
+		lua_gettable(vm.get(), -2); // retrieve sub-table 
+
+		if (!lua_istable(vm.get(), -1)) {
+			return false;
+		}
+
+		auto name = utils::read_lua_string(vm, "name", -2);
+		if (name == "") {
+			return false;
+		}
+
+		auto description = utils::read_lua_string(vm, "description", -2);
+		if (description == "") {
+			return false;
+		}
+
+		std::vector<int> stats;
+		lua_pushstring(vm.get(), "stats");
+		lua_gettable(vm.get(), -2);
+		if (!lua_istable(vm.get(), -1)) {
+			return false;
+		}
+
+		auto num_stats = lua_rawlen(vm.get(), -1);
+		for (int j = 1; j < num_stats + 1; j++) {
+			auto stat = utils::read_lua_int(vm, j, -2);
+			if (stat == -1) {
+				return false;
+			}
+			stats.push_back(stat);
+		}
+		lua_pop(vm.get(), 1); // pop stat table
+
+		lua_pushstring(vm.get(), "sprite");
+		lua_gettable(vm.get(), -2);
+		if (!lua_istable(vm.get(), -1)) {
+			return false;
+		}
+
+		auto tilesheet = utils::read_lua_string(vm, "tilesheet", -2);
+		if (tilesheet == "") {
+			return false;
+		}
+		auto path = "./Resources/" + tilesheet;
+		auto sprite_id = tex_manager.LoadTexture(path);
+
+		auto clip_x = utils::read_lua_int(vm, "clip_x", -2);
+		if (clip_x == -1) {
+			return false;
+		}
+
+		auto clip_y = utils::read_lua_int(vm, "clip_y", -2);
+		if (clip_y == -1) {
+			return false;
+		}
+
+		lua_pop(vm.get(), 1); // pop the sprite array
+
+		lua_pop(vm.get(), 1); // pop current sub-table
+
+		char_options.insert({ i - 1, CharacterClass(name, description, stats, sprite_id, clip_x, clip_y) });
+	}
+	return true;
 }
 
 CharacterCreationScreen::CharacterCreationScreen(StateManager& _state_manager, World& _world, TextureManager& _tex_manager, EventManager& _event_manager, Keyboard& _keyboard):
@@ -75,7 +92,10 @@ CharacterCreationScreen::CharacterCreationScreen(StateManager& _state_manager, W
 {
 	stats = { "STR", "DEX", "CON", "WIS", "INT", "CHA" };
 
-	load_character_classes();
+	if (!load_character_classes()) {
+		printf("Error loading lua character classes.\n")
+		exit(1);
+	}
 }
 
 void CharacterCreationScreen::handle_input(SDL_Event& event)

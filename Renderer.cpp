@@ -353,9 +353,9 @@ void Renderer::DrawCharacterSelectionScene(const uint32_t fps, const std::map<in
 	int x{ 12 };
 	y = 1;
 	//j = 2 * num_options + 1 + 2;
-	DrawBox(x, y, 20, 11);
+	DrawBox(x, y, 22, 11);
 
-	std::for_each(description.cbegin(), description.cend(), [&y, this](const std::string& line) {this->DrawText(line, 13, 2 + y++, 0, 0, 0); });
+	std::for_each(description.cbegin(), description.cend(), [&y, this](const std::string& line) {this->DrawText(line, 13, 1 + y++, 0, 0, 0); });
 
 	y = 7;
 	int i{ 12 };
