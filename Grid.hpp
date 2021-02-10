@@ -15,7 +15,7 @@ public:
 		grid = std::make_unique<Tile[]>(width * height);
 		for (int i = 0; i < _width; i++) {
 			for (int j = 0; j < _height; j++) {
-				set_tile(i, j, true, false, TileType::EMPTY);
+				set_tile(i, j, true, false, TileType::FLOOR);
 			}
 		}
 	}

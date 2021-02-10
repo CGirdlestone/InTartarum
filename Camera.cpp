@@ -1,6 +1,6 @@
 #include "Camera.hpp"
 
-Camera::Camera(): x(0), y(0), width(0), height(0), map_width(0), map_height(0), zoom(0)
+Camera::Camera(Window& _window) :window(_window), x(0), y(0), offset_x(0), offset_y(0), width(0), height(0), map_width(0), map_height(0), zoom(0)
 {
 	SmartLuaVM vm(nullptr, &lua_close);
 	vm.reset(luaL_newstate());
@@ -22,6 +22,14 @@ Camera::Camera(): x(0), y(0), width(0), height(0), map_width(0), map_height(0), 
 		lua_getglobal(vm.get(), "camera_height");
 		if (lua_isnumber(vm.get(), -1)) {
 			height = static_cast<int>(lua_tonumber(vm.get(), -1));
+		}
+		lua_getglobal(vm.get(), "camera_x_offset");
+		if (lua_isnumber(vm.get(), -1)) {
+			offset_x = static_cast<int>(lua_tonumber(vm.get(), -1));
+		}
+		lua_getglobal(vm.get(), "camera_y_offset");
+		if (lua_isnumber(vm.get(), -1)) {
+			offset_y = static_cast<int>(lua_tonumber(vm.get(), -1));
 		}
 		lua_getglobal(vm.get(), "map_width");
 		if (lua_isnumber(vm.get(), -1)) {

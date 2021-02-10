@@ -18,9 +18,9 @@ struct Message
 	Message(std::string _text, uint8_t _r, uint8_t _g, uint8_t _b) : text(_text), r(_r), g(_g), b(_b) { };
 	const std::tuple<uint8_t, uint8_t, uint8_t> get_colour() const { return std::make_tuple(r, g, b); };
 	std::string text{ "" };
-	uint8_t r{ 0 };
-	uint8_t g{ 0 };
-	uint8_t b{ 0 };
+	uint8_t r{ 0xBB };
+	uint8_t g{ 0xAA };
+	uint8_t b{ 0x99 };
 };
 
 class MessageLog : public BaseSystem

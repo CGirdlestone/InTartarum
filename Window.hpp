@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Common.hpp"
+#include "Utils.hpp"
 
 class Window
 {
@@ -14,6 +15,7 @@ private:
 	int default_height{ 0 };
 	int tile_width{ 0 };
 	int tile_height{ 0 };
+	SDL_Color background;
 
 public:
 	Window();
@@ -22,7 +24,8 @@ public:
 	inline SDL_Renderer* GetRenderer() const { return renderer.get(); };
 	inline const int GetWidth() const { return width; };
 	inline const int GetHeight() const { return height; };
-	inline const int GetTileWidth() const { return tile_height; };
+	inline const int GetTileWidth() const { return tile_width; };
 	inline const int GetTileHeight() const { return tile_height; };
+	inline const SDL_Color& GetBackground() const { return background; };
 };
 

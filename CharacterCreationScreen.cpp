@@ -92,8 +92,8 @@ bool CharacterCreationScreen::load_character_classes()
 	return true;
 }
 
-CharacterCreationScreen::CharacterCreationScreen(StateManager& _state_manager, World& _world, TextureManager& _tex_manager, EventManager& _event_manager, Keyboard& _keyboard):
-	state_manager(_state_manager), world(_world), tex_manager(_tex_manager), event_manager(_event_manager), keyboard(_keyboard)
+CharacterCreationScreen::CharacterCreationScreen(StateManager& _state_manager, World& _world, TextureManager& _tex_manager, EventManager& _event_manager, Keyboard& _keyboard, int _tile_width, int _tile_height, unsigned int _tileset):
+	state_manager(_state_manager), world(_world), tex_manager(_tex_manager), event_manager(_event_manager), keyboard(_keyboard), tile_width(_tile_width), tile_height(_tile_height), tileset(_tileset)
 {
 	stats = { "STR", "DEX", "CON", "WIS", "INT", "CHA" };
 
@@ -125,14 +125,11 @@ void CharacterCreationScreen::handle_input(SDL_Event& event)
 		auto entity = world.CreateEntity();
 		int start_x{ 19 }, start_y{ 19 };
 		world.AddComponent<Position>(entity, start_x, start_y, 0);
-		world.AddComponent<Sprite>(entity, char_options.at(selection).id, char_options.at(selection).clip_x * TILE_SIZE, char_options.at(selection).clip_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, 1);
+		world.AddComponent<Sprite>(entity, tileset, 0 * tile_width, 4 * tile_height, tile_width, tile_height, 1, 0xFF, 0xA7, 0x5D);
 		world.AddComponent<Player>(entity, 8);
 		auto* p = world.GetComponent<Player>(entity);
 		world.AddComponent<Blocker>(entity);
-		world.AddComponent<Animation>(entity, 0.2f, char_options.at(selection).id, char_options.at(selection).clip_x * TILE_SIZE, char_options.at(selection).clip_y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-		auto* entity_animation = world.GetComponent<Animation>(entity);
-		entity_animation->animations.at(state::IDLE).push_back(AnimFrame(char_options.at(selection).id + 1, char_options.at(selection).clip_x * TILE_SIZE, char_options.at(selection).clip_y * TILE_SIZE, TILE_SIZE, TILE_SIZE));
-
+	
 		state_manager.push(GameState::GAME);
 		return;
 	}

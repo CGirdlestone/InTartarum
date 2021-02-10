@@ -16,6 +16,9 @@ private:
 	TextureManager& tex_manager;
 	EventManager& event_manager;
 	Keyboard& keyboard;
+	int tile_width{ 0 };
+	int tile_height{ 0 };
+	unsigned int tileset{ 0 };
 	bool render_prev{ true };
 	std::string player_name{ "" };
 	std::map<int, CharacterClass> char_options;
@@ -25,7 +28,7 @@ private:
 	bool load_character_classes();
 
 public:
-	CharacterCreationScreen(StateManager& _state_manager, World& _world, TextureManager& _tex_manager, EventManager& _event_manager, Keyboard& _keyboard);
+	CharacterCreationScreen(StateManager& _state_manager, World& _world, TextureManager& _tex_manager, EventManager& _event_manager, Keyboard& _keyboard, int _tile_width, int _tile_height, unsigned int _tileset);
 	~CharacterCreationScreen() {};
 	virtual void handle_input(SDL_Event& event) override;
 	virtual void on_tick() override;

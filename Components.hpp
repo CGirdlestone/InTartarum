@@ -76,15 +76,18 @@ struct Interactable : public ISerializeable {
 
 struct Sprite : public ISerializeable {
 	Sprite() {};
-	Sprite(unsigned int _id, unsigned int _clip_x, unsigned int _clip_y, unsigned int _width, unsigned int _height, unsigned int _depth) :
-		id(_id), clip_x(_clip_x), clip_y(_clip_y), width(_width), height(_height), depth(_depth) {};
+	Sprite(unsigned int _id, int _clip_x, int _clip_y, int _width, int _height, int _depth, uint8_t _r = 255, uint8_t _g = 255, uint8_t _b = 255) :
+		id(_id), clip_x(_clip_x), clip_y(_clip_y), width(_width), height(_height), depth(_depth), r(_r), g(_g), b(_b) {};
 	~Sprite() {};
 	unsigned int id{ 0 };
-	unsigned int clip_x{ 0 };
-	unsigned int clip_y{ 0 };
-	unsigned int width{ 0 };
-	unsigned int height{ 0 };
-	unsigned int depth{ 0 };
+	int clip_x{ 0 };
+	int clip_y{ 0 };
+	int width{ 0 };
+	int height{ 0 };
+	int depth{ 0 };
+	uint8_t r{ 0 };
+	uint8_t g{ 0 };
+	uint8_t b{ 0 };
 
 	virtual void serialise(std::ofstream& file) override;
 	virtual void deserialise(const char* buffer, size_t& offset) override;

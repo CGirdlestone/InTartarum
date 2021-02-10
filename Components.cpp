@@ -75,6 +75,10 @@ void Sprite::serialise(std::ofstream& file)
 	utils::serialiseUint32(file, static_cast<uint32_t>(clip_y));
 	utils::serialiseUint32(file, static_cast<uint32_t>(width));
 	utils::serialiseUint32(file, static_cast<uint32_t>(height));
+
+	utils::serialiseUint8(file, r);
+	utils::serialiseUint8(file, g);
+	utils::serialiseUint8(file, b);
 }
 
 void Sprite::deserialise(const char* buffer, size_t& offset)
@@ -84,6 +88,9 @@ void Sprite::deserialise(const char* buffer, size_t& offset)
 	clip_y = static_cast<int>(utils::deserialiseUint32(buffer, offset));
 	width = static_cast<int>(utils::deserialiseUint32(buffer, offset));
 	height = static_cast<int>(utils::deserialiseUint32(buffer, offset));
+	r = utils::deserialiseUint8(buffer, offset);
+	g = utils::deserialiseUint8(buffer, offset);
+	b = utils::deserialiseUint8(buffer, offset);
 }
 
 void AnimFrame::serialise(std::ofstream& file)

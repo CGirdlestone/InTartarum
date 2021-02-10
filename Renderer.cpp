@@ -25,7 +25,11 @@ void Renderer::DrawMap(Level& level)
 			dstrect.w = window.GetTileWidth();
 			dstrect.h = window.GetTileHeight();
 
-			auto sprite = tile_sprites.at(TileType::GRASS_MIDDLE); // need to have this determined by the level environment theme
+			auto sprite = tile_sprites.at(tile.type);
+
+			if (!tile.explored) {
+				sprite = tile_sprites.at(TileType::EMPTY);
+			}
 
 			SDL_Rect srcrect;
 			srcrect.x = sprite.clip_x;
@@ -33,52 +37,128 @@ void Renderer::DrawMap(Level& level)
 			srcrect.w = sprite.width;
 			srcrect.h = sprite.height;
 
-			SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(sprite.id), &srcrect, &dstrect);
 
-
-			sprite = tile_sprites.at(tile.type);
-
-			if (!tile.explored) {
-				sprite = tile_sprites.at(TileType::EMPTY);
-			}
-
-			srcrect.x = sprite.clip_x;
-			srcrect.y = sprite.clip_y;
-			srcrect.w = sprite.width;
-			srcrect.h = sprite.height;
-
+			SDL_SetTextureColorMod(texture_manager.GetTexture(sprite.id), sprite.r, sprite.g, sprite.b);
 			SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(sprite.id), &srcrect, &dstrect);
 
 			if (!tile.visible) {
 				SDL_SetRenderDrawColor(window.GetRenderer(), 50, 50, 50, 128);
 				SDL_SetRenderDrawBlendMode(window.GetRenderer(), SDL_BLENDMODE_BLEND);
 				SDL_RenderFillRect(window.GetRenderer(), &dstrect);
-				SDL_SetRenderDrawColor(window.GetRenderer(), 255, 255, 255, 0);
+				SDL_SetRenderDrawColor(window.GetRenderer(), window.GetBackground().r, window.GetBackground().g, window.GetBackground().b, 0);
 			}
 		}
 	}
 	ResetTarget();
 }
 
-void Renderer::DrawBox(int x, int y, int width, int height)
+void Renderer::DrawBox(int x, int y, int width, int height, bool lower_join, bool upper_join, bool game_border)
 {
-	auto* parchment = texture_manager.GetTexture(texture_manager.LoadTexture("./Resources/Parchment.jpg"));
+	for (int i = 0; i <= width; i++) {
+		SDL_Rect rect;
+		rect.x = (x + i) * window.GetTileWidth();
+		rect.y = y * window.GetTileHeight();
+		rect.w = window.GetTileWidth();
+		rect.h = window.GetTileHeight();
 
-	SDL_Rect rect;
-	rect.x = x * window.GetTileWidth();
-	rect.y = y * window.GetTileHeight();
-	rect.w = width * window.GetTileWidth();
-	rect.h = height * window.GetTileHeight();
+		Sprite sprite;
+		SDL_Rect srcrect;
+		if (i == 0) {
+			if (!upper_join) {
+				sprite = tile_sprites.at(TileType::BORDER_TL);
+				srcrect.x = sprite.clip_x;
+				srcrect.y = sprite.clip_y;
+			}
+			else {
+				sprite = tile_sprites.at(TileType::BORDER_LEFT_T);
+				srcrect.x = sprite.clip_x;
+				srcrect.y = sprite.clip_y;
+			}
+		}
+		else if (i == width) {
+			if (!upper_join){
+				sprite = tile_sprites.at(TileType::BORDER_TR);
+				srcrect.x = sprite.clip_x;
+				srcrect.y = sprite.clip_y;
+			}
+			else {
+				sprite = tile_sprites.at(TileType::BORDER_RIGHT_T);
+				srcrect.x = sprite.clip_x;
+				srcrect.y = sprite.clip_y;
+			}
+		}
+		else {
+			sprite = tile_sprites.at(TileType::BORDER_HORIZONTAL);
+			srcrect.x = sprite.clip_x;
+			srcrect.y = sprite.clip_y;
+		}
+		if (!game_border || (i == 0 || i == width)) {
+			srcrect.w = sprite.width;
+			srcrect.h = sprite.height;
+			SDL_SetTextureColorMod(texture_manager.GetTexture(sprite.id), sprite.r, sprite.g, sprite.b);
+			SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(sprite.id), &srcrect, &rect);
+		}
 
-	auto empty_skill = texture_manager.GetTexture(texture_manager.LoadTexture("./Resources/UniqueBorderV11.png"));
-	SDL_RenderCopy(window.GetRenderer(), empty_skill, nullptr, &rect);
+		rect.y = (y + height) * window.GetTileHeight();
+		if (i == 0) {
+			if (!lower_join) {
+				sprite = tile_sprites.at(TileType::BORDER_BL);
+				srcrect.x = sprite.clip_x;
+				srcrect.y = sprite.clip_y;
+			}
+			else {
+				sprite = tile_sprites.at(TileType::BORDER_LEFT_T);
+				srcrect.x = sprite.clip_x;
+				srcrect.y = sprite.clip_y;
+			}
+		}
+		else if (i == width) {
+			if (!lower_join) {
+				sprite = tile_sprites.at(TileType::BORDER_BR);
+				srcrect.x = sprite.clip_x;
+				srcrect.y = sprite.clip_y;
+			}
+			else {
+				sprite = tile_sprites.at(TileType::BORDER_RIGHT_T);
+				srcrect.x = sprite.clip_x;
+				srcrect.y = sprite.clip_y;
+			}
+		}
+		else {
+			sprite = tile_sprites.at(TileType::BORDER_HORIZONTAL);
+			srcrect.x = sprite.clip_x;
+			srcrect.y = sprite.clip_y;
+		}
+		srcrect.w = sprite.width;
+		srcrect.h = sprite.height;
+		SDL_SetTextureColorMod(texture_manager.GetTexture(sprite.id), sprite.r, sprite.g, sprite.b);
+		SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(sprite.id), &srcrect, &rect);
+	}
 
-	rect.x = x * window.GetTileWidth() + window.GetTileWidth() / 2;
-	rect.y = y * window.GetTileHeight() + window.GetTileHeight() / 2;
-	rect.w = width * window.GetTileWidth() - window.GetTileWidth();
-	rect.h = height * window.GetTileHeight() - window.GetTileHeight();
+	for (int j = 1; j < height; j++) {
 
-	SDL_RenderCopy(window.GetRenderer(), parchment, nullptr, &rect);
+		SDL_Rect rect;
+		rect.x = x * GetTileWidth();
+		rect.y = (y + j) * window.GetTileHeight();
+		rect.w = window.GetTileWidth();
+		rect.h = window.GetTileHeight();
+
+		Sprite sprite;
+		SDL_Rect srcrect;
+
+		sprite = tile_sprites.at(TileType::BORDER_VERTICAL);
+		srcrect.x = sprite.clip_x;
+		srcrect.y = sprite.clip_y;
+		srcrect.w = sprite.width;
+		srcrect.h = sprite.height;
+
+		SDL_SetTextureColorMod(texture_manager.GetTexture(sprite.id), sprite.r, sprite.g, sprite.b);
+		SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(sprite.id), &srcrect, &rect);
+
+		rect.x = (width + x) * GetTileWidth();
+		SDL_SetTextureColorMod(texture_manager.GetTexture(sprite.id), sprite.r, sprite.g, sprite.b);
+		SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(sprite.id), &srcrect, &rect);
+	}
 }
 
 void Renderer::DrawMiniMap(int x, int y, int width, int height)
@@ -147,11 +227,11 @@ void Renderer::DrawMessageLog(MessageLog& message_log)
 {
 	auto& messages = message_log.get_messages();
 	auto it = messages.rbegin();
-	int j{ 3 };
+	int j{ camera.get_height() + 2 * camera.get_offset_y() };
 	for (int i = 0; i < 10; i++) {
 		const auto& msg = *(it + message_log.get_offset() + i);
 		auto & [r, g, b] = msg.get_colour();
-		DrawText(msg.text, camera.get_width() + 1, j++, r, g, b);
+		DrawText(msg.text, camera.get_offset_x() * camera.get_zoom() , j++, r, g, b);
 		if ((it + message_log.get_offset()) + i + 1 == messages.rend()) {
 			break;
 		}
@@ -269,17 +349,19 @@ void Renderer::DrawSprite(Position* pos, Sprite* sprite)
 {
 	SDL_Rect dstrect;
 	auto [x, y] = camera.viewport(pos->x, pos->y);
-	dstrect.x = x * camera.get_zoom() * window.GetTileWidth();
-	dstrect.y = y * camera.get_zoom() * window.GetTileHeight();
-	dstrect.w = sprite->width * 2;
-	dstrect.h = sprite->height * 2;
-
+	auto [cam_x, cam_y] = camera.get_position();
+	dstrect.x = (x * camera.get_zoom() + camera.get_offset_x()) * window.GetTileWidth();
+	dstrect.y = (y * camera.get_zoom() + camera.get_offset_y()) * window.GetTileHeight();
+	dstrect.w = sprite->width * camera.get_zoom();
+	dstrect.h = sprite->height * camera.get_zoom();
+	
 	SDL_Rect srcrect;
 	srcrect.x = sprite->clip_x;
 	srcrect.y = sprite->clip_y;
 	srcrect.w = sprite->width;
 	srcrect.h = sprite->height;
 
+	SDL_SetTextureColorMod(texture_manager.GetTexture(sprite->id), sprite->r, sprite->g, sprite->b);
 	SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(sprite->id), &srcrect, &dstrect);
 }
 
@@ -291,7 +373,7 @@ void Renderer::DrawSplash(unsigned int tex_id, const uint32_t fps, float dt, int
 	auto* title = texture_manager.GetTexture(texture_manager.LoadTexture("./Resources/In_Tartarum.png"));
 	SDL_Rect dstrect;
 	SDL_QueryTexture(title, nullptr, nullptr, &dstrect.w, &dstrect.h);
-	dstrect.x = window.GetWidth() / 2 * window.GetTileWidth() - dstrect.w / 2;
+	dstrect.x = (window.GetWidth() * window.GetTileWidth()) / 2 - dstrect.w / 2;
 	dstrect.y = window.GetTileHeight() * 4;
 	SDL_RenderCopy(window.GetRenderer(), title, nullptr, &dstrect);
 
@@ -336,57 +418,39 @@ void Renderer::DrawSplash(unsigned int tex_id, const uint32_t fps, float dt, int
 void Renderer::DrawCharacterSelectionScene(const uint32_t fps, const std::map<int, CharacterClass>& character_options, int selected, const std::vector<std::string>& stats)
 {
 	int num_options{ static_cast<int>(character_options.size()) };
-	DrawBox(1, 1, 10, 2 * num_options + 1);
+	DrawBox(1, 1, 10, 20);
 
-	int y{ 0 };
-	for (auto& [id, character] : character_options) {
-		if (y == selected) {
-			DrawText(character.name, 2, 2 * (y++ + 1), 200, 0, 0);
-		}
-		else {
-			DrawText(character.name, 2, 2 * (y++ + 1), 0, 0, 0);
-		}
-	}
+	//int y{ 0 };
+	//for (auto& [id, character] : character_options) {
+	//	if (y == selected) {
+	//		DrawText(character.name, 2, 2 * (y++ + 1), 0xE8, 0xAE, 0x5B);
+	//	}
+	//	else {
+	//		DrawText(character.name, 2, 2 * (y++ + 1), 0xBB, 0xAA, 0x99);
+	//	}
+	//}
 
-	auto description = WrapText(character_options.at(selected).description, 30);
+	//auto description = WrapText(character_options.at(selected).description, 30);
 
-	int x{ 12 };
-	y = 1;
+	//int x{ 12 };
+	//y = 1;
 	//j = 2 * num_options + 1 + 2;
-	DrawBox(x, y, 22, 11);
+	//DrawBox(x, y, 22, 11);
 
-	std::for_each(description.cbegin(), description.cend(), [&y, this](const std::string& line) {this->DrawText(line, 13, 1 + y++, 0, 0, 0); });
+	//std::for_each(description.cbegin(), description.cend(), [&y, this](const std::string& line) {this->DrawText(line, 13, 1 + y++, 0xBB, 0xAA, 0x99); });
 
-	y = 7;
-	int i{ 12 };
-	for (size_t k = 0; k < stats.size(); k++) {
-		DrawText(stats[k], i + 1, y + 1, 0, 0, 0);
-		DrawText(std::to_string(character_options.at(selected).stats[k]), i + 1, y + 3, 0, 0, 0);
-		i += 3;
-	}
-
-	y += 5;
-	DrawBox(x, y, 11, 11);
-
-	SDL_Rect dstrect;
-	dstrect.x = (x + 1) * window.GetTileWidth();
-	dstrect.y = (y + 1) * window.GetTileHeight();
-	dstrect.w = 9 * window.GetTileWidth();
-	dstrect.h = 9 * window.GetTileWidth();
-
-	SDL_Rect srcrect;
-	srcrect.x = character_options.at(selected).clip_x * window.GetTileWidth();
-	srcrect.y = character_options.at(selected).clip_y * window.GetTileHeight();
-	srcrect.w = window.GetTileWidth();
-	srcrect.h = window.GetTileHeight();
-
-	SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(character_options.at(selected).id), &srcrect, &dstrect);
-
+	//y = 7;
+	//int i{ 12 };
+	//for (size_t k = 0; k < stats.size(); k++) {
+	//	DrawText(stats[k], i + 1, y + 1, 0, 0, 0);
+	//	DrawText(std::to_string(character_options.at(selected).stats[k]), i + 1, y + 3, 0xBB, 0xAA, 0x99);
+	//	i += 3;
+	//}
 }
 
 void Renderer::DrawScene(uint32_t fps, WorldMap& world_map, MessageLog& message_log)
 {
-	DrawMapTexture(0, 0);
+	DrawMapTexture(camera.get_offset_x(), camera.get_offset_y());
 
 	auto components = world.GetComponents<Position, Sprite>();
 	// remove the entities that are not on this depth level.
@@ -409,23 +473,9 @@ void Renderer::DrawScene(uint32_t fps, WorldMap& world_map, MessageLog& message_
 	}
 
 	DrawFPS(fps);
-	DrawSkills();
-	auto y = window.GetHeight() * 5 / 8;
-	DrawBox(camera.get_width(),
-		0,
-		window.GetWidth() - camera.get_width(),
-		y
-	);
-
-	y = y + window.GetHeight() * 3 / 8 == window.GetHeight() ? window.GetHeight() * 3 / 8 : window.GetHeight() * 3 / 8 + 1;
-	DrawMiniMap(camera.get_width(),
-		window.GetHeight() * 5 / 8,
-		window.GetWidth() - camera.get_width(),
-		y
-	);
-
+	DrawBox(0, 0, camera.get_width() + camera.get_offset_x(), camera.get_height() + camera.get_offset_y(), true, false, true);
 	std::string depth = "Dungeon depth: " + std::to_string(world_map.get_current_depth());
-	DrawText(depth, camera.get_width() + 1, 1);
+	DrawText(depth, camera.get_offset_x() * camera.get_zoom(), 0, 0xBB, 0xAA, 0x99);
 
 	if (!message_log.get_messages().empty()){
 		DrawMessageLog(message_log);

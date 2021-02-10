@@ -1,23 +1,28 @@
 #pragma once
 
 #include "Common.hpp"
+#include "Window.hpp"
 #include "Utils.hpp"
 
 class Camera
 {
 private:
+	Window& window;
 	int x, y;
+	int offset_x, offset_y;
 	int width, height;
 	int map_width, map_height;
 	int zoom{ 1 };
 public:
-	Camera();
+	Camera(Window& _window);
 	~Camera() { };
 
 	inline const int get_width() const { return width; };
 	inline const int get_height() const { return height; };
 	inline void set_width(int _width) { width = _width; };
 	inline void set_height(int _height) { width = _height; };
+	inline const int get_offset_x() const { return offset_x; };
+	inline const int get_offset_y() const { return offset_y; };
 	inline const int get_map_width() const { return map_width; };
 	inline const int get_map_height() const { return map_height; };
 	inline const std::tuple<int, int> get_position() const { return std::make_tuple(x, y); };

@@ -30,7 +30,7 @@ private:
 	void DrawMapTexture(int x, int y);
 	void DrawFPS(uint32_t fps);
 	void DrawSprite(Position* pos, Sprite* sprite);
-	void DrawBox(int x, int y, int width, int height);
+	void DrawBox(int x, int y, int width, int height, bool lower_join=false, bool upper_join=false, bool game_border=false);
 	void DrawMiniMap(int x, int y, int width, int height);
 	void DrawSkills();
 	void DrawText(const std::string& text, int x, int y, uint8_t r = 0, uint8_t g = 0, uint8_t b = 0);
