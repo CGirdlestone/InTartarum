@@ -238,6 +238,51 @@ void Renderer::DrawMessageLog(MessageLog& message_log)
 	}
 }
 
+void Renderer::DrawGameBorder(int x, int y, int width, int height, int height_divider)
+{
+	DrawBox(x, y, width, height_divider, true, false, true);
+	DrawBox(x, y + height_divider, width, height - height_divider - 1, false, true, false);
+}
+
+void Renderer::DrawHealth(int x, int y, int health, int max_health)
+{
+	std::string _health = "Health: ";
+	DrawText(_health, x, 0, 0xBB, 0xAA, 0x99);
+
+	auto bar_width = window.GetWidth() - x - _health.length() - 2;
+	auto filled_bar = (health * bar_width / max_health);
+	auto empty_bar = bar_width - filled_bar;
+	for (int i = 0; i < bar_width; i++) {
+		auto c = '=';
+		SDL_Rect dstrect;
+		dstrect.x = (x + _health.length() + i) * font_width;
+		dstrect.y = y * window.GetTileHeight();
+		dstrect.w = font_width;
+		dstrect.h = font_height;
+
+		SDL_Rect srcrect;
+		srcrect.x = (static_cast<int>(c) % 16) * font_width;
+		srcrect.y = (static_cast<int>(c) / 16) * font_height;
+		srcrect.w = font_width;
+		srcrect.h = font_height;
+
+		uint8_t r, g, b;
+		if (i <= filled_bar) {
+			r = 0xCD;
+			g = 0x5C;
+			b = 0x5C;
+		}
+		else {
+			r = 0xBB;
+			g = 0xAA;
+			b = 0x99;
+		}
+
+		SDL_SetTextureColorMod(texture_manager.GetTexture(font_id), r, g, b);
+		SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(font_id), &srcrect, &dstrect);
+	}
+}
+
 void Renderer::LoadFont()
 {
 	SmartLuaVM vm(nullptr, &lua_close);
@@ -350,8 +395,12 @@ void Renderer::DrawSprite(Position* pos, Sprite* sprite)
 	SDL_Rect dstrect;
 	auto [x, y] = camera.viewport(pos->x, pos->y);
 	auto [cam_x, cam_y] = camera.get_position();
-	dstrect.x = (x * camera.get_zoom() + camera.get_offset_x()) * window.GetTileWidth();
-	dstrect.y = (y * camera.get_zoom() + camera.get_offset_y()) * window.GetTileHeight();
+	dstrect.x = (x * camera.get_zoom()) * window.GetTileWidth() + camera.get_offset_x() * window.GetTileWidth();
+	dstrect.y = (y * camera.get_zoom()) * window.GetTileHeight() + camera.get_offset_y() * window.GetTileHeight();
+
+	if (dstrect.x == 0 || dstrect.x == window.GetWidth() - 1 || dstrect.y == 0 || dstrect.y == window.GetHeight() - 1) {
+		return;
+	}
 	dstrect.w = sprite->width * camera.get_zoom();
 	dstrect.h = sprite->height * camera.get_zoom();
 	
@@ -418,34 +467,34 @@ void Renderer::DrawSplash(unsigned int tex_id, const uint32_t fps, float dt, int
 void Renderer::DrawCharacterSelectionScene(const uint32_t fps, const std::map<int, CharacterClass>& character_options, int selected, const std::vector<std::string>& stats)
 {
 	int num_options{ static_cast<int>(character_options.size()) };
-	DrawBox(1, 1, 10, 20);
+	int j = 2 * (num_options + 1);
+	DrawBox(1, 1, 10, j);
 
-	//int y{ 0 };
-	//for (auto& [id, character] : character_options) {
-	//	if (y == selected) {
-	//		DrawText(character.name, 2, 2 * (y++ + 1), 0xE8, 0xAE, 0x5B);
-	//	}
-	//	else {
-	//		DrawText(character.name, 2, 2 * (y++ + 1), 0xBB, 0xAA, 0x99);
-	//	}
-	//}
+	int y{ 0 };
+	for (auto& [id, character] : character_options) {
+		if (y == selected) {
+			DrawText(character.name, 2, 2 * (y++ + 1), 0xE8, 0xAE, 0x5B);
+		}
+		else {
+			DrawText(character.name, 2, 2 * (y++ + 1), 0xBB, 0xAA, 0x99);
+		}
+	}
 
-	//auto description = WrapText(character_options.at(selected).description, 30);
+	auto description = WrapText(character_options.at(selected).description, 30);
 
-	//int x{ 12 };
-	//y = 1;
-	//j = 2 * num_options + 1 + 2;
-	//DrawBox(x, y, 22, 11);
+	int x{ 12 };
+	y = 1;
+	DrawBox(x, y, 35, j);
 
-	//std::for_each(description.cbegin(), description.cend(), [&y, this](const std::string& line) {this->DrawText(line, 13, 1 + y++, 0xBB, 0xAA, 0x99); });
+	std::for_each(description.cbegin(), description.cend(), [&y, this](const std::string& line) {this->DrawText(line, 13, 1 + y++, 0xBB, 0xAA, 0x99); });
 
-	//y = 7;
-	//int i{ 12 };
-	//for (size_t k = 0; k < stats.size(); k++) {
-	//	DrawText(stats[k], i + 1, y + 1, 0, 0, 0);
-	//	DrawText(std::to_string(character_options.at(selected).stats[k]), i + 1, y + 3, 0xBB, 0xAA, 0x99);
-	//	i += 3;
-	//}
+	y = 7;
+	int i{ 12 };
+	for (size_t k = 0; k < stats.size(); k++) {
+		DrawText(stats[k], i + 1, y + 1, 0xBB, 0xAA, 0x99);
+		DrawText(std::to_string(character_options.at(selected).stats[k]), i + 1, y + 3, 0xBB, 0xAA, 0x99);
+		i += 4;
+	}
 }
 
 void Renderer::DrawScene(uint32_t fps, WorldMap& world_map, MessageLog& message_log)
@@ -473,10 +522,14 @@ void Renderer::DrawScene(uint32_t fps, WorldMap& world_map, MessageLog& message_
 	}
 
 	DrawFPS(fps);
-	DrawBox(0, 0, camera.get_width() + camera.get_offset_x(), camera.get_height() + camera.get_offset_y(), true, false, true);
-	std::string depth = "Dungeon depth: " + std::to_string(world_map.get_current_depth());
-	DrawText(depth, camera.get_offset_x() * camera.get_zoom(), 0, 0xBB, 0xAA, 0x99);
+	DrawGameBorder(0, 0, camera.get_width() + camera.get_offset_x(), window.GetHeight(), camera.get_height() + camera.get_offset_y());
+	std::string depth = "Dungeon depth: ";
+	DrawHealth(5 + depth.length(), 0, 50, 60);
 
+	auto dungeon_depth = std::to_string(world_map.get_current_depth());
+	depth += dungeon_depth;
+	DrawText(depth, camera.get_offset_x() * camera.get_zoom() + 1, 0, 0xBB, 0xAA, 0x99);
+	
 	if (!message_log.get_messages().empty()){
 		DrawMessageLog(message_log);
 

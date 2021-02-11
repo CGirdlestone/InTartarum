@@ -1,7 +1,7 @@
 -- config data for the SDL window.
 title = "In Tartarum";
-width = 100;
-height = 50;
+width = 80;
+height = 58;
 
 -- default renderer colour
 colour_r = 28;

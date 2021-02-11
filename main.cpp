@@ -152,7 +152,7 @@ void build_town(Level& level, World& world, TextureManager& texture_manager, uns
 
 	auto door = world.CreateEntity();
 	world.AddComponent<Position>(door, 15, 15, 0);
-	world.AddComponent<Sprite>(door, font_tileset, 11 * tile_width, 2 * tile_height, tile_width, tile_height, 0, 0x55, 0x44, 0x44);
+	world.AddComponent<Sprite>(door, font_tileset, 11 * tile_width, 2 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99);
 	world.AddComponent<Animation>(door, 0.1f, font_tileset, 13 * tile_width, 2 * tile_height, tile_width, tile_height, false);
 	world.AddComponent<Interactable>(door);
 	world.AddComponent<Blocker>(door, true);
@@ -174,7 +174,7 @@ void build_town(Level& level, World& world, TextureManager& texture_manager, uns
 
 	auto chest = world.CreateEntity();
 	world.AddComponent<Position>(chest, 15, 20, 0);
-	world.AddComponent<Sprite>(chest, font_tileset, 11 * tile_width, 13 * tile_height, tile_width, tile_height, 0, 0x55, 0x44, 0x44);
+	world.AddComponent<Sprite>(chest, font_tileset, 11 * tile_width, 13 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99);
 	world.AddComponent<Animation>(chest, 0.1f, font_tileset, 12 * tile_width, 13 * tile_height, tile_width, tile_height, false);
 	world.AddComponent<Blocker>(chest);
 	world.AddComponent<Interactable>(chest);
@@ -187,7 +187,7 @@ void build_town(Level& level, World& world, TextureManager& texture_manager, uns
 
 	auto fire = world.CreateEntity();
 	world.AddComponent<Position>(fire, 23, 23, 0);
-	world.AddComponent<Sprite>(fire, font_tileset, 5 * tile_width, 1 * tile_height, tile_width, tile_height, 0, 0xFF, 0x00, 0x00);
+	world.AddComponent<Sprite>(fire, font_tileset, 5 * tile_width, 1 * tile_height, tile_width, tile_height, 0, 0xCD, 0x5C, 0x5C);
 	world.AddComponent<Animation>(fire, 0.1f, font_tileset, 4 * tile_width, 2 * tile_height, tile_width, tile_height);
 	auto fire_animation = world.GetComponent<Animation>(fire);
 	fire_animation->animations.at(state::IDLE).push_back(AnimFrame(font_tileset, 5 * tile_width, 1 * tile_height, tile_width, tile_height));
@@ -233,9 +233,6 @@ int main(int argc, char* argv[])
 		auto window = Window();
 		auto camera = Camera(window);
 
-		printf("%d\n%d\n", camera.get_width(), camera.get_height());
-		printf("%d\n%d\n", window.GetWidth(), window.GetHeight());
-
 		auto tex_manager = TextureManager(window);
 
 		auto font_tileset = tex_manager.LoadTexture(tileset_path);
@@ -243,34 +240,7 @@ int main(int argc, char* argv[])
 		auto splash = tex_manager.LoadTexture("./Resources/fog01.png");
 		auto parchment = tex_manager.LoadTexture("./Resources/Parchment.jpg");
 		auto fireball = tex_manager.LoadTexture("./Resources/Skills/fireball.png");
-
-		/*
-		auto chest1_tex = tex_manager.LoadTexture("./Resources/Chest1.png");
-		auto gui_0 = tex_manager.LoadTexture("./Resources/GUI0.png");
-		auto gui_1 = tex_manager.LoadTexture("./Resources/GUI1.png");
-		auto player_0 = tex_manager.LoadTexture("./Resources/Player0.png");
-		auto player_1 = tex_manager.LoadTexture("./Resources/Player1.png");
-		auto tree_0 = tex_manager.LoadTexture("./Resources/Tree0.png");
-		auto tree_1 = tex_manager.LoadTexture("./Resources/Tree1.png");
-		auto floor = tex_manager.LoadTexture("./Resources/Floor.png");
-		auto water = tex_manager.LoadTexture("./Resources/Pit0.png");
-		auto tile = tex_manager.LoadTexture("./Resources/Tile.png");
-		auto door_0 = tex_manager.LoadTexture("./Resources/Door0.png");
-		auto door_1 = tex_manager.LoadTexture("./Resources/Door1.png");
-		auto effect_0 = tex_manager.LoadTexture("./Resources/Effect0.png");
-		auto effect_1 = tex_manager.LoadTexture("./Resources/Effect1.png");
-		auto walls = tex_manager.LoadTexture("./Resources/Wall.png");
-
 		
-
-		auto kenny_tileset = tex_manager.LoadTexture("./Resources/colored_packed.png");
-		auto kenny_transparent = tex_manager.LoadTexture("./Resources/colored_transparent_packed.png");
-		
-		auto fire_tex = tex_manager.LoadTexture("./Resources/CampFireFinished.png");
-		auto exp_tex = tex_manager.LoadTexture("./Resources/exp2_0.png");
-		*/
-		
-
 		auto sound_manager = SoundManager();
 		auto intro_music = sound_manager.LoadMusic("./Resources/Sounds/bleeding_out2.ogg");
 		auto button_click = sound_manager.LoadChunk("./Resources/Sounds/SFX/click3.wav");

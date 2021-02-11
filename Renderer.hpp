@@ -35,6 +35,8 @@ private:
 	void DrawSkills();
 	void DrawText(const std::string& text, int x, int y, uint8_t r = 0, uint8_t g = 0, uint8_t b = 0);
 	void DrawMessageLog(MessageLog& message_log);
+	void DrawGameBorder(int x, int y, int width, int height, int height_divider);
+	void DrawHealth(int x, int y, int health, int max_health);
 	void LoadFont();
 	std::vector<std::string> WrapText(const std::string& text, int line_width);
 public:

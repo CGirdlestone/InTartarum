@@ -19,7 +19,7 @@ private:
 	int tile_width{ 0 };
 	int tile_height{ 0 };
 	unsigned int tileset{ 0 };
-	bool render_prev{ true };
+	bool render_prev{ false };
 	std::string player_name{ "" };
 	std::map<int, CharacterClass> char_options;
 	std::vector<std::string> stats;
