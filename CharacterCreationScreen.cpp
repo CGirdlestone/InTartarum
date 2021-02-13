@@ -85,9 +85,26 @@ bool CharacterCreationScreen::load_character_classes()
 			return false;
 		}
 
+		std::vector<std::string> skills;
+		lua_pushstring(vm.get(), "sprite");
+		lua_gettable(vm.get(), -2);
+		if (!lua_istable(vm.get(), -1)) {
+			return false;
+		}
+
+		auto num_skills = lua_rawlen(vm.get(), -1);
+		for (int j = 1; j < num_skills + 1; j++) {
+			auto skill = utils::read_lua_string(vm, j, -2);
+			if (skill == "") {
+				return false;
+			}
+			skills.push_back(skill);
+		}
+		lua_pop(vm.get(), 1); // pop skill array
+
 		lua_pop(vm.get(), 1); // pop current sub-table
 
-		char_options.insert({ i - 1, CharacterClass(name, description, stats, sprite_id, clip_x, clip_y, hit_die) });
+		char_options.insert({ i - 1, CharacterClass(name, description, stats, skills, sprite_id, clip_x, clip_y, hit_die) });
 	}
 	return true;
 }

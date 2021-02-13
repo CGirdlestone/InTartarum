@@ -212,5 +212,19 @@ namespace utils {
 
         return s;
     }
+
+    std::string read_lua_string(SmartLuaVM& vm, int key, int index)
+    {
+        lua_pushnumber(vm.get(), key);
+        lua_gettable(vm.get(), index);
+        if (!lua_isstring(vm.get(), index + 1)) {
+            printf("Expected number!");
+            return "";
+        }
+        auto val = lua_tostring(vm.get(), index + 1);
+        lua_pop(vm.get(), 1);
+
+        return val;
+    }
 };
 

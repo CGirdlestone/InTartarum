@@ -11,7 +11,12 @@ void WorldMap::__create_dungeon()
 		for (int j = 0; j < grid.get_height(); j++) {
 			auto& tile = grid.get_tile(i, j);
 			auto roll = randomiser.sample(1, 100);
-			tile.set(true, false, TileType::FLOOR);
+			if (roll < 10) {
+				tile.set(false, false, TileType::SHALLOW_WATER);
+			}
+			else {
+				tile.set(true, false, TileType::GRASS);
+			}
 		}
 	}
 	dungeon.swap(level);
@@ -34,7 +39,7 @@ void WorldMap::ray_cast(int x, int y, int radius)
 	grid.get_tile(x, y).explored = true;
 
 	for (unsigned int i = 0; i < sin.size(); ++i) {
-		
+
 		bool hit{ false };
 
 		double	ray_dir_x{ cos[i] };
@@ -71,11 +76,11 @@ void WorldMap::ray_cast(int x, int y, int radius)
 			}
 
 			if (grid.in_bounds(ray_pos_x, ray_pos_y)) {
-				
+
 				grid.get_tile(ray_pos_x, ray_pos_y).visible = true;
 				grid.get_tile(ray_pos_x, ray_pos_y).explored = true;
 				bool object_blocker{ false };
-				
+
 				auto entities = get_entity_grid().get(ray_pos_x, ray_pos_y);
 				if (!entities.empty()) {
 					for (auto e : entities) {
@@ -106,6 +111,60 @@ void WorldMap::ray_cast(int x, int y, int radius)
 void WorldMap::set_seed()
 {
 	randomiser.new_seed();
+}
+
+void WorldMap::do_bitmask()
+{
+	auto& grid = get_level().get_grid();
+
+	Mask directions[9] = { Mask::NORTHWEST, Mask::NORTH, Mask::NORTHEAST, Mask::WEST, Mask::CENTRE, Mask::EAST, Mask::SOUTHWEST, Mask::SOUTH, Mask::SOUTHEAST };
+
+	auto _grid = std::make_unique<uint8_t[]>(grid.get_width() * grid.get_height());
+
+	for (int j = 0; j < grid.get_height(); j++) {
+		for (int i = 0; i < grid.get_width(); i++){
+			if (grid.get_tile(i, j).walkable) {
+				continue;
+			}
+			_grid.get()[i + j * grid.get_width()] = 0;
+			uint8_t mask{ 0 };
+			for (int k = 0; k < 9; k++) {
+				auto n = k % 3 - 1;
+				auto m = k / 3 - 1;
+				if (!grid.in_bounds(i + n , j + m) || (n == 0 && m == 0)) {
+					continue;
+				}
+				if (n * m != 0) {
+					continue;
+				}
+				auto& tile = grid.get_tile(i + n, j + m);
+				if (!tile.walkable) {
+					mask |= static_cast<uint8_t>(directions[k]);
+				}
+			}
+			_grid.get()[i + j * grid.get_width()] = mask;
+		}
+	}
+
+	for (int j = 0; j < grid.get_height(); j++) {
+		for (int i = 0; i < grid.get_width(); i++) {
+			auto& tile = grid.get_tile(i, j);
+			auto mask = _grid.get()[i + j * grid.get_width()];
+			switch (mask){
+				case static_cast<uint8_t>(Mask::NORTH) : tile.type = TileType::WALL_LEFT; break;
+				case static_cast<uint8_t>(Mask::SOUTH) : tile.type = TileType::WALL_LEFT; break;
+				case static_cast<uint8_t>(Mask::EAST) : tile.type = TileType::WALL_TOP; break;
+				case static_cast<uint8_t>(Mask::WEST) : tile.type = TileType::WALL_TOP; break;
+				case static_cast<uint8_t>(Mask::NORTH) | static_cast<uint8_t>(Mask::EAST) : tile.type = TileType::WALL_BL; break;
+				case static_cast<uint8_t>(Mask::NORTH) | static_cast<uint8_t>(Mask::WEST) : tile.type = TileType::WALL_BR; break;
+				case static_cast<uint8_t>(Mask::SOUTH) | static_cast<uint8_t>(Mask::EAST) : tile.type = TileType::WALL_TL; break;
+				case static_cast<uint8_t>(Mask::SOUTH) | static_cast<uint8_t>(Mask::WEST) : tile.type = TileType::WALL_TR; break;
+				case static_cast<uint8_t>(Mask::SOUTH) | static_cast<uint8_t>(Mask::NORTH) : tile.type = TileType::WALL_LEFT; break;
+				case static_cast<uint8_t>(Mask::EAST) | static_cast<uint8_t>(Mask::WEST) : tile.type = TileType::WALL_TOP; break;
+		}
+		}
+	}
+
 }
 
 WorldMap::WorldMap(Level& _town, World& _world): town(_town), world(_world), randomiser(), player_smells(), dungeon(nullptr), entity_grid(nullptr)
@@ -140,6 +199,8 @@ WorldMap::WorldMap(Level& _town, World& _world): town(_town), world(_world), ran
 		sin.push_back(std::sin(static_cast<double>(i) * pi / static_cast<double>(interval / 2)));
 		cos.push_back(std::cos(static_cast<double>(i) * pi / static_cast<double>(interval / 2)));
 	}
+
+	do_bitmask();
 }
 
 void WorldMap::create_dungeon()
@@ -180,17 +241,6 @@ void WorldMap::update_fov(int x, int y, int radius)
 		}
 	}
 	ray_cast(x, y, radius);
-
-	auto lights = world.GetComponents<LightSource, Position>();
-	lights.erase(std::remove_if(lights.begin(), lights.end(), [this](const std::tuple<LightSource*, Position*>& data) { 
-		auto& [ls, pos] = data;
-		return pos->z != this->dungeon_depth;
-	}
-	), lights.end());
-
-	for (auto& [ls, pos] : lights) {
-		ray_cast(pos->x, pos->y, ls->radius);
-	}
 }
 
 void WorldMap::update_scent_trail(int stinkyness)

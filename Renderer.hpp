@@ -37,6 +37,7 @@ private:
 	void DrawMessageLog(MessageLog& message_log);
 	void DrawGameBorder(int x, int y, int width, int height, int height_divider);
 	void DrawHealth(int x, int y, int health, int max_health);
+	void DrawPlayerInfo(WorldMap& world_map);
 	void LoadFont();
 	std::vector<std::string> WrapText(const std::string& text, int line_width);
 public:

@@ -89,15 +89,19 @@ SDL_Keycode Keyboard::handle_input(SDL_Event& event)
 {
 	if (event.type == SDL_KEYDOWN){
 		SDL_Keycode key = event.key.keysym.sym;
-		if (!keys.at(key)) {
-			press(key);
-			return key;
+		if (keys.find(key) != keys.end()) {
+			if (!keys.at(key)) {
+				press(key);
+				return key;
+			}
 		}
 	}
 	else if (event.type == SDL_KEYUP) {
 		SDL_Keycode key = event.key.keysym.sym;
-		if (keys.at(key)) {
-			release(key);
+		if (keys.find(key) != keys.end()) {
+			if (keys.at(key)) {
+				release(key);
+			}
 		}
 	}
 

@@ -231,7 +231,7 @@ void Renderer::DrawMessageLog(MessageLog& message_log)
 	for (int i = 0; i < 10; i++) {
 		const auto& msg = *(it + message_log.get_offset() + i);
 		auto & [r, g, b] = msg.get_colour();
-		DrawText(msg.text, camera.get_offset_x() * camera.get_zoom() , j++, r, g, b);
+		DrawText(msg.text, camera.get_offset_x() * camera.get_zoom(), j++, r, g, b);
 		if ((it + message_log.get_offset()) + i + 1 == messages.rend()) {
 			break;
 		}
@@ -241,7 +241,8 @@ void Renderer::DrawMessageLog(MessageLog& message_log)
 void Renderer::DrawGameBorder(int x, int y, int width, int height, int height_divider)
 {
 	DrawBox(x, y, width, height_divider, true, false, true);
-	DrawBox(x, y + height_divider, width, height - height_divider - 1, false, true, false);
+	DrawBox(x, y + height_divider, width / 2 + 1, height - height_divider - 1, false, false, true);
+	DrawBox(x + width / 2 + 1, y + height_divider, width / 2, height - height_divider - 1, false, false, true);
 }
 
 void Renderer::DrawHealth(int x, int y, int health, int max_health)
@@ -281,6 +282,34 @@ void Renderer::DrawHealth(int x, int y, int health, int max_health)
 		SDL_SetTextureColorMod(texture_manager.GetTexture(font_id), r, g, b);
 		SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(font_id), &srcrect, &dstrect);
 	}
+}
+
+void Renderer::DrawPlayerInfo(WorldMap& world_map)
+{
+	std::string depth = "Dungeon depth: ";
+
+	int hp = 20;
+	int max_hp = 20;
+	std::string health = "Health: " + std::to_string(hp) + '/' + std::to_string(max_hp);
+	if (max_hp / hp >= 10) {
+		DrawText(health, 5 + depth.length(), 0, 0xCD, 0x5C, 0x5C);
+	}
+	else {
+		DrawText(health, 5 + depth.length(), 0, 0xBB, 0xAA, 0x99);
+	}
+
+	int xp = 300;
+	int max_xp = 500;
+	std::string experience = "Exp: " + std::to_string(xp) + '/' + std::to_string(max_xp);
+	DrawText(experience, 5 + depth.length() + health.length() + 2, 0, 0xB0, 0xC4, 0xDE);
+
+	auto dungeon_depth = std::to_string(world_map.get_current_depth());
+	depth += dungeon_depth;
+	DrawText(depth, camera.get_offset_x() * camera.get_zoom() + 1, 0, 0xBB, 0xAA, 0x99);
+
+	int j{ camera.get_height() + 2 * camera.get_offset_y() };
+	std::string player_level = "Level: 1";
+	DrawText(player_level, window.GetWidth() / 2 + 1, j, 0xBB, 0xAA, 0x99);
 }
 
 void Renderer::LoadFont()
@@ -352,23 +381,7 @@ std::vector<std::string> Renderer::WrapText(const std::string& text, int line_wi
 void Renderer::DrawFPS(uint32_t fps)
 {
 	std::string fps_str = std::to_string(fps);
-
-	for (unsigned int i = 0; i < fps_str.size(); i++) {
-		SDL_Rect dstrect;
-		dstrect.x = (i + 1) * 16;
-		dstrect.y = 2 * 16;
-		dstrect.w = 16;
-		dstrect.h = 16;
-
-		int x = static_cast<int>(fps_str[i]);
-
-		SDL_Rect srcrect;
-		srcrect.x = (36 + (x - 49)) * 16;
-		srcrect.y = 17 * 16;
-		srcrect.w = 16;
-		srcrect.h = 16;
-		SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(texture_manager.LoadTexture("./Resources/colored_packed.png")), &srcrect, &dstrect);
-	}
+	DrawText(fps_str, 2, 2, 0xBB, 0xAA, 0x99);
 }
 
 void Renderer::DrawMapTexture(int x, int y)
@@ -523,16 +536,12 @@ void Renderer::DrawScene(uint32_t fps, WorldMap& world_map, MessageLog& message_
 
 	DrawFPS(fps);
 	DrawGameBorder(0, 0, camera.get_width() + camera.get_offset_x(), window.GetHeight(), camera.get_height() + camera.get_offset_y());
-	std::string depth = "Dungeon depth: ";
-	DrawHealth(5 + depth.length(), 0, 50, 60);
+	
 
-	auto dungeon_depth = std::to_string(world_map.get_current_depth());
-	depth += dungeon_depth;
-	DrawText(depth, camera.get_offset_x() * camera.get_zoom() + 1, 0, 0xBB, 0xAA, 0x99);
+	DrawPlayerInfo(world_map);
 	
 	if (!message_log.get_messages().empty()){
 		DrawMessageLog(message_log);
-
 	}
 }
 

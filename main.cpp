@@ -65,27 +65,31 @@ void RegisterComponents(World& world) {
 }
 
 void load_tiles(Renderer& renderer, TextureManager& tex_manager, unsigned int font_tileset, int tile_width, int tile_height) {
-	renderer.AddTile(TileType::EMPTY,		Sprite(font_tileset, 0 * tile_width, 0 * tile_height, tile_width, tile_height, 0));
-	renderer.AddTile(TileType::FLOOR,		Sprite(font_tileset, 14 * tile_width, 2 * tile_height, tile_width, tile_height, 0, 0x3D, 0x35, 0x2A));
-	renderer.AddTile(TileType::WALL_TL,		Sprite(font_tileset,  9 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::WALL_TOP,	Sprite(font_tileset,  13 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::WALL_TR,		Sprite(font_tileset,  11 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::WALL_LEFT,	Sprite(font_tileset,  10 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::WALL_RIGHT,	Sprite(font_tileset,  10 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::WALL_BL,		Sprite(font_tileset,  8 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::WALL_BR,		Sprite(font_tileset,  12 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::WALL_BOTTOM,	Sprite(font_tileset,  13 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::WALL_LEFT_T, Sprite(font_tileset, 12 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::WALL_RIGHT_T,Sprite(font_tileset, 9 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::BORDER_TL,	Sprite(font_tileset, 10 * tile_width, 13 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::BORDER_TR,	Sprite(font_tileset, 15 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::EMPTY,			Sprite(font_tileset, 0 * tile_width, 0 * tile_height, tile_width, tile_height, 0));
+	renderer.AddTile(TileType::FLOOR,			Sprite(font_tileset, 14 * tile_width, 2 * tile_height, tile_width, tile_height, 0, 0x3D, 0x35, 0x2A));
+	renderer.AddTile(TileType::GRASS,			Sprite(font_tileset, 2 * tile_width, 2 * tile_height, tile_width, tile_height, 0, 0x86, 0xAF, 0x80));
+	renderer.AddTile(TileType::SHALLOW_WATER,	Sprite(font_tileset, 7 * tile_width, 15 * tile_height, tile_width, tile_height, 0, 0x87, 0xCE, 0xEB));
+	renderer.AddTile(TileType::DEEP_WATER,		Sprite(font_tileset, 7 * tile_width, 15 * tile_height, tile_width, tile_height, 0, 0x69, 0x95, 0xED));
+	renderer.AddTile(TileType::ROAD,			Sprite(font_tileset, 14 * tile_width, 7 * tile_height, tile_width, tile_height, 0, 0x55, 0x44, 0x44));
+	renderer.AddTile(TileType::WALL_TL,			Sprite(font_tileset, 9 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::WALL_TOP,		Sprite(font_tileset, 13 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::WALL_TR,			Sprite(font_tileset, 11 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::WALL_LEFT,		Sprite(font_tileset, 10 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::WALL_RIGHT,		Sprite(font_tileset, 10 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::WALL_BL,			Sprite(font_tileset, 8 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::WALL_BR,			Sprite(font_tileset, 12 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::WALL_BOTTOM,		Sprite(font_tileset, 13 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::WALL_LEFT_T,		Sprite(font_tileset, 12 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::WALL_RIGHT_T,	Sprite(font_tileset, 9 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::BORDER_TL,		Sprite(font_tileset, 10 * tile_width, 13 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::BORDER_TR,		Sprite(font_tileset, 15 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
 	renderer.AddTile(TileType::BORDER_HORIZONTAL, Sprite(font_tileset, 4 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
 	renderer.AddTile(TileType::BORDER_VERTICAL, Sprite(font_tileset, 3 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::BORDER_BL,	Sprite(font_tileset, 0 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::BORDER_BR,	Sprite(font_tileset, 9 * tile_width, 13 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::BORDER_LEFT_T, Sprite(font_tileset, 3 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::BORDER_RIGHT_T, Sprite(font_tileset, 4 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::STAIRS,		Sprite(font_tileset, 14 * tile_width, 3 * tile_height, tile_width, tile_height, 0, 0xCD, 0x5C, 0x5C));
+	renderer.AddTile(TileType::BORDER_BL,		Sprite(font_tileset, 0 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::BORDER_BR,		Sprite(font_tileset, 9 * tile_width, 13 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::BORDER_LEFT_T,	Sprite(font_tileset, 3 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::BORDER_RIGHT_T,	Sprite(font_tileset, 4 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::STAIRS,			Sprite(font_tileset, 14 * tile_width, 3 * tile_height, tile_width, tile_height, 0, 0xCD, 0x5C, 0x5C));
 }
 
 void build_town(Level& level, World& world, TextureManager& texture_manager, unsigned int font_tileset, int tile_width, int tile_height) {
@@ -94,53 +98,23 @@ void build_town(Level& level, World& world, TextureManager& texture_manager, uns
 
 	for (int i = 0; i < grid.get_width(); i++) {
 		for (int j = 0; j < grid.get_height(); j++) {
-			if (i == 0 && j ==0) {
-				grid.set_tile(i, j, false, true, TileType::WALL_TL);
-			}
-			else if (i == grid.get_width() - 1 && j ==0) {
-				grid.set_tile(i, j, false, true, TileType::WALL_TR);
-			}
-			else if (i == 0 && j == grid.get_height() - 1) {
-				grid.set_tile(i, j, false, true, TileType::WALL_BL);
-			}
-			else if (i == grid.get_width() - 1 && j == grid.get_height() - 1) {
-				grid.set_tile(i, j, false, true, TileType::WALL_BR);
-			}
-			else if (i == 0 || i == grid.get_width() - 1) {
-				grid.set_tile(i, j, false, true, TileType::WALL_LEFT);
-			}
-			else if (j == 0 || j == grid.get_height() - 1) {
-				grid.set_tile(i, j, false, true, TileType::WALL_TOP);
+			if (i == 0 || j == 0 || i == grid.get_width() - 1 || j == grid.get_height() - 1) {
+				grid.set_tile(i, j, false, true, TileType::FLOOR);
 			}
 			else {
-				grid.set_tile(i, j, true, false, TileType::FLOOR);
+				grid.set_tile(i, j, true, false, TileType::GRASS);
 			}
 		}
 	}
 	
-	for (int i = 10; i < 20; i++) {
+	for (int i = 10; i < 21; i++) {
 		for (int j = 10; j < 16; j++) {
 			if (i == 15 && j == 15) {
 				grid.set_tile(i, j, true, false, TileType::FLOOR);
 				continue;
 			}
-			if (i == 10 && j == 10) {
-				grid.set_tile(i, j, false, true, TileType::WALL_TL);
-			}
-			else if (i == 20 - 1 && j == 10) {
-				grid.set_tile(i, j, false, true, TileType::WALL_TR);
-			}
-			else if (i == 10 && j == 16 - 1) {
-				grid.set_tile(i, j, false, true, TileType::WALL_BL);
-			}
-			else if (i == 20 - 1 && j == 16 - 1) {
-				grid.set_tile(i, j, false, true, TileType::WALL_BR);
-			}
-			else if (i == 10 || i == 20 - 1) {
-				grid.set_tile(i, j, false, true, TileType::WALL_LEFT);
-			}
-			else if (j == 10 || j == 16 - 1) {
-				grid.set_tile(i, j, false, true, TileType::WALL_TOP);
+			if ( i == 10 || j == 10 || i == 21 - 1 || j == 16 - 1) {
+				grid.set_tile(i, j, false, true, TileType::FLOOR);
 			}
 			else {
 				grid.set_tile(i, j, true, false, TileType::FLOOR);
@@ -166,32 +140,31 @@ void build_town(Level& level, World& world, TextureManager& texture_manager, uns
 
 
 	auto npc = world.CreateEntity();
-	int npc_x{ 18 }, npc_y{ 21 };
+	int npc_x{ 15 }, npc_y{ 11 };
 	world.AddComponent<Position>(npc, npc_x, npc_y, 0);
 	world.AddComponent<Sprite>(npc, font_tileset, 1 * tile_width, 0 * tile_height, tile_width, tile_height, 1);
 	world.AddComponent<Blocker>(npc);
 	world.AddComponent<Actor>(npc);
 
 	auto chest = world.CreateEntity();
-	world.AddComponent<Position>(chest, 15, 20, 0);
+	world.AddComponent<Position>(chest, 11, 11, 0);
 	world.AddComponent<Sprite>(chest, font_tileset, 11 * tile_width, 13 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99);
 	world.AddComponent<Animation>(chest, 0.1f, font_tileset, 12 * tile_width, 13 * tile_height, tile_width, tile_height, false);
 	world.AddComponent<Blocker>(chest);
 	world.AddComponent<Interactable>(chest);
 	auto* chest_animation = world.GetComponent<Animation>(chest);
 	chest_animation->animations.at(state::IDLE).push_back(AnimFrame(font_tileset, 11 * tile_width, 13 * tile_height, tile_width, tile_height));
-
 	world.AddComponent<Scriptable>(chest, chest);
 	script = world.GetComponent<Scriptable>(chest);
 	script->OnBump = "OPEN_CHEST";
 
 	auto fire = world.CreateEntity();
-	world.AddComponent<Position>(fire, 23, 23, 0);
+	world.AddComponent<Position>(fire, 15, 13, 0);
 	world.AddComponent<Sprite>(fire, font_tileset, 5 * tile_width, 1 * tile_height, tile_width, tile_height, 0, 0xCD, 0x5C, 0x5C);
 	world.AddComponent<Animation>(fire, 0.1f, font_tileset, 4 * tile_width, 2 * tile_height, tile_width, tile_height);
 	auto fire_animation = world.GetComponent<Animation>(fire);
 	fire_animation->animations.at(state::IDLE).push_back(AnimFrame(font_tileset, 5 * tile_width, 1 * tile_height, tile_width, tile_height));
-	world.AddComponent<LightSource>(fire, 10);
+	world.AddComponent<Blocker>(fire);
 }
 
 int main(int argc, char* argv[])
@@ -236,9 +209,7 @@ int main(int argc, char* argv[])
 		auto tex_manager = TextureManager(window);
 
 		auto font_tileset = tex_manager.LoadTexture(tileset_path);
-		auto empty_skill = tex_manager.LoadTexture("./Resources/Skills/EmptyButton.png");
 		auto splash = tex_manager.LoadTexture("./Resources/fog01.png");
-		auto parchment = tex_manager.LoadTexture("./Resources/Parchment.jpg");
 		auto fireball = tex_manager.LoadTexture("./Resources/Skills/fireball.png");
 		
 		auto sound_manager = SoundManager();

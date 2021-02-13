@@ -3,6 +3,10 @@
 enum class TileType {
 	EMPTY,
 	FLOOR,
+	GRASS,
+	SHALLOW_WATER,
+	DEEP_WATER,
+	ROAD,
 	WALL_TL,
 	WALL_TOP,
 	WALL_TR,

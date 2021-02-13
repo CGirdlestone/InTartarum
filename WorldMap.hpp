@@ -6,6 +6,18 @@
 #include "RandomNumberGenerator.hpp"
 #include "Pathfinding.hpp"
 
+enum class Mask {
+	NORTH = static_cast<uint8_t>(1) << 0,
+	NORTHEAST = static_cast<uint8_t>(1) << 1,
+	EAST = static_cast<uint8_t>(1) << 2,
+	SOUTHEAST = static_cast<uint8_t>(1) << 3,
+	CENTRE = static_cast<uint8_t>(0), // because we scan in a 3 x 3 grid so this effectively skips the entry
+	SOUTH = static_cast<uint8_t>(1) << 4,
+	SOUTHWEST = static_cast<uint8_t>(1) << 5,
+	WEST = static_cast<uint8_t>(1) << 6,
+	NORTHWEST = static_cast<uint8_t>(1) << 7,
+};
+
 class WorldMap
 {
 private:
@@ -28,6 +40,7 @@ private:
 	void populate_level();
 	void ray_cast(int x, int y, int radius);
 	void set_seed();
+	void do_bitmask();
 public:
 	WorldMap(Level& _town, World& _world);
 	~WorldMap() {};
