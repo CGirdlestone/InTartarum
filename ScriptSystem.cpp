@@ -24,8 +24,6 @@ void ScriptSystem::load_bump_scripts()
 		sprite->clip_y = state.clip_y;
 		sprite->width = state.width;
 		sprite->height = state.height;
-
-		
 	};
 
 	auto open_door_script = [](World& world, EventManager& event_manager, SoundManager& sound_manager, TextureManager& texture_manager, int tile_width, int tile_height, uint32_t entity, uint32_t target) {

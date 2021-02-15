@@ -1,14 +1,155 @@
+ID = 
+{
+    ["HEAD"] = 0,
+    ["CHEST"]  = 1,
+    ["LEFT_HAND"] = 2,
+    ["RIGHT_HAND"] = 3,
+    ["NECK"] = 4,
+    ["LEGS"] = 5,
+    ["HANDS"] = 6,
+    ["BOOTS"] = 7,
+    ["RING"] = 8,
+}
 
-rusty_sword = {
+width = 14;
+height = 16;
+
+fire_sword = 
+{
     item = 
     {
-        name = "sword", description = "A rusty iron sword."
+        name = "sword of fire", description = "A blazin' sword."
     };
     sprite = 
     {
         tilesheet = "Cooz-curses-14x16.png", 
         clip_x = 15, clip_y = 2, 
         width = 14, height = 16, depth = 1,
+        red = 205, green = 92, blue = 92,
+    };
+    equipable = 
+    {
+        slot = ID["RIGHT_HAND"]
+    };
+    script = 
+    {
+        --OnInit = "";
+        --OnUpdate = "";
+        --OnBump = "";
+        --OnDeath = "";
+        OnEquip = "buff_strength",
+        OnUnequip = "debuff_strength",
+        --OnUse = "";
+        --OnHit = "";
+    };
+    weapon = 
+    {
+        num_dice = 2,
+        sides = 8,
+    };
+}
+
+chest = 
+{
+    sprite = 
+    {
+        tilesheet = "Cooz-curses-14x16.png", 
+        clip_x = 11, clip_y = 13, 
+        width = 14, height = 16, depth = 1,
         red = 187, green = 170, blue = 153,
+    };
+    script = 
+    {
+        --OnInit = "";
+        --OnUpdate = "";
+        OnBump = "OPEN_CHEST";
+        --OnDeath = "";
+        --OnEquip = "buff_strength",
+        --OnUnequip = "debuff_strength",
+        --OnUse = "";
+        --OnHit = "";
+    };
+    blocker = 
+    {
+        blocks_view = true;
+    };
+    interactable = 
+    {
+        repeatable = true;
+    };
+    animation = 
+    {
+        lifetime = 0.1;
+        dynamic = false;
+        frames = 
+        {
+            { tilesheet = "Cooz-curses-14x16.png", clip_x = 12 * width, clip_y = 13 * height, width = width, height = height };
+            { tilesheet = "Cooz-curses-14x16.png", clip_x = 11 * width, clip_y = 13 * height, width = width, height = height };
+        }
+    };
+}
+
+door = 
+{
+    sprite = 
+    {
+        tilesheet = "Cooz-curses-14x16.png", 
+        clip_x = 11, clip_y = 2, 
+        width = 14, height = 16, depth = 1,
+        red = 187, green = 170, blue = 153,
+    };
+    script = 
+    {
+        --OnInit = "";
+        --OnUpdate = "";
+        OnBump = "OPEN_DOOR";
+        --OnDeath = "";
+        --OnEquip = "buff_strength",
+        --OnUnequip = "debuff_strength",
+        --OnUse = "";
+        --OnHit = "";
+    };
+    blocker = 
+    {
+        blocks_view = true;
+    };
+    interactable = 
+    {
+        repeatable = true;
+    };
+    animation = 
+    {
+        lifetime = 0.1;
+        dynamic = false;
+        frames = 
+        {
+            { tilesheet = "Cooz-curses-14x16.png", clip_x = 13 * width, clip_y = 2 * height, width = width, height = height };
+            { tilesheet = "Cooz-curses-14x16.png", clip_x = 11 * width, clip_y = 2 * height, width = width, height = height };
+        }
+    };
+}
+
+camp_fire = 
+{
+    sprite = 
+    {
+        tilesheet = "Cooz-curses-14x16.png", 
+        clip_x = 5, clip_y = 1, 
+        width = 14, height = 16, depth = 1,
+        red = 205, green = 92, blue = 92,
+    };
+    blocker = 
+    {
+        blocks_view = false;
+    };
+    animation = 
+    {
+        lifetime = 0.1;
+        dynamic = true;
+        frames = 
+        {
+            { tilesheet = "Cooz-curses-14x16.png", clip_x = 4 * width, clip_y = 2 * height, width = width, height = height };
+            { tilesheet = "Cooz-curses-14x16.png", clip_x = 5 * width, clip_y = 1 * height, width = width, height = height };
+        }
     };
 }

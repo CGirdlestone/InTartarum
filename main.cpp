@@ -62,6 +62,9 @@ void RegisterComponents(World& world) {
 	world.RegisterComponent<Blocker>();
 	world.RegisterComponent<Interactable>();
 	world.RegisterComponent<LightSource>();
+	world.RegisterComponent<Item>();
+	world.RegisterComponent<Weapon>();
+	world.RegisterComponent<Equipable>();
 }
 
 void load_tiles(Renderer& renderer, TextureManager& tex_manager, unsigned int font_tileset, int tile_width, int tile_height) {
@@ -92,7 +95,7 @@ void load_tiles(Renderer& renderer, TextureManager& tex_manager, unsigned int fo
 	renderer.AddTile(TileType::STAIRS,			Sprite(font_tileset, 14 * tile_width, 3 * tile_height, tile_width, tile_height, 0, 0xCD, 0x5C, 0x5C));
 }
 
-void build_town(Level& level, World& world, TextureManager& texture_manager, unsigned int font_tileset, int tile_width, int tile_height) {
+void build_town(Level& level, World& world, TextureManager& texture_manager, EntityFactory& entity_factory, unsigned int font_tileset, int tile_width, int tile_height) {
 	// placeholder
 	auto& grid = level.get_grid();
 
@@ -124,47 +127,20 @@ void build_town(Level& level, World& world, TextureManager& texture_manager, uns
 
 	grid.set_tile(25, 25, true, false, TileType::STAIRS);
 
-	auto door = world.CreateEntity();
-	world.AddComponent<Position>(door, 15, 15, 0);
-	world.AddComponent<Sprite>(door, font_tileset, 11 * tile_width, 2 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99);
-	world.AddComponent<Animation>(door, 0.1f, font_tileset, 13 * tile_width, 2 * tile_height, tile_width, tile_height, false);
-	world.AddComponent<Interactable>(door);
-	world.AddComponent<Blocker>(door, true);
-	auto* door_animation = world.GetComponent<Animation>(door);
-	door_animation->animations.at(state::IDLE).push_back(AnimFrame(font_tileset, 11 * tile_width, 2 * tile_height, tile_width, tile_height));
+	std::string door = "door";
+	entity_factory.create_item(door, 15, 15, 0);
 
-	world.AddComponent<Scriptable>(door, door);
-	auto* script = world.GetComponent<Scriptable>(door);
-	script->OnBump = "OPEN_DOOR";
+	std::string npc = "npc";
+	entity_factory.create_npc(npc, 15, 11, 0);
 
+	std::string chest = "chest";
+	entity_factory.create_item(chest, 11, 11, 0);
 
-
-	auto npc = world.CreateEntity();
-	int npc_x{ 15 }, npc_y{ 11 };
-	world.AddComponent<Position>(npc, npc_x, npc_y, 0);
-	world.AddComponent<Sprite>(npc, font_tileset, 1 * tile_width, 0 * tile_height, tile_width, tile_height, 1);
-	world.AddComponent<Blocker>(npc);
-	world.AddComponent<Actor>(npc);
-
-	auto chest = world.CreateEntity();
-	world.AddComponent<Position>(chest, 11, 11, 0);
-	world.AddComponent<Sprite>(chest, font_tileset, 11 * tile_width, 13 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99);
-	world.AddComponent<Animation>(chest, 0.1f, font_tileset, 12 * tile_width, 13 * tile_height, tile_width, tile_height, false);
-	world.AddComponent<Blocker>(chest);
-	world.AddComponent<Interactable>(chest);
-	auto* chest_animation = world.GetComponent<Animation>(chest);
-	chest_animation->animations.at(state::IDLE).push_back(AnimFrame(font_tileset, 11 * tile_width, 13 * tile_height, tile_width, tile_height));
-	world.AddComponent<Scriptable>(chest, chest);
-	script = world.GetComponent<Scriptable>(chest);
-	script->OnBump = "OPEN_CHEST";
-
-	auto fire = world.CreateEntity();
-	world.AddComponent<Position>(fire, 15, 13, 0);
-	world.AddComponent<Sprite>(fire, font_tileset, 5 * tile_width, 1 * tile_height, tile_width, tile_height, 0, 0xCD, 0x5C, 0x5C);
-	world.AddComponent<Animation>(fire, 0.1f, font_tileset, 4 * tile_width, 2 * tile_height, tile_width, tile_height);
-	auto fire_animation = world.GetComponent<Animation>(fire);
-	fire_animation->animations.at(state::IDLE).push_back(AnimFrame(font_tileset, 5 * tile_width, 1 * tile_height, tile_width, tile_height));
-	world.AddComponent<Blocker>(fire);
+	std::string sword = "fire_sword";
+	entity_factory.create_item(sword, 21, 21, 0);
+	
+	std::string fire = "camp_fire";
+	entity_factory.create_item(fire, 15, 13, 0);
 }
 
 int main(int argc, char* argv[])
@@ -225,7 +201,7 @@ int main(int argc, char* argv[])
 		load_tiles(renderer, tex_manager, font_tileset, tile_width, tile_height);
 		
 		auto town = Level();
-		build_town(town, world, tex_manager, font_tileset, tile_width, tile_height);
+		build_town(town, world, tex_manager, entity_factory, font_tileset, tile_width, tile_height);
 
 		auto world_map = WorldMap(town, world);
 

@@ -238,3 +238,33 @@ void Fighter::deserialise(const char* buffer, size_t& offset)
 	cha_buff = static_cast<int>(utils::deserialiseUint32(buffer, offset));
 	cha_mod = static_cast<int>(utils::deserialiseUint32(buffer, offset));
 }
+
+void Item::serialise(std::ofstream& file)
+{
+
+}
+
+void Item::deserialise(const char* buffer, size_t& offset)
+{
+
+}
+
+void Equipable::serialise(std::ofstream& file)
+{
+
+}
+
+void Equipable::deserialise(const char* buffer, size_t& offset)
+{
+
+}
+
+void Weapon::serialise(std::ofstream& file)
+{
+
+}
+
+void Weapon::deserialise(const char* buffer, size_t& offset)
+{
+
+}

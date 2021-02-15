@@ -12,6 +12,7 @@ struct ISerializeable {
 class World;
 
 enum class state { IDLE, WALK_LEFT, WALK_RIGHT, WALK_UP, WALK_DOWN };
+enum class Slot { HEAD, CHEST, LEFT_HAND, RIGHT_HAND, NECK, LEGS, HANDS, BOOTS, RING};
 
 struct Position : public ISerializeable {
 	Position() {};
@@ -118,6 +119,9 @@ struct Animation : public ISerializeable {
 		: lifetime(_lifetime), dynamic(is_dynamic) {
 		animations.insert({ state::IDLE, {AnimFrame(_id, _clip_x, _clip_y, _width, _height)} });
 	};
+	Animation(float _lifetime, bool is_dynamic) : lifetime(_lifetime), dynamic(is_dynamic) {
+		animations.insert({ state::IDLE, {} });
+	};
 	~Animation() {};
 	float dt{ 0.0f };
 	float lifetime{ 1.0f };
@@ -148,6 +152,10 @@ struct Scriptable : public ISerializeable {
 	std::string OnUpdate{ "" };
 	std::string OnBump{ "" };
 	std::string OnDeath{ "" };
+	std::string OnEquip{ "" };
+	std::string OnUnequip{ "" };
+	std::string OnUse{ "" };
+	std::string OnHit{ "" };
 	uint32_t owner{ 0 };
 
 	virtual void serialise(std::ofstream& file) override;
@@ -179,6 +187,38 @@ struct Fighter : public ISerializeable {
 	int base_charisma{ 0 };
 	int cha_buff{ 0 };
 	int cha_mod{ 0 };
+
+	virtual void serialise(std::ofstream& file) override;
+	virtual void deserialise(const char* buffer, size_t& offset) override;
+};
+
+struct Item : public ISerializeable {
+	Item() {};
+	~Item() {};
+	Item(const std::string& _name, const std::string& _description) : name(_name), description(_description) {};
+	std::string name{ "" };
+	std::string description{ "" };
+
+	virtual void serialise(std::ofstream& file) override;
+	virtual void deserialise(const char* buffer, size_t& offset) override;
+};
+
+struct Equipable : public ISerializeable {
+	Equipable() {};
+	~Equipable() {};
+	Equipable(Slot _slot) : slot(_slot) {};
+	Slot slot{ Slot::HEAD };
+
+	virtual void serialise(std::ofstream& file) override;
+	virtual void deserialise(const char* buffer, size_t& offset) override;
+};
+
+struct Weapon : public ISerializeable {
+	Weapon() {};
+	~Weapon() {};
+	Weapon(int _num_dice, int _sides) : num_dice(_num_dice), sides(_sides) {};
+	int num_dice{ 0 };
+	int sides{ 0 };
 
 	virtual void serialise(std::ofstream& file) override;
 	virtual void deserialise(const char* buffer, size_t& offset) override;

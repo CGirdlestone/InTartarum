@@ -10,7 +10,10 @@ player_table =
         width = 14, height = 16, depth = 1, -- depth = 1 ensures the player will be drawn above everything else
         red = 255, green = 167, blue = 93,
     };
-    player = {vision = 8};
+    player = 
+    {
+        vision = 8,
+    };
     blocker = {true};
 }
 

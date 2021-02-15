@@ -21,6 +21,10 @@ namespace utils {
 
 	int read_lua_int(SmartLuaVM& vm, const char* key, int index);
 	int read_lua_int(SmartLuaVM& vm, int key, int index);
+	float read_lua_float(SmartLuaVM& vm, const char* key, int index);
+	float read_lua_float(SmartLuaVM& vm, int key, int index);
+	bool read_lua_bool(SmartLuaVM& vm, const char* key, int index);
+	bool read_lua_bool(SmartLuaVM& vm, int key, int index);
 	std::string read_lua_string(SmartLuaVM& vm, const char* key, int index);
 	std::string read_lua_string(SmartLuaVM& vm, int key, int index);
 }

@@ -13,6 +13,7 @@ public:
 	uint32_t create_player();
 	uint32_t create_item(std::string& entity_name, int x, int y, int z);
 	uint32_t create_item(std::string& entity_name); // used to create items that are owned (inventory or equipped) by an actor
+	uint32_t create_npc(std::string& entity_name, int x, int y, int z);
 private:
 	World& world;
 	TextureManager& texture_manager;
@@ -29,6 +30,9 @@ private:
 	void create_animation(uint32_t& entity);
 	void create_particle(uint32_t& entity);
 	void create_script(uint32_t& entity);
+	void create_item(uint32_t& entity);
+	void create_equipable(uint32_t& entity);
+	void create_weapon(uint32_t& entity);
 };
 
 

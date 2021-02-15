@@ -206,6 +206,66 @@ namespace utils {
         return val;
     }
 
+    float read_lua_float(SmartLuaVM& vm, const char* key, int index)
+    {
+        lua_pushstring(vm.get(), key);
+        lua_gettable(vm.get(), index);
+        if (!lua_isnumber(vm.get(), -1)) {
+            printf("Expected number!");
+            lua_pop(vm.get(), 1);
+            return -1;
+        }
+        auto val = static_cast<float>(lua_tonumber(vm.get(), -1));
+        lua_pop(vm.get(), 1);
+
+        return val;
+    }
+
+    float read_lua_float(SmartLuaVM& vm, int key, int index)
+    {
+        lua_pushnumber(vm.get(), key);
+        lua_gettable(vm.get(), index);
+        if (!lua_isnumber(vm.get(), -1)) {
+            printf("Expected number!");
+            lua_pop(vm.get(), 1);
+            return -1;
+        }
+        auto val = static_cast<float>(lua_tonumber(vm.get(), -1));
+        lua_pop(vm.get(), 1);
+
+        return val;
+    }
+
+    bool read_lua_bool(SmartLuaVM& vm, const char* key, int index)
+    {
+        lua_pushstring(vm.get(), key);
+        lua_gettable(vm.get(), index);
+        if (!lua_isboolean(vm.get(), -1)) {
+            printf("Expected bool!");
+            lua_pop(vm.get(), 1);
+            return -1;
+        }
+        auto val = lua_toboolean(vm.get(), -1);
+        lua_pop(vm.get(), 1);
+
+        return val;
+    }
+
+    bool read_lua_bool(SmartLuaVM& vm, int key, int index)
+    {
+        lua_pushnumber(vm.get(), key);
+        lua_gettable(vm.get(), index);
+        if (!lua_isboolean(vm.get(), -1)) {
+            printf("Expected bool!");
+            lua_pop(vm.get(), 1);
+            return -1;
+        }
+        auto val = lua_toboolean(vm.get(), -1);
+        lua_pop(vm.get(), 1);
+
+        return val;
+    }
+
     std::string read_lua_string(SmartLuaVM& vm, const char* key, int index)
     {
         lua_pushstring(vm.get(), key);
