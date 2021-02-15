@@ -7,6 +7,7 @@
 #include "World.hpp"
 #include "Utils.hpp"
 #include "CharacterClass.hpp"
+#include "EntityFactory.hpp"
 
 class CharacterCreationScreen : public BaseState
 {
@@ -16,6 +17,7 @@ private:
 	TextureManager& tex_manager;
 	EventManager& event_manager;
 	Keyboard& keyboard;
+	EntityFactory& entity_factory;
 	int tile_width{ 0 };
 	int tile_height{ 0 };
 	unsigned int tileset{ 0 };
@@ -26,9 +28,10 @@ private:
 	int selection{ 0 };
 
 	bool load_character_classes();
+	void create_player();
 
 public:
-	CharacterCreationScreen(StateManager& _state_manager, World& _world, TextureManager& _tex_manager, EventManager& _event_manager, Keyboard& _keyboard, int _tile_width, int _tile_height, unsigned int _tileset);
+	CharacterCreationScreen(StateManager& _state_manager, World& _world, TextureManager& _tex_manager, EventManager& _event_manager, Keyboard& _keyboard, EntityFactory& _entity_factory, int _tile_width, int _tile_height, unsigned int _tileset);
 	~CharacterCreationScreen() {};
 	virtual void handle_input(SDL_Event& event) override;
 	virtual void on_tick() override;

@@ -154,6 +154,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CharacterCreationScreen.cpp" />
     <ClCompile Include="Components.cpp" />
+    <ClCompile Include="EntityFactory.cpp" />
     <ClCompile Include="GameScreen.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="Keyboard.cpp" />
@@ -185,6 +186,7 @@
     <ClInclude Include="CharacterCreationScreen.hpp" />
     <ClInclude Include="Common.hpp" />
     <ClInclude Include="Components.hpp" />
+    <ClInclude Include="EntityFactory.hpp" />
     <ClInclude Include="EntityGrid.hpp" />
     <ClInclude Include="Environment.hpp" />
     <ClInclude Include="EventManager.hpp" />

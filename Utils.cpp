@@ -3,6 +3,11 @@
 #include "Utils.hpp"
 
 namespace utils {
+    int getAttributeMod(int attrib)
+    {
+        return (attrib - 10) / 2;
+    }
+
     int roll(std::string& die_roll, bool drop_lowest) 
     {
         /* This calculates the total score for rolling 'x' number of 'm'-sided dice. */
@@ -175,11 +180,12 @@ namespace utils {
     {
         lua_pushstring(vm.get(), key);
         lua_gettable(vm.get(), index);
-        if (!lua_isnumber(vm.get(), index + 1)) {
+        if (!lua_isnumber(vm.get(), -1)) {
             printf("Expected number!");
+            lua_pop(vm.get(), 1);
             return -1;
         }
-        auto val = lua_tointeger(vm.get(), index + 1);
+        auto val = lua_tointeger(vm.get(), -1);
         lua_pop(vm.get(), 1);
 
         return val;
@@ -189,11 +195,12 @@ namespace utils {
     {
         lua_pushnumber(vm.get(), key);
         lua_gettable(vm.get(), index);
-        if (!lua_isnumber(vm.get(), index + 1)) {
+        if (!lua_isnumber(vm.get(), -1)) {
             printf("Expected number!");
+            lua_pop(vm.get(), 1);
             return -1;
         }
-        auto val = lua_tointeger(vm.get(), index + 1);
+        auto val = lua_tointeger(vm.get(), -1);
         lua_pop(vm.get(), 1);
 
         return val;
@@ -203,11 +210,12 @@ namespace utils {
     {
         lua_pushstring(vm.get(), key);
         lua_gettable(vm.get(), index);
-        if (!lua_isstring(vm.get(), index + 1)) {
+        if (!lua_isstring(vm.get(), -1)) {
             printf("Expected string!");
+            lua_pop(vm.get(), 1);
             return std::string("");
         }
-        auto s = std::string(lua_tostring(vm.get(), index + 1));
+        auto s = std::string(lua_tostring(vm.get(), -1));
         lua_pop(vm.get(), 1);
 
         return s;
@@ -217,11 +225,12 @@ namespace utils {
     {
         lua_pushnumber(vm.get(), key);
         lua_gettable(vm.get(), index);
-        if (!lua_isstring(vm.get(), index + 1)) {
+        if (!lua_isstring(vm.get(), -1)) {
             printf("Expected number!");
+            lua_pop(vm.get(), 1);
             return "";
         }
-        auto val = lua_tostring(vm.get(), index + 1);
+        auto val = lua_tostring(vm.get(), -1);
         lua_pop(vm.get(), 1);
 
         return val;

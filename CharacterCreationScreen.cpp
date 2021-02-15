@@ -4,7 +4,7 @@ bool CharacterCreationScreen::load_character_classes()
 {
 	SmartLuaVM vm(nullptr, &lua_close);
 	vm.reset(luaL_newstate());
-	auto result = luaL_dofile(vm.get(), "./Resources/Data/PlayerClasses/PlayerClasses.lua");
+	auto result = luaL_dofile(vm.get(), "./Resources/Data/PlayerData/PlayerClasses.lua");
 
 	if (result != LUA_OK) {
 		return false;
@@ -109,8 +109,23 @@ bool CharacterCreationScreen::load_character_classes()
 	return true;
 }
 
-CharacterCreationScreen::CharacterCreationScreen(StateManager& _state_manager, World& _world, TextureManager& _tex_manager, EventManager& _event_manager, Keyboard& _keyboard, int _tile_width, int _tile_height, unsigned int _tileset):
-	state_manager(_state_manager), world(_world), tex_manager(_tex_manager), event_manager(_event_manager), keyboard(_keyboard), tile_width(_tile_width), tile_height(_tile_height), tileset(_tileset)
+void CharacterCreationScreen::create_player()
+{
+	/*
+	auto entity = world.CreateEntity();
+	int start_x{ 19 }, start_y{ 19 };
+	world.AddComponent<Position>(entity, start_x, start_y, 0);
+	world.AddComponent<Sprite>(entity, tileset, 0 * tile_width, 4 * tile_height, tile_width, tile_height, 1, 0xFF, 0xA7, 0x5D);
+	world.AddComponent<Player>(entity, 8);
+	world.AddComponent<Blocker>(entity);
+	*/
+	entity_factory.create_player();
+
+	state_manager.push(GameState::GAME);
+}
+
+CharacterCreationScreen::CharacterCreationScreen(StateManager& _state_manager, World& _world, TextureManager& _tex_manager, EventManager& _event_manager, Keyboard& _keyboard, EntityFactory& _entity_factory, int _tile_width, int _tile_height, unsigned int _tileset):
+	state_manager(_state_manager), world(_world), tex_manager(_tex_manager), event_manager(_event_manager), keyboard(_keyboard), entity_factory(_entity_factory), tile_width(_tile_width), tile_height(_tile_height), tileset(_tileset)
 {
 	stats = { "STR", "DEX", "CON", "WIS", "INT", "CHA" };
 
@@ -138,18 +153,7 @@ void CharacterCreationScreen::handle_input(SDL_Event& event)
 		selection = selection + 1 > static_cast<int>(char_options.size()) - 1 ? 0 : selection + 1;
 		break;
 	}
-	case SDLK_RETURN: {
-		auto entity = world.CreateEntity();
-		int start_x{ 19 }, start_y{ 19 };
-		world.AddComponent<Position>(entity, start_x, start_y, 0);
-		world.AddComponent<Sprite>(entity, tileset, 0 * tile_width, 4 * tile_height, tile_width, tile_height, 1, 0xFF, 0xA7, 0x5D);
-		world.AddComponent<Player>(entity, 8);
-		auto* p = world.GetComponent<Player>(entity);
-		world.AddComponent<Blocker>(entity);
-	
-		state_manager.push(GameState::GAME);
-		return;
-	}
+	case SDLK_RETURN:  create_player(); break;
 	}
 }
 

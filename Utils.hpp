@@ -3,7 +3,7 @@
 #include "Common.hpp"
 
 namespace utils {
-
+	int getAttributeMod(int attrib);
 	int roll(std::string& die_roll, bool drop_lowest = false);
 	inline size_t advance(size_t num_bytes) { return 8 * num_bytes; };
 	void serialiseUint8(std::ofstream& file, uint8_t x);

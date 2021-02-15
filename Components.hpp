@@ -153,3 +153,33 @@ struct Scriptable : public ISerializeable {
 	virtual void serialise(std::ofstream& file) override;
 	virtual void deserialise(const char* buffer, size_t& offset) override;
 };
+
+struct Fighter : public ISerializeable {
+	Fighter() {};
+	~Fighter() {};
+	Fighter(int _hp, int _defence, int _str, int _dex, int _con, int _wis, int _int, int _cha);
+	int max_hp{ 0 };
+	int hp{ 0 };
+	int defence{ 0 };
+	int base_strength{ 0 };
+	int str_buff{ 0 };
+	int str_mod{ 0 };
+	int base_dexterity{ 0 };
+	int dex_buff{ 0 };
+	int dex_mod{ 0 };
+	int base_constitution{ 0 };
+	int con_buff{ 0 };
+	int con_mod{ 0 };
+	int base_wisdom{ 0 };
+	int wis_buff{ 0 };
+	int wis_mod{ 0 };
+	int base_intelligence{ 0 };
+	int int_buff{ 0 };
+	int int_mod{ 0 };
+	int base_charisma{ 0 };
+	int cha_buff{ 0 };
+	int cha_mod{ 0 };
+
+	virtual void serialise(std::ofstream& file) override;
+	virtual void deserialise(const char* buffer, size_t& offset) override;
+};

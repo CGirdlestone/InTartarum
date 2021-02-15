@@ -58,6 +58,9 @@
     <Filter Include="Header Files\RandomGenerators">
       <UniqueIdentifier>{4aba3d21-bb19-4b3b-b03f-78a9fd33803c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\ECS">
+      <UniqueIdentifier>{114cf16e-839a-45d2-930c-f47ffc618427}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -134,6 +137,9 @@
     </ClCompile>
     <ClCompile Include="Keyboard.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityFactory.cpp">
+      <Filter>Source Files\ECS</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -241,6 +247,9 @@
     </ClInclude>
     <ClInclude Include="Keyboard.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityFactory.hpp">
+      <Filter>Header Files\ECS</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

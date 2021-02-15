@@ -211,6 +211,8 @@ int main(int argc, char* argv[])
 		auto font_tileset = tex_manager.LoadTexture(tileset_path);
 		auto splash = tex_manager.LoadTexture("./Resources/fog01.png");
 		auto fireball = tex_manager.LoadTexture("./Resources/Skills/fireball.png");
+
+		auto entity_factory = EntityFactory(world, tex_manager);
 		
 		auto sound_manager = SoundManager();
 		auto intro_music = sound_manager.LoadMusic("./Resources/Sounds/bleeding_out2.ogg");
@@ -256,7 +258,7 @@ int main(int argc, char* argv[])
 		auto splash_screen = SplashScreen(state_manager, world, tex_manager, event_manager, keyboard, false, splash, intro_music);
 		state_manager.add_state(splash_screen.get_state(), splash_screen);
 
-		auto creation_screen = CharacterCreationScreen(state_manager, world, tex_manager, event_manager, keyboard, tile_width, tile_height, font_tileset);
+		auto creation_screen = CharacterCreationScreen(state_manager, world, tex_manager, event_manager, keyboard, entity_factory, tile_width, tile_height, font_tileset);
 		state_manager.add_state(creation_screen.get_state(), creation_screen);
 
 		auto game_screen = GameScreen(state_manager, world, tex_manager, event_manager, world_map, renderer, camera, message_log, keyboard, false, wind);
