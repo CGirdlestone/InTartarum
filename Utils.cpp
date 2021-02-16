@@ -273,7 +273,7 @@ namespace utils {
         if (!lua_isstring(vm.get(), -1)) {
             printf("Expected string!");
             lua_pop(vm.get(), 1);
-            return std::string("");
+            return std::string(" ");
         }
         auto s = std::string(lua_tostring(vm.get(), -1));
         lua_pop(vm.get(), 1);
@@ -288,7 +288,7 @@ namespace utils {
         if (!lua_isstring(vm.get(), -1)) {
             printf("Expected number!");
             lua_pop(vm.get(), 1);
-            return "";
+            return std::string(" ");
         }
         auto val = lua_tostring(vm.get(), -1);
         lua_pop(vm.get(), 1);

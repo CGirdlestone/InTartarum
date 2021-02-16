@@ -18,7 +18,7 @@ fire_sword =
 {
     item = 
     {
-        name = "sword of fire", description = "A blazin' sword."
+        name = "sword of fire", description = "A blazin' sword.", weight = 5;
     };
     sprite = 
     {
@@ -104,8 +104,8 @@ door =
         --OnUpdate = "";
         OnBump = "OPEN_DOOR";
         --OnDeath = "";
-        --OnEquip = "buff_strength",
-        --OnUnequip = "debuff_strength",
+        --OnEquip = "",
+        --OnUnequip = "",
         --OnUse = "";
         --OnHit = "";
     };

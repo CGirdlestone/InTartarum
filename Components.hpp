@@ -13,6 +13,7 @@ class World;
 
 enum class state { IDLE, WALK_LEFT, WALK_RIGHT, WALK_UP, WALK_DOWN };
 enum class Slot { HEAD, CHEST, LEFT_HAND, RIGHT_HAND, NECK, LEGS, HANDS, BOOTS, RING};
+enum class Attitude { NEUTRAL, HOSTILE, FRIENDLY };
 
 struct Position : public ISerializeable {
 	Position() {};
@@ -37,7 +38,33 @@ struct Player : public ISerializeable {
 	virtual void deserialise(const char* buffer, size_t& offset) override;
 };
 
+struct Container : public ISerializeable {
+	Container() {};
+	~Container() {};
+	Container(int _weight_capacity) : weight_capacity(_weight_capacity) {};
+
+	std::vector<uint32_t> inventory;
+	int weight_capacity{ 100 };
+	int weight{ 0 };
+
+	virtual void serialise(std::ofstream& file) override;
+	virtual void deserialise(const char* buffer, size_t& offset) override;
+};
+
 struct Actor : public ISerializeable {
+	Actor() {};
+	~Actor() {};
+
+	virtual void serialise(std::ofstream& file) override;
+	virtual void deserialise(const char* buffer, size_t& offset) override;
+};
+
+struct AI : public ISerializeable {
+	AI() {};
+	AI(Attitude _attitude) : attitude(_attitude) {};
+	~AI() {};
+
+	Attitude attitude{ Attitude::NEUTRAL };
 
 	virtual void serialise(std::ofstream& file) override;
 	virtual void deserialise(const char* buffer, size_t& offset) override;
@@ -46,7 +73,7 @@ struct Actor : public ISerializeable {
 struct Blocker : public ISerializeable {
 	Blocker() {};
 	Blocker(bool _blocks_view) : blocks_view(_blocks_view) {};
-	~Blocker();
+	~Blocker() {};
 	bool blocks_view{ false };
 
 	virtual void serialise(std::ofstream& file) override;
@@ -195,9 +222,10 @@ struct Fighter : public ISerializeable {
 struct Item : public ISerializeable {
 	Item() {};
 	~Item() {};
-	Item(const std::string& _name, const std::string& _description) : name(_name), description(_description) {};
+	Item(const std::string& _name, const std::string& _description, int _weight) : name(_name), description(_description), weight(_weight) {};
 	std::string name{ "" };
 	std::string description{ "" };
+	int weight{ 0 };
 
 	virtual void serialise(std::ofstream& file) override;
 	virtual void deserialise(const char* buffer, size_t& offset) override;

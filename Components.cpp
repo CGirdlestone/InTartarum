@@ -241,30 +241,60 @@ void Fighter::deserialise(const char* buffer, size_t& offset)
 
 void Item::serialise(std::ofstream& file)
 {
-
+	utils::serialiseString(file, name);
+	utils::serialiseString(file, description);
+	utils::serialiseUint32(file, static_cast<uint32_t>(weight));
 }
 
 void Item::deserialise(const char* buffer, size_t& offset)
 {
-
+	name = utils::deserialiseString(buffer, offset);
+	description = utils::deserialiseString(buffer, offset);
+	weight = static_cast<int>(utils::deserialiseUint32(buffer, offset));
 }
 
 void Equipable::serialise(std::ofstream& file)
 {
-
+	utils::serialiseUint32(file, static_cast<uint32_t>(slot));
 }
 
 void Equipable::deserialise(const char* buffer, size_t& offset)
 {
-
+	slot = static_cast<Slot>(utils::deserialiseUint32(buffer, offset));
 }
 
 void Weapon::serialise(std::ofstream& file)
 {
-
+	utils::serialiseUint32(file, static_cast<uint32_t>(num_dice));
+	utils::serialiseUint32(file, static_cast<uint32_t>(sides));
 }
 
 void Weapon::deserialise(const char* buffer, size_t& offset)
 {
+	num_dice = static_cast<int>(utils::deserialiseUint32(buffer, offset));
+	sides = static_cast<int>(utils::deserialiseUint32(buffer, offset));
+}
 
+void AI::serialise(std::ofstream& file)
+{
+	utils::serialiseUint32(file, static_cast<uint32_t>(attitude));
+}
+
+void AI::deserialise(const char* buffer, size_t& offset)
+{
+	attitude = static_cast<Attitude>(utils::deserialiseUint32(buffer, offset));
+}
+
+void Container::serialise(std::ofstream& file)
+{
+	utils::serialiseUint32(file, static_cast<uint32_t>(weight));
+	utils::serialiseUint32(file, static_cast<uint32_t>(weight_capacity));
+	utils::serialiseVector(file, inventory);
+}
+
+void Container::deserialise(const char* buffer, size_t& offset)
+{
+	weight = static_cast<int>(utils::deserialiseUint32(buffer, offset));
+	weight_capacity = static_cast<int>(utils::deserialiseUint32(buffer, offset));
+	inventory = utils::deserialiseVector(buffer, offset);
 }

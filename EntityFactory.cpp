@@ -150,6 +150,9 @@ void EntityFactory::create_entity(uint32_t& entity)
         else if (component == "interactable") {
             create_interactable(entity);
         }
+        else if (component == "container") {
+            create_container(entity);
+        }
         lua_pop(vm.get(), 2);
     }
     lua_pop(vm.get(), 1);
@@ -256,35 +259,35 @@ void EntityFactory::create_script(uint32_t& entity)
     auto* script = world.GetComponent<Scriptable>(entity);
     
     auto init = utils::read_lua_string(vm, "OnInit", -3);
-    if (init != "") {
+    if (init != " ") {
         script->OnInit = init;
     }
     auto update = utils::read_lua_string(vm, "OnUpdate", -3);
-    if (update != "") {
+    if (update != " ") {
         script->OnUpdate = update;
     }
     auto bump = utils::read_lua_string(vm, "OnBump", -3);
-    if (bump != "") {
+    if (bump != " ") {
         script->OnBump = bump;
     }
     auto death = utils::read_lua_string(vm, "OnDeath", -3);
-    if (death != "") {
+    if (death != " ") {
         script->OnDeath = death;
     }
     auto equip = utils::read_lua_string(vm, "OnEquip", -3);
-    if (equip != "") {
+    if (equip != " ") {
         script->OnEquip = equip;
     }
     auto unequip = utils::read_lua_string(vm, "OnUnequip", -3);
-    if (unequip != "") {
+    if (unequip != " ") {
         script->OnUnequip = unequip;
     }
     auto use = utils::read_lua_string(vm, "OnUse", -3);
-    if (use != "") {
+    if (use != " ") {
         script->OnUse = use;
     }
     auto hit = utils::read_lua_string(vm, "OnHit", -3);
-    if (hit != "") {
+    if (hit != " ") {
         script->OnHit = hit;
     }
 }
@@ -293,7 +296,8 @@ void EntityFactory::create_item(uint32_t& entity)
 {
     auto name = utils::read_lua_string(vm, "name", -3);
     auto description = utils::read_lua_string(vm, "description", -3);
-    world.AddComponent<Item>(entity, name, description);
+    auto weight = utils::read_lua_int(vm, "weight", -3);
+    world.AddComponent<Item>(entity, name, description, weight);
 }
 
 void EntityFactory::create_equipable(uint32_t& entity)
@@ -309,4 +313,10 @@ void EntityFactory::create_weapon(uint32_t& entity)
     auto num_dice = utils::read_lua_int(vm, "num_dice", -3);
     auto sides = utils::read_lua_int(vm, "sides", -3);
     world.AddComponent<Weapon>(entity, num_dice, sides);
+}
+
+void EntityFactory::create_container(uint32_t& entity)
+{
+    auto weight_capacity = utils::read_lua_int(vm, "weight_capacity", -3);
+    world.AddComponent<Container>(entity, weight_capacity);
 }

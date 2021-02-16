@@ -2,7 +2,10 @@
 -- This contains all the player data
 player_table = 
 {
-    position = { x = 19, y = 19, z = 0};
+    position = 
+    { 
+        x = 19, y = 19, z = 0
+    };
     sprite = 
     {
         tilesheet = "Cooz-curses-14x16.png", 
@@ -14,7 +17,18 @@ player_table =
     {
         vision = 8,
     };
-    blocker = {true};
+    blocker = 
+    {
+        blocks_vision = false
+    };
+    actor = 
+    {
+        nil;
+    };
+    container = 
+    {
+        weight_capacity = 100;
+    };
 }
 
 

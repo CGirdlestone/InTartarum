@@ -36,6 +36,7 @@ MessageLog::MessageLog(World& _world, EventManager& _event_manager)
 	event_manager.add_subscriber(EventTypes::LEVEL_UP, *this);
 	event_manager.add_subscriber(EventTypes::MESSAGE, *this);
 	event_manager.add_subscriber(EventTypes::BLOCKED_MOVEMENT, *this);
+	event_manager.add_subscriber(EventTypes::PICK_UP_ITEM, *this);
 }
 
 void MessageLog::update(float dt)
@@ -51,11 +52,6 @@ void MessageLog::on_tick()
 void MessageLog::receive(EventTypes event)
 {
 	switch (event) {
-	case EventTypes::MELEE_HIT: {
-		auto msg = Message("Testing... testing... 1 2 3...");
-		add_message(msg);
-		break;
-	}
 	case EventTypes::BLOCKED_MOVEMENT: {
 		auto msg = Message("You can't move there!");
 		add_message(msg);
@@ -66,7 +62,16 @@ void MessageLog::receive(EventTypes event)
 
 void MessageLog::receive(EventTypes event, uint32_t actor)
 {
-
+	switch (event) {
+	case EventTypes::PICK_UP_ITEM: {
+		auto* item = world.GetComponent<Item>(actor);
+		std::string text = "You pick up the $.";
+		interpolate(text, item->name);
+		auto msg = Message(text);
+		add_message(msg);
+		break;
+	}
+	}
 }
 
 void MessageLog::receive(EventTypes event, uint32_t actor, uint32_t target)

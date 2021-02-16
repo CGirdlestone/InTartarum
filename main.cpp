@@ -18,6 +18,7 @@
 #include "SoundSystem.hpp"
 #include "MoveSystem.hpp"
 #include "ScriptSystem.hpp"
+#include "InventorySystem.hpp"
 #include "Prefabs.hpp"
 #include "StateManager.hpp"
 #include "SplashScreen.hpp"
@@ -65,6 +66,7 @@ void RegisterComponents(World& world) {
 	world.RegisterComponent<Item>();
 	world.RegisterComponent<Weapon>();
 	world.RegisterComponent<Equipable>();
+	world.RegisterComponent<Container>();
 }
 
 void load_tiles(Renderer& renderer, TextureManager& tex_manager, unsigned int font_tileset, int tile_width, int tile_height) {
@@ -223,6 +225,9 @@ int main(int argc, char* argv[])
 
 		auto message_log = MessageLog(world, event_manager);
 		systems.push_back(std::reference_wrapper(message_log));
+
+		auto inventory_system = InventorySystem(world, event_manager, world_map);
+		systems.push_back(std::reference_wrapper(inventory_system));
 
 		auto script_system = ScriptSystem(world, event_manager, world_map, sound_manager, tex_manager);
 		script_system.init();

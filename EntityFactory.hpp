@@ -33,6 +33,7 @@ private:
 	void create_item(uint32_t& entity);
 	void create_equipable(uint32_t& entity);
 	void create_weapon(uint32_t& entity);
+	void create_container(uint32_t& entity);
 };
 
 
