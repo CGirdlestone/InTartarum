@@ -37,6 +37,7 @@ MessageLog::MessageLog(World& _world, EventManager& _event_manager)
 	event_manager.add_subscriber(EventTypes::MESSAGE, *this);
 	event_manager.add_subscriber(EventTypes::BLOCKED_MOVEMENT, *this);
 	event_manager.add_subscriber(EventTypes::PICK_UP_ITEM, *this);
+	event_manager.add_subscriber(EventTypes::NO_ITEM_PRESENT, *this);
 }
 
 void MessageLog::update(float dt)
@@ -52,8 +53,8 @@ void MessageLog::on_tick()
 void MessageLog::receive(EventTypes event)
 {
 	switch (event) {
-	case EventTypes::BLOCKED_MOVEMENT: {
-		auto msg = Message("You can't move there!");
+	case EventTypes::NO_ITEM_PRESENT: {
+		auto msg = Message("There's nothing to pick up here!");
 		add_message(msg);
 		break;
 	}

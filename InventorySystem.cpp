@@ -46,25 +46,27 @@ void InventorySystem::pick_up(uint32_t actor)
 
 	auto entities = get_entities_at_tile(pos->x, pos->y);
 
-	if (entities.empty()) {
+	if (entities.size() == 1) {
+		// it will always be at least 1 as the player will be in the list.
 		event_manager.push_event(EventTypes::NO_ITEM_PRESENT);
 		return;
 	}
+
 	for (auto e : entities) {
 		auto* item = world.GetComponent<Item>(e);
 		if (item == nullptr) {
 			continue;
 		}
 		if (!can_pick_up(actor, e)) {
-			event_manager.push_event(EventTypes::OVERWEIGHT);
 			return;
 		}
-		container->inventory.push_back(e);
+		add_to_inventory(actor, e);
 		world.RemoveComponent<Position>(e);
 		world_map.get_entity_grid().remove_entity(e, pos->x, pos->y);
 		if (player != nullptr) {
 			event_manager.push_event(EventTypes::PICK_UP_ITEM, e);
 		}
+		break;
 	}
 }
 
@@ -88,5 +90,20 @@ bool InventorySystem::can_pick_up(uint32_t actor, uint32_t item)
 	auto* container = world.GetComponent<Container>(actor);
 	auto* _item = world.GetComponent<Item>(item);
 
-	return container->weight + _item->weight <= container->weight_capacity;
+	if (container->weight + _item->weight <= container->weight_capacity) {
+		return true;
+	}
+	else {
+		event_manager.push_event(EventTypes::OVERWEIGHT);
+		return false;
+	}
+}
+
+void InventorySystem::add_to_inventory(uint32_t actor, uint32_t item)
+{
+	auto* container = world.GetComponent<Container>(actor);
+	auto* _item = world.GetComponent<Item>(item);
+	
+	container->inventory.push_back(item);
+	container->weight += _item->weight;
 }

@@ -27,6 +27,7 @@ private:
 	void unequip(uint32_t actor, uint32_t item);
 
 	bool can_pick_up(uint32_t actor, uint32_t item);
+	void add_to_inventory(uint32_t actor, uint32_t item);
 	inline std::vector<uint32_t>& get_entities_at_tile(int x, int y) { return world_map.get_entity_grid().get(x, y); };
 };
 
