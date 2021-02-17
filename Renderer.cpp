@@ -240,9 +240,18 @@ void Renderer::DrawMessageLog(MessageLog& message_log)
 
 void Renderer::DrawGameBorder(int x, int y, int width, int height, int height_divider)
 {
-	DrawBox(x, y, width, height_divider, true, false, true);
-	DrawBox(x, y + height_divider, width / 2 + 1, height - height_divider - 1, false, false, true);
-	DrawBox(x + width / 2 + 1, y + height_divider, width / 2, height - height_divider - 1, false, false, true);
+	//DrawBox(x, y, width, height_divider, true, false, true);
+	//DrawBox(x, y + height_divider, width / 2 + 1, height - height_divider - 1, false, false, true);
+	//DrawBox(x + width / 2 + 1, y + height_divider, width / 2, height - height_divider - 1, false, false, true);
+	DrawBox(x, y, width, height_divider, false, false, true);
+	
+	std::string log = "Message Log";
+	DrawBox(x, y + height_divider + 1, width / 2 - 1, height - height_divider - 2, false, false, true);
+	DrawText(log, x + 2, y + height_divider + 1, 0xBB, 0xAA, 0x99);
+
+	std::string info = "Character Info";
+	DrawBox(x + width / 2, y + height_divider + 1, width / 2 + 1, height - height_divider - 2, false, false, true);
+	DrawText(info, x + width / 2 + 2, y + height_divider + 1, 0xBB, 0xAA, 0x99);
 }
 
 void Renderer::DrawHealth(int x, int y, int health, int max_health)
@@ -287,29 +296,31 @@ void Renderer::DrawHealth(int x, int y, int health, int max_health)
 void Renderer::DrawPlayerInfo(WorldMap& world_map)
 {
 	std::string depth = "Dungeon depth: ";
+	auto dungeon_depth = std::to_string(world_map.get_current_depth());
+	depth += dungeon_depth;
+	DrawText(depth, 2, 0, 0xBB, 0xAA, 0x99);
+	
+	int y{ camera.get_height() + 2 * camera.get_offset_y() + 2 };
+	int x{ window.GetWidth() / 2 + 1 };
+	std::string player_level = "Level: 1";
+	DrawText(player_level, x, y, 0xBB, 0xAA, 0x99);
+	y += 2;
 
 	int hp = 20;
 	int max_hp = 20;
 	std::string health = "Health: " + std::to_string(hp) + '/' + std::to_string(max_hp);
 	if (max_hp / hp >= 10) {
-		DrawText(health, 5 + depth.length(), 0, 0xCD, 0x5C, 0x5C);
+		DrawText(health,  x, y, 0xCD, 0x5C, 0x5C);
 	}
 	else {
-		DrawText(health, 5 + depth.length(), 0, 0xBB, 0xAA, 0x99);
+		DrawText(health, x, y, 0xBB, 0xAA, 0x99);
 	}
+	y += 2;
 
 	int xp = 300;
 	int max_xp = 500;
 	std::string experience = "Exp: " + std::to_string(xp) + '/' + std::to_string(max_xp);
-	DrawText(experience, 5 + depth.length() + health.length() + 2, 0, 0xB0, 0xC4, 0xDE);
-
-	auto dungeon_depth = std::to_string(world_map.get_current_depth());
-	depth += dungeon_depth;
-	DrawText(depth, camera.get_offset_x() * camera.get_zoom() + 1, 0, 0xBB, 0xAA, 0x99);
-
-	int j{ camera.get_height() + 2 * camera.get_offset_y() };
-	std::string player_level = "Level: 1";
-	DrawText(player_level, window.GetWidth() / 2 + 1, j, 0xBB, 0xAA, 0x99);
+	DrawText(experience, x, y, 0xB0, 0xC4, 0xDE);
 }
 
 void Renderer::LoadFont()
@@ -582,10 +593,9 @@ void Renderer::DrawScene(uint32_t fps, WorldMap& world_map, MessageLog& message_
 	}
 
 	DrawFPS(fps);
-	DrawGameBorder(0, 0, camera.get_width() + camera.get_offset_x(), window.GetHeight(), camera.get_height() + camera.get_offset_y());
 	
-
 	DrawPlayerInfo(world_map);
+	DrawGameBorder(0, 0, camera.get_width() + camera.get_offset_x(), window.GetHeight(), camera.get_height() + camera.get_offset_y());
 	
 	if (!message_log.get_messages().empty()){
 		DrawMessageLog(message_log);
