@@ -24,6 +24,7 @@
 #include "SplashScreen.hpp"
 #include "CharacterCreationScreen.hpp"
 #include "GameScreen.hpp"
+#include "InventoryScreen.hpp"
 
 void initialise_SDL() {
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
@@ -67,6 +68,8 @@ void RegisterComponents(World& world) {
 	world.RegisterComponent<Weapon>();
 	world.RegisterComponent<Equipable>();
 	world.RegisterComponent<Container>();
+	world.RegisterComponent<Stackable>();
+	world.RegisterComponent<AI>();
 }
 
 void load_tiles(Renderer& renderer, TextureManager& tex_manager, unsigned int font_tileset, int tile_width, int tile_height) {
@@ -140,6 +143,12 @@ void build_town(Level& level, World& world, TextureManager& texture_manager, Ent
 
 	std::string sword = "fire_sword";
 	entity_factory.create_item(sword, 21, 21, 0);
+
+	std::string arrow = "arrow";
+	entity_factory.create_item(arrow, 20, 20, 0);
+
+	std::string arrow2 = "arrow";
+	entity_factory.create_item(arrow2, 19, 20, 0);
 	
 	std::string fire = "camp_fire";
 	entity_factory.create_item(fire, 15, 13, 0);
@@ -244,6 +253,9 @@ int main(int argc, char* argv[])
 
 		auto game_screen = GameScreen(state_manager, world, tex_manager, event_manager, world_map, renderer, camera, message_log, keyboard, false, wind);
 		state_manager.add_state(GameState::GAME, game_screen);
+
+		auto inventory_screen = InventoryScreen(state_manager, world, event_manager, keyboard);
+		state_manager.add_state(GameState::INVENTORY, inventory_screen);
 
 		SDL_Event event;
 

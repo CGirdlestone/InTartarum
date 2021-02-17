@@ -116,6 +116,7 @@ void GameScreen::handle_input(SDL_Event& event)
 	case SDLK_1: Prefab::create_explosion(world, pos->x, pos->y, pos->z, tex_manager.LoadTexture("./Resources/exp2_0.png")); break;
 	case SDLK_ESCAPE: state_manager.stop_playing(); save_game(); break;;
 	case SDLK_g: event_manager.push_event(EventTypes::TRY_PICK_UP_ITEM, entity); break;
+	case SDLK_i: state_manager.push(GameState::INVENTORY); break;
 	}
 }
 
@@ -174,7 +175,8 @@ void GameScreen::receive(EventTypes event)
 	case EventTypes::ASCEND_DUNGEON: return_to_safe_zone(); break;
 	case EventTypes::DESCEND_DUNGEON: descend_dungeon(); break;
 	case EventTypes::TICK: on_tick(); break;
-	case EventTypes::LOAD_GAME: load_game();
+	case EventTypes::LOAD_GAME: load_game(); break;
+	case EventTypes::SAVE_GAME: save_game(); break;
 	}
 }
 
@@ -221,6 +223,12 @@ void GameScreen::load_game()
 	world.Deserialise<Blocker>(buffer.get(), offset);
 	world.Deserialise<Interactable>(buffer.get(), offset);
 	world.Deserialise<LightSource>(buffer.get(), offset);
+	world.Deserialise<Item>(buffer.get(), offset);
+	world.Deserialise<Container>(buffer.get(), offset);
+	world.Deserialise<Weapon>(buffer.get(), offset);
+	world.Deserialise<AI>(buffer.get(), offset);
+	world.Deserialise<Stackable>(buffer.get(), offset);
+	world.Deserialise<Equipable>(buffer.get(), offset);
 
 	world_map.deserialise(buffer.get(), offset);
 
@@ -245,6 +253,12 @@ void GameScreen::save_game()
 	world.Serialise<Blocker>(file);
 	world.Serialise<Interactable>(file);
 	world.Serialise<LightSource>(file);
+	world.Serialise<Item>(file);
+	world.Serialise<Container>(file);
+	world.Serialise<Weapon>(file);
+	world.Serialise<AI>(file);
+	world.Serialise<Stackable>(file);
+	world.Serialise<Equipable>(file);
 
 	world_map.serialise(file);
 

@@ -52,5 +52,6 @@ public:
 	void DrawSplash(unsigned int tex_id, const uint32_t fps, float dt, int option, bool save_game);
 	void DrawCharacterSelectionScene(const uint32_t, const std::map<int, CharacterClass>& character_options, int selected, const std::vector<std::string>& stats);
 	void DrawMap(Level& level);
+	void DrawInventory(const std::vector<uint32_t>& items, int option);
 	void SetFont(unsigned int id, int width, int height) { font_id = id; font_width = width; font_height = height; };
 };

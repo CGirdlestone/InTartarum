@@ -9,10 +9,34 @@ ID =
     ["HANDS"] = 6,
     ["BOOTS"] = 7,
     ["RING"] = 8,
+    ["QUIVER"] = 9,
 }
 
-width = 14;
-height = 16;
+width = 14; -- used for the animation frame clipping
+height = 16; -- used for the animation frame clipping
+
+arrow = 
+{
+    item = 
+    {
+        name = "arrow", description = "A wooden arrow.", weight = 1;
+    };
+    sprite = 
+    {
+        tilesheet = "Cooz-curses-14x16.png", 
+        clip_x = 15, clip_y = 2, 
+        width = width, height = height, depth = 1,
+        red = 187, green = 170, blue = 153,
+    };
+    equipable = 
+    {
+        slot = ID["QUIVER"]
+    };
+    stackable = 
+    {
+        true,
+    }
+}
 
 fire_sword = 
 {
@@ -24,7 +48,7 @@ fire_sword =
     {
         tilesheet = "Cooz-curses-14x16.png", 
         clip_x = 15, clip_y = 2, 
-        width = 14, height = 16, depth = 1,
+        width = width, height = height, depth = 1,
         red = 205, green = 92, blue = 92,
     };
     equipable = 
@@ -55,7 +79,7 @@ chest =
     {
         tilesheet = "Cooz-curses-14x16.png", 
         clip_x = 11, clip_y = 13, 
-        width = 14, height = 16, depth = 1,
+        width = width, height = height, depth = 1,
         red = 187, green = 170, blue = 153,
     };
     script = 
@@ -95,7 +119,7 @@ door =
     {
         tilesheet = "Cooz-curses-14x16.png", 
         clip_x = 11, clip_y = 2, 
-        width = 14, height = 16, depth = 1,
+        width = width, height = height, depth = 1,
         red = 187, green = 170, blue = 153,
     };
     script = 
@@ -135,7 +159,7 @@ camp_fire =
     {
         tilesheet = "Cooz-curses-14x16.png", 
         clip_x = 5, clip_y = 1, 
-        width = 14, height = 16, depth = 1,
+        width = width, height = height, depth = 1,
         red = 205, green = 92, blue = 92,
     };
     blocker = 

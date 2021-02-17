@@ -298,3 +298,13 @@ void Container::deserialise(const char* buffer, size_t& offset)
 	weight_capacity = static_cast<int>(utils::deserialiseUint32(buffer, offset));
 	inventory = utils::deserialiseVector(buffer, offset);
 }
+
+void Stackable::serialise(std::ofstream& file)
+{
+	utils::serialiseUint32(file, static_cast<uint32_t>(quantity));
+}
+
+void Stackable::deserialise(const char* buffer, size_t& offset)
+{
+	quantity = static_cast<int>(utils::deserialiseUint32(buffer, offset));
+}

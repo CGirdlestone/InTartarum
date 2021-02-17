@@ -12,7 +12,7 @@ struct ISerializeable {
 class World;
 
 enum class state { IDLE, WALK_LEFT, WALK_RIGHT, WALK_UP, WALK_DOWN };
-enum class Slot { HEAD, CHEST, LEFT_HAND, RIGHT_HAND, NECK, LEGS, HANDS, BOOTS, RING};
+enum class Slot { HEAD, CHEST, LEFT_HAND, RIGHT_HAND, NECK, LEGS, HANDS, BOOTS, RING, QUIVER};
 enum class Attitude { NEUTRAL, HOSTILE, FRIENDLY };
 
 struct Position : public ISerializeable {
@@ -227,6 +227,15 @@ struct Item : public ISerializeable {
 	std::string description{ "" };
 	int weight{ 0 };
 
+	virtual void serialise(std::ofstream& file) override;
+	virtual void deserialise(const char* buffer, size_t& offset) override;
+};
+
+struct Stackable : public ISerializeable {
+	Stackable() {};
+	~Stackable() {};
+	
+	int quantity{ 1 };
 	virtual void serialise(std::ofstream& file) override;
 	virtual void deserialise(const char* buffer, size_t& offset) override;
 };

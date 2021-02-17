@@ -157,6 +157,7 @@
     <ClCompile Include="EntityFactory.cpp" />
     <ClCompile Include="GameScreen.cpp" />
     <ClCompile Include="Grid.cpp" />
+    <ClCompile Include="InventoryScreen.cpp" />
     <ClCompile Include="InventorySystem.cpp" />
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Level.cpp" />
@@ -195,6 +196,7 @@
     <ClInclude Include="EventTypes.hpp" />
     <ClInclude Include="GameScreen.hpp" />
     <ClInclude Include="Grid.hpp" />
+    <ClInclude Include="InventoryScreen.hpp" />
     <ClInclude Include="InventorySystem.hpp" />
     <ClInclude Include="Keyboard.hpp" />
     <ClInclude Include="Level.hpp" />

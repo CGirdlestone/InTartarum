@@ -510,6 +510,53 @@ void Renderer::DrawCharacterSelectionScene(const uint32_t fps, const std::map<in
 	}
 }
 
+void Renderer::DrawInventory(const std::vector<uint32_t>& items, int option)
+{
+	int inventory_x{ 2 };
+	int inventory_width{ window.GetWidth() * 3 / 8 };
+	DrawBox(0, 0, inventory_width, window.GetHeight() - 1, false, false, true);
+	std::string inventory = "Inventory";
+	DrawText(inventory, inventory_x, 0, 0xBB, 0xAA, 0x99);
+
+	int stats_height{ window.GetHeight() * 2 / 6 };
+	DrawBox(inventory_width + 1, 0, window.GetWidth() - inventory_width - 2, stats_height, false, false, true);
+	std::string stats = "Item Stats";
+	DrawText(stats, inventory_width + 3, 0, 0xBB, 0xAA, 0x99);
+
+	DrawBox(inventory_width + 1, stats_height + 1, window.GetWidth() - inventory_width - 2, stats_height - 1, false, false, true);
+	std::string description = "Item Description";
+	DrawText(description, inventory_width + 3, stats_height + 1, 0xBB, 0xAA, 0x99);
+
+	DrawBox(inventory_width + 1, 2 * stats_height + 1, window.GetWidth() - inventory_width - 2, window.GetHeight() - 2 * stats_height - 2, false, false, true);
+	std::string equipped_items = "Equipped Items";
+	DrawText(equipped_items, inventory_width + 3, 2 * stats_height + 1, 0xBB, 0xAA, 0x99);
+
+	int j{ 0 };
+	for (auto e : items) {
+		auto* item = world.GetComponent<Item>(e);
+		auto* stack = world.GetComponent<Stackable>(e);
+		std::string info{ "" };
+		info += static_cast<char>(97 + j);
+		info +=  ") ";
+		info += item->name;
+		if (stack != nullptr) {
+			info += " (" + std::to_string(stack->quantity) + ")";
+		}
+		if (j == option) {
+			DrawText(">", 1, 2 * j + 2, 0xBB, 0xAA, 0x99);
+			DrawText(info, inventory_x, 2 * j++ + 2, 0xBB, 0xAA, 0x99);
+			auto description_lines = WrapText(item->description, window.GetWidth() - inventory_width - 2);
+			int k{ 0 };
+			for (auto& line : description_lines) {
+				DrawText(line, inventory_width + 2, stats_height + 3, 0xBB, 0xAA, 0x99);
+			}
+		}
+		else {
+			DrawText(info, inventory_x, 2 * j++ + 2, 0xBB, 0xAA, 0x99);
+		}
+	}
+}
+
 void Renderer::DrawScene(uint32_t fps, WorldMap& world_map, MessageLog& message_log)
 {
 	DrawMapTexture(camera.get_offset_x(), camera.get_offset_y());

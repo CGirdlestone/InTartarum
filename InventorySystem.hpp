@@ -28,6 +28,8 @@ private:
 
 	bool can_pick_up(uint32_t actor, uint32_t item);
 	void add_to_inventory(uint32_t actor, uint32_t item);
+	void add_to_stack(uint32_t actor, uint32_t item, uint32_t current);
+	uint32_t get_item_from_inventory(uint32_t actor, const std::string& item);
 	inline std::vector<uint32_t>& get_entities_at_tile(int x, int y) { return world_map.get_entity_grid().get(x, y); };
 };
 

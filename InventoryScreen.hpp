@@ -32,5 +32,6 @@ private:
 	Keyboard& keyboard;
 	bool render_prev{ false };
 	GameState state{ GameState::INVENTORY };
+	int option{ 0 };
 };
 

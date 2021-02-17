@@ -153,6 +153,9 @@ void EntityFactory::create_entity(uint32_t& entity)
         else if (component == "container") {
             create_container(entity);
         }
+        else if (component == "stackable") {
+            create_stackable(entity);
+        }
         lua_pop(vm.get(), 2);
     }
     lua_pop(vm.get(), 1);
@@ -319,4 +322,9 @@ void EntityFactory::create_container(uint32_t& entity)
 {
     auto weight_capacity = utils::read_lua_int(vm, "weight_capacity", -3);
     world.AddComponent<Container>(entity, weight_capacity);
+}
+
+void EntityFactory::create_stackable(uint32_t& entity)
+{
+    world.AddComponent<Stackable>(entity);
 }
