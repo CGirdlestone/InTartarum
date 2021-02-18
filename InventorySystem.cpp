@@ -1,7 +1,7 @@
 #include "InventorySystem.hpp"
 
-InventorySystem::InventorySystem(World& _world, EventManager& _event_manager, WorldMap& _world_map) 
-	: world(_world), event_manager(_event_manager), world_map(_world_map) 
+InventorySystem::InventorySystem(World& _world, EventManager& _event_manager, WorldMap& _world_map, EntityFactory& _entity_factory)
+	: world(_world), event_manager(_event_manager), world_map(_world_map), entity_factory(_entity_factory)
 {
 	event_manager.add_subscriber(EventTypes::TRY_PICK_UP_ITEM, *this);
 	event_manager.add_subscriber(EventTypes::DROP_ITEM, *this);
@@ -32,16 +32,18 @@ void InventorySystem::receive(EventTypes event, uint32_t actor)
 	}
 }
 
-void InventorySystem::receive(EventTypes event, uint32_t actor, uint32_t target)
+void InventorySystem::receive(EventTypes event, uint32_t actor, uint32_t item)
 {
 	switch (event) {
-	case EventTypes::DROP_ITEM: drop(actor, target);
+	case EventTypes::DROP_ITEM: drop(actor, item);
 	}
 }
 
-void InventorySystem::receive(EventTypes event, uint32_t actor, uint32_t target, uint32_t item)
+void InventorySystem::receive(EventTypes event, uint32_t actor, uint32_t item, uint32_t quantity)
 {
-
+	switch (event) {
+	case EventTypes::DROP_ITEM_STACK: drop_stack(actor, item, quantity);
+	}
 }
 
 void InventorySystem::pick_up(uint32_t actor)
@@ -111,6 +113,25 @@ void InventorySystem::drop(uint32_t actor, uint32_t item)
 	auto* pos = world.GetComponent<Position>(actor);
 	world.AddComponent<Position>(item, pos->x, pos->y, pos->z);
 	world_map.get_entity_grid().add_entity(item, pos->x, pos->y);
+	event_manager.push_event(EventTypes::DROP_ITEM_MESSAGE, item);
+}
+
+void InventorySystem::drop_stack(uint32_t actor, uint32_t item, uint32_t quantity)
+{
+	auto* stack = world.GetComponent<Stackable>(item);
+	auto* _item = world.GetComponent<Item>(item);
+	auto* pos = world.GetComponent<Position>(actor);
+	auto* container = world.GetComponent<Container>(actor);
+
+	if (static_cast<int>(quantity) <= stack->quantity) {
+		std::string entity_name = _item->name;
+		auto entity = entity_factory.create_item(entity_name, pos->x, pos->y, pos->z);
+		auto* new_stack = world.GetComponent<Stackable>(entity);
+		new_stack->quantity = quantity;
+		stack->quantity -= quantity;
+		world_map.get_entity_grid().add_entity(entity, pos->x, pos->y);
+		event_manager.push_event(EventTypes::DROP_ITEM_STACK_MESSAGE, entity, quantity);
+	}
 }
 
 void InventorySystem::equip(uint32_t actor, uint32_t item)

@@ -1,12 +1,13 @@
 #pragma once
 
 #include "EventManager.hpp"
+#include "EntityFactory.hpp"
 #include "WorldMap.hpp"
 
 class InventorySystem : public BaseSystem
 {
 public:
-	InventorySystem(World& _world, EventManager& _event_manager, WorldMap& _world_map);
+	InventorySystem(World& _world, EventManager& _event_manager, WorldMap& _world_map, EntityFactory& _entity_factory);
 	~InventorySystem() {};
 
 	virtual void update(float dt) override;
@@ -20,9 +21,11 @@ private:
 	World& world;
 	EventManager& event_manager;
 	WorldMap& world_map;
+	EntityFactory& entity_factory;
 
 	void pick_up(uint32_t actor);
 	void drop(uint32_t actor, uint32_t item);
+	void drop_stack(uint32_t actor, uint32_t item, uint32_t quantity);
 	void equip(uint32_t actor, uint32_t item);
 	void unequip(uint32_t actor, uint32_t item);
 

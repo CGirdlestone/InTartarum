@@ -38,6 +38,8 @@ MessageLog::MessageLog(World& _world, EventManager& _event_manager)
 	event_manager.add_subscriber(EventTypes::BLOCKED_MOVEMENT, *this);
 	event_manager.add_subscriber(EventTypes::PICK_UP_ITEM, *this);
 	event_manager.add_subscriber(EventTypes::NO_ITEM_PRESENT, *this);
+	event_manager.add_subscriber(EventTypes::DROP_ITEM_MESSAGE, *this);
+	event_manager.add_subscriber(EventTypes::DROP_ITEM_STACK_MESSAGE, *this);
 }
 
 void MessageLog::update(float dt)
@@ -72,12 +74,37 @@ void MessageLog::receive(EventTypes event, uint32_t actor)
 		add_message(msg);
 		break;
 	}
+	case EventTypes::DROP_ITEM_MESSAGE: {
+		auto* item = world.GetComponent<Item>(actor);
+		std::string text = "You drop up the $ on the ground.";
+		interpolate(text, item->name);
+		auto msg = Message(text);
+		add_message(msg);
+		break;
+	}
 	}
 }
 
 void MessageLog::receive(EventTypes event, uint32_t actor, uint32_t target)
 {
-
+	switch (event) {
+	case EventTypes::DROP_ITEM_STACK_MESSAGE: {
+		auto* item = world.GetComponent<Item>(actor);
+		auto quantity = static_cast<int>(target);
+		std::string text{ "" };
+		if (quantity == 1) {
+			text = "You drop the $ on the ground.";
+			interpolate(text, item->name);
+		}
+		else {
+			text = "You drop $ $s on the ground.";
+			interpolate(text, quantity, item->name);
+		}
+		auto msg = Message(text);
+		add_message(msg);
+		break;
+	}
+	}
 }
 
 void MessageLog::receive(EventTypes event, uint32_t actor, uint32_t target, uint32_t item)

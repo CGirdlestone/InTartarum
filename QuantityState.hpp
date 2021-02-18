@@ -8,12 +8,11 @@
 #include "World.hpp"
 #include "Utils.hpp"
 
-class ActionsState : public BaseState, BaseSystem
+class QuantityState : public BaseState, BaseSystem
 {
 public:
-
-	ActionsState(StateManager& _state_manager, World& _world, EventManager& _event_manager, Keyboard& _keyboard);
-	~ActionsState() {};
+	QuantityState(StateManager& _state_manager, World& _world, EventManager& _event_manager, Keyboard& _keyboard);
+	~QuantityState() {};
 
 	virtual void handle_input(SDL_Event& event) override;
 	virtual void on_tick() override;
@@ -29,6 +28,7 @@ public:
 	virtual void receive(EventTypes event, uint32_t actor, uint32_t target, uint32_t item)  override;
 
 	inline void set_item(uint32_t item) { selected_item = item; };
+	void backspace();
 
 private:
 	StateManager& state_manager;
@@ -36,7 +36,8 @@ private:
 	EventManager& event_manager;
 	Keyboard& keyboard;
 	bool render_prev{ true };
-	GameState state{ GameState::ACTIONS };
+	GameState state{ GameState::QUANTITY };
 	uint32_t selected_item;
+	std::string quantity{ "" };
 };
 

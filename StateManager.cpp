@@ -35,11 +35,18 @@ void StateManager::handle_input(SDL_Event& event)
 void StateManager::draw_scene(uint32_t fps, float dt)
 {
 	renderer.Clear();
+
 	if (stack.size() > 1) {
-		auto it = stack.end() - 2;
-		if (stack.back().get().render_previous()) {
-			it->get().draw_scene(renderer, fps, dt);
+		auto it = stack.end() - 1;
+		for (; it != stack.begin(); it--) {
+			if (!it->get().render_previous()) {
+				break;
+			}
 		}
+
+		do {
+			it->get().draw_scene(renderer, fps, dt);
+		} while (++it != stack.end());
 	}
 	stack.back().get().draw_scene(renderer, fps, dt);
 	renderer.Update();

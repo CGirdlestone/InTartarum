@@ -54,5 +54,6 @@ public:
 	void DrawMap(Level& level);
 	void DrawInventory(const std::vector<uint32_t>& items, const std::vector<std::string>& equipment_slots, int option);
 	void DrawActions();
+	void DrawQuantity(const std::string& quantity);
 	void SetFont(unsigned int id, int width, int height) { font_id = id; font_width = width; font_height = height; };
 };

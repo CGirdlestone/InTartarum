@@ -13,11 +13,26 @@ void ActionsState::handle_input(SDL_Event& event)
 	auto components = world.GetEntitiesWith<Player>();
 	auto player_id = components[0];
 
+	auto* stack = world.GetComponent<Stackable>(selected_item);
+
 	auto key = keyboard.handle_input(event);
 
 	switch (key) {
-	case SDLK_ESCAPE: state_manager.pop(1); set_item(MAX_ENTITIES + 1);  break;
-	case SDLK_d: event_manager.push_event(EventTypes::DROP_ITEM, player_id, selected_item); state_manager.pop(1); break;
+	case SDLK_ESCAPE: state_manager.pop(1);  break;
+	case SDLK_d: {
+		if (stack == nullptr) {
+			event_manager.push_event(EventTypes::DROP_ITEM, player_id, selected_item); 
+			state_manager.pop(2); 
+			set_item(MAX_ENTITIES + 1); 
+			event_manager.push_event(EventTypes::TICK);
+			break;
+		}
+		else {
+			state_manager.push(GameState::QUANTITY);
+			event_manager.push_event(EventTypes::SEND_ITEM_TO_QUANTITY_STATE, selected_item); break;
+		}
+
+	}
 	}
 }
 

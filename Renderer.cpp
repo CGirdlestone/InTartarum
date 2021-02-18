@@ -6,7 +6,7 @@ Renderer::Renderer(World& _world, Window& _window, TextureManager& _tex_manager,
 	auto tex = SDL_CreateTexture(window.GetRenderer(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, camera.get_map_width() * window.GetTileWidth(), camera.get_map_height() * window.GetTileHeight());
 	map_texture.reset(tex);
 	LoadFont();
-};
+}
 
 void Renderer::DrawMap(Level& level)
 {
@@ -660,6 +660,39 @@ void Renderer::DrawActions()
 	std::string use = "u) use";
 	DrawText(use, x + 1, y + 1, 0xBB, 0xAA, 0x99);
 	y += 2;
+}
+
+void Renderer::DrawQuantity(const std::string& quantity)
+{
+	int x{ window.GetWidth() / 2 - 5 };
+	int y{ window.GetHeight() / 2 - 5 };
+	int width{ 10 };
+	int height{ 5 };
+	for (int i = 0; i < width + 1; i++) {
+		for (int j = 0; j < height + 1; j++) {
+			auto background = window.GetBackground();
+			SDL_SetTextureColorMod(texture_manager.GetTexture(font_id), 0x3d, 0x35, 0x2a);
+			SDL_Rect dstrect;
+			dstrect.x = (x + i) * window.GetTileWidth();
+			dstrect.y = (y + j) * window.GetTileHeight();
+			dstrect.w = window.GetTileWidth();
+			dstrect.h = window.GetTileHeight();
+
+			SDL_Rect srcrect;
+			srcrect.x = 11 * window.GetTileWidth();
+			srcrect.y = 13 * window.GetTileHeight();
+			srcrect.w = window.GetTileWidth();
+			srcrect.h = window.GetTileHeight();
+
+			SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(font_id), &srcrect, &dstrect);
+		}
+	}
+	DrawBox(x, y, width, height, false, false, true);
+	std::string header = "Quantity";
+	DrawText(header, x + 1, y, 0xBB, 0xAA, 0x99);
+	std::string prompt = ">";
+	DrawText(prompt, x + 1, y + 2, 0xBB, 0xAA, 0x99);
+	DrawText(quantity, x + 2, y + 2, 0xBB, 0xAA, 0x99);
 }
 
 

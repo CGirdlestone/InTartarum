@@ -26,6 +26,7 @@
 #include "GameScreen.hpp"
 #include "InventoryScreen.hpp"
 #include "ActionsState.hpp"
+#include "QuantityState.hpp"
 
 void initialise_SDL() {
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
@@ -235,7 +236,7 @@ int main(int argc, char* argv[])
 		auto message_log = MessageLog(world, event_manager);
 		systems.push_back(std::reference_wrapper(message_log));
 
-		auto inventory_system = InventorySystem(world, event_manager, world_map);
+		auto inventory_system = InventorySystem(world, event_manager, world_map, entity_factory);
 		systems.push_back(std::reference_wrapper(inventory_system));
 
 		auto script_system = ScriptSystem(world, event_manager, world_map, sound_manager, tex_manager);
@@ -259,6 +260,9 @@ int main(int argc, char* argv[])
 
 		auto action_state = ActionsState(state_manager, world, event_manager, keyboard);
 		state_manager.add_state(GameState::ACTIONS, action_state);
+
+		auto quantity_state = QuantityState(state_manager, world, event_manager, keyboard);
+		state_manager.add_state(GameState::QUANTITY, quantity_state);
 
 		SDL_Event event;
 

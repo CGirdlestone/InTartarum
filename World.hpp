@@ -225,7 +225,7 @@ public:
 		if (!m_free_entities.empty()) {
 			entity = RecycleEntity();
 
-			IncreaseEntityVersion(entity);
+			//IncreaseEntityVersion(entity);
 			m_entities[GetEntityID(entity)] = entity;
 		}
 		else {

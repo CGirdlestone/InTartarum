@@ -14,6 +14,7 @@ public:
 	uint32_t create_item(std::string& entity_name, int x, int y, int z);
 	uint32_t create_item(std::string& entity_name); // used to create items that are owned (inventory or equipped) by an actor
 	uint32_t create_npc(std::string& entity_name, int x, int y, int z);
+
 private:
 	World& world;
 	TextureManager& texture_manager;
