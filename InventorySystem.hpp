@@ -28,6 +28,7 @@ private:
 	void drop_stack(uint32_t actor, uint32_t item, uint32_t quantity);
 	void equip(uint32_t actor, uint32_t item);
 	void unequip(uint32_t actor, uint32_t item);
+	void drop_equipped(uint32_t actor, uint32_t item);
 
 	bool can_pick_up(uint32_t actor, uint32_t item);
 	bool is_slot_occupied(uint32_t actor, uint32_t item);

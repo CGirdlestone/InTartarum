@@ -151,7 +151,7 @@
       <Filter>Source Files\States</Filter>
     </ClCompile>
     <ClCompile Include="QuantityState.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\States</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -276,7 +276,7 @@
       <Filter>Header Files\States</Filter>
     </ClInclude>
     <ClInclude Include="QuantityState.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\States</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

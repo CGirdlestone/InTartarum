@@ -74,7 +74,7 @@ void SplashScreen::draw_scene(Renderer& renderer, const uint32_t fps, float dt) 
 	renderer.DrawSplash(splash_id, fps, dt, option, save_game);
 }
 
-void SplashScreen::on_entrance(Renderer& renderer) const
+void SplashScreen::on_entrance(Renderer& renderer)
 {
 	event_manager.push_event(EventTypes::FADE_IN_SOUND, music_id);
 }

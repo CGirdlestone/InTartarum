@@ -21,7 +21,7 @@ public:
 	virtual void draw_scene(Renderer& renderer, const uint32_t fps, float dt) const override;
 	virtual bool render_previous() const override;
 	virtual GameState get_state() const override;
-	virtual void on_entrance(Renderer& renderer) const override;
+	virtual void on_entrance(Renderer& renderer) override;
 	virtual void on_bury() const override;
 	virtual void receive(EventTypes event) override;
 	virtual void receive(EventTypes event, uint32_t actor)  override;
@@ -38,5 +38,9 @@ private:
 	bool render_prev{ true };
 	GameState state{ GameState::ACTIONS };
 	uint32_t selected_item;
+	bool in_equipment_list{ false };
+
+	void handle_inventory_input(SDL_Event& event);
+	void handle_equipment_input(SDL_Event& event);
 };
 

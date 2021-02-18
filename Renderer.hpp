@@ -38,6 +38,7 @@ private:
 	void DrawGameBorder(int x, int y, int width, int height, int height_divider);
 	void DrawHealth(int x, int y, int health, int max_health);
 	void DrawPlayerInfo(WorldMap& world_map);
+	void DrawBackgroundTile(int x, int y, uint8_t r, uint8_t g, uint8_t b);
 	void LoadFont();
 	std::vector<std::string> WrapText(const std::string& text, int line_width);
 public:
@@ -52,8 +53,8 @@ public:
 	void DrawSplash(unsigned int tex_id, const uint32_t fps, float dt, int option, bool save_game);
 	void DrawCharacterSelectionScene(const uint32_t, const std::map<int, CharacterClass>& character_options, int selected, const std::vector<std::string>& stats);
 	void DrawMap(Level& level);
-	void DrawInventory(const std::vector<uint32_t>& items, const std::vector<std::string>& equipment_slots, int option);
-	void DrawActions();
+	void DrawInventory(const std::vector<uint32_t>& items, const std::vector<std::string>& equipment_slots, int option, bool in_equipment_list);
+	void DrawActions(bool in_equipment_list);
 	void DrawQuantity(const std::string& quantity);
 	void SetFont(unsigned int id, int width, int height) { font_id = id; font_width = width; font_height = height; };
 };

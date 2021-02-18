@@ -8,6 +8,8 @@ InventorySystem::InventorySystem(World& _world, EventManager& _event_manager, Wo
 	event_manager.add_subscriber(EventTypes::DROP_ITEM_STACK, *this);
 	event_manager.add_subscriber(EventTypes::EQUIP_ITEM, *this);
 	event_manager.add_subscriber(EventTypes::UNEQUIP_ITEM, *this);
+	event_manager.add_subscriber(EventTypes::DROP_EQUIPPED_ITEM, *this);
+	
 }
 
 void InventorySystem::update(float dt)
@@ -35,14 +37,17 @@ void InventorySystem::receive(EventTypes event, uint32_t actor)
 void InventorySystem::receive(EventTypes event, uint32_t actor, uint32_t item)
 {
 	switch (event) {
-	case EventTypes::DROP_ITEM: drop(actor, item);
+	case EventTypes::DROP_ITEM: drop(actor, item); break;
+	case EventTypes::EQUIP_ITEM: equip(actor, item); break;
+	case EventTypes::UNEQUIP_ITEM: unequip(actor, item); break;
+	case EventTypes::DROP_EQUIPPED_ITEM: drop_equipped(actor, item); break;
 	}
 }
 
 void InventorySystem::receive(EventTypes event, uint32_t actor, uint32_t item, uint32_t quantity)
 {
 	switch (event) {
-	case EventTypes::DROP_ITEM_STACK: drop_stack(actor, item, quantity);
+	case EventTypes::DROP_ITEM_STACK: drop_stack(actor, item, quantity); break;
 	}
 }
 
@@ -128,7 +133,12 @@ void InventorySystem::drop_stack(uint32_t actor, uint32_t item, uint32_t quantit
 		auto entity = entity_factory.create_item(entity_name, pos->x, pos->y, pos->z);
 		auto* new_stack = world.GetComponent<Stackable>(entity);
 		new_stack->quantity = quantity;
-		stack->quantity -= quantity;
+		if (static_cast<int>(quantity) == stack->quantity) {
+			remove_from_inventory(actor, item);
+		}
+		else {
+			stack->quantity -= quantity;
+		}
 		world_map.get_entity_grid().add_entity(entity, pos->x, pos->y);
 		event_manager.push_event(EventTypes::DROP_ITEM_STACK_MESSAGE, entity, quantity);
 	}
@@ -136,12 +146,42 @@ void InventorySystem::drop_stack(uint32_t actor, uint32_t item, uint32_t quantit
 
 void InventorySystem::equip(uint32_t actor, uint32_t item)
 {
-
+	auto* equipable = world.GetComponent<Equipable>(item);
+	
+	if (equipable != nullptr) {
+		if (is_slot_occupied(actor, item)) {
+			// swap items
+		}
+		else {
+			auto slot = equipable->slot;
+			remove_from_inventory(actor, item);
+			auto* body = world.GetComponent<Body>(actor);
+			body->equipment[static_cast<int>(slot)] = item;
+		}
+	}
 }
 
 void InventorySystem::unequip(uint32_t actor, uint32_t item)
 {
+	auto* equipable = world.GetComponent<Equipable>(item);
+	auto* body = world.GetComponent<Body>(actor);
 
+	if (can_pick_up(actor, item)) {
+		add_to_inventory(actor, item);
+		body->equipment[static_cast<int>(equipable->slot)] = MAX_ENTITIES + 1;
+	}
+}
+
+void InventorySystem::drop_equipped(uint32_t actor, uint32_t item)
+{
+	auto* stack = world.GetComponent<Stackable>(item);
+	event_manager.push_event(EventTypes::UNEQUIP_ITEM, actor, item);
+	if (stack == nullptr) {
+		event_manager.push_event(EventTypes::DROP_ITEM, actor, item);
+	}
+	else {
+		event_manager.push_event(EventTypes::DROP_ITEM_STACK, actor, item, static_cast<uint32_t>(stack->quantity));
+	}
 }
 
 bool InventorySystem::can_pick_up(uint32_t actor, uint32_t item)

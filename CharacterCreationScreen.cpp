@@ -172,7 +172,7 @@ void CharacterCreationScreen::draw_scene(Renderer& renderer, const uint32_t fps,
 	renderer.DrawCharacterSelectionScene(fps, char_options, selection, stats);
 }
 
-void CharacterCreationScreen::on_entrance(Renderer& renderer) const
+void CharacterCreationScreen::on_entrance(Renderer& renderer)
 {
 
 }

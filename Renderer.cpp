@@ -389,6 +389,24 @@ std::vector<std::string> Renderer::WrapText(const std::string& text, int line_wi
 	return lines;
 }
 
+void Renderer::DrawBackgroundTile(int x, int y, uint8_t r, uint8_t g, uint8_t b)
+{
+	SDL_SetTextureColorMod(texture_manager.GetTexture(font_id), r, g, b);
+	SDL_Rect dstrect;
+	dstrect.x = x * window.GetTileWidth();
+	dstrect.y = y * window.GetTileHeight();
+	dstrect.w = window.GetTileWidth();
+	dstrect.h = window.GetTileHeight();
+
+	SDL_Rect srcrect;
+	srcrect.x = 11 * window.GetTileWidth();
+	srcrect.y = 13 * window.GetTileHeight();
+	srcrect.w = window.GetTileWidth();
+	srcrect.h = window.GetTileHeight();
+
+	SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(font_id), &srcrect, &dstrect);
+}
+
 void Renderer::DrawFPS(uint32_t fps)
 {
 	std::string fps_str = std::to_string(fps);
@@ -520,7 +538,7 @@ void Renderer::DrawCharacterSelectionScene(const uint32_t fps, const std::map<in
 	}
 }
 
-void Renderer::DrawInventory(const std::vector<uint32_t>& items, const std::vector<std::string>& equipment_slots, int option)
+void Renderer::DrawInventory(const std::vector<uint32_t>& items, const std::vector<std::string>& equipment_slots, int option, bool in_equipment_list)
 {
 	auto components = world.GetComponents<Player, Body>();
 	auto& [player, body] = components[0];
@@ -547,15 +565,25 @@ void Renderer::DrawInventory(const std::vector<uint32_t>& items, const std::vect
 	for (auto equipment_slot : equipment_slots) {
 		auto x{ inventory_width + 2 };
 		auto y{ 2 * stats_height + 1 + 2 * (k + 1) };
-		DrawText(equipment_slot, x, y, 0xBB, 0xAA, 0x99);
-		if (body->equipment[k++] == MAX_ENTITIES + 1) {
+		std::string slot{ "" };
+		slot += static_cast<char>(97 + k);
+		slot += ") ";
+		slot += equipment_slot;
+		DrawText(slot, x, y, 0xBB, 0xAA, 0x99);
+		if (body->equipment[k] == MAX_ENTITIES + 1) {
 			std::string s = "empty";
-			DrawText(s, x + 12, y, 0xBB, 0xAA, 0x99);
+			DrawText(s, x + 15, y, 0xBB, 0xAA, 0x99);
 		}
 		else {
 			auto* item = world.GetComponent<Item>(body->equipment[k]);
-			DrawText(item->name, x + 12, y, 0xBB, 0xAA, 0x99);
+			auto* stack = world.GetComponent<Stackable>(body->equipment[k]);
+			std::string line = item->name;
+			if (stack != nullptr) {
+				 line += " (" + std::to_string(stack->quantity) + ")";
+			}
+			DrawText(line, x + 15, y, 0xBB, 0xAA, 0x99);
 		}
+		k++;
 	}
 
 	int j{ 0 };
@@ -618,29 +646,16 @@ void Renderer::DrawScene(uint32_t fps, WorldMap& world_map, MessageLog& message_
 	}
 }
 
-void Renderer::DrawActions()
+void Renderer::DrawActions(bool in_equipment_list)
 {
 	int x{ window.GetWidth() / 2 - 5 };
 	int y{ window.GetHeight() / 2 - 5 };
-	int width{ 10 };
+	int width{ 12 };
 	int height{ 10 };
 	for (int i = 0; i < width + 1; i++) {
 		for (int j = 0; j < height + 1; j++) {
 			auto background = window.GetBackground();
-			SDL_SetTextureColorMod(texture_manager.GetTexture(font_id), 0x3d, 0x35, 0x2a);
-			SDL_Rect dstrect;
-			dstrect.x = (x + i) * window.GetTileWidth();
-			dstrect.y = (y + j) * window.GetTileHeight();
-			dstrect.w = window.GetTileWidth();
-			dstrect.h = window.GetTileHeight();
-
-			SDL_Rect srcrect;
-			srcrect.x = 11 * window.GetTileWidth();
-			srcrect.y = 13 * window.GetTileHeight();
-			srcrect.w = window.GetTileWidth();
-			srcrect.h = window.GetTileHeight();
-
-			SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(font_id), &srcrect, &dstrect);
+			DrawBackgroundTile(x + i, y + j, background.r, background.g, background.b);
 		}
 	}
 	DrawBox(x, y, width, height);
@@ -648,9 +663,16 @@ void Renderer::DrawActions()
 	std::string drop = "d) drop";
 	DrawText(drop, x + 1, y + 1, 0xBB, 0xAA, 0x99);
 	y += 2;
-	std::string equip = "e) equip";
-	DrawText(equip, x + 1, y + 1, 0xBB, 0xAA, 0x99);
-	y += 2;
+	if (in_equipment_list) {
+		std::string equip = "e) unequip";
+		DrawText(equip, x + 1, y + 1, 0xBB, 0xAA, 0x99);
+		y += 2;
+	}
+	else {
+		std::string equip = "e) equip";
+		DrawText(equip, x + 1, y + 1, 0xBB, 0xAA, 0x99);
+		y += 2;
+	}
 	std::string look = "l) look";
 	DrawText(look, x + 1, y + 1, 0xBB, 0xAA, 0x99);
 	y += 2;

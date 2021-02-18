@@ -76,7 +76,7 @@ GameState QuantityState::get_state() const
 	return state;
 }
 
-void QuantityState::on_entrance(Renderer& renderer) const
+void QuantityState::on_entrance(Renderer& renderer)
 {
 
 }

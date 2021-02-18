@@ -153,7 +153,7 @@ void GameScreen::draw_scene(Renderer& renderer, const uint32_t fps, float dt) co
 	renderer.DrawScene(fps, world_map, message_log);
 }
 
-void GameScreen::on_entrance(Renderer& renderer) const
+void GameScreen::on_entrance(Renderer& renderer)
 {
 	event_manager.push_event(EventTypes::PLAY_SOUND, id);
 	auto components = world.GetComponents<Player, Position>();

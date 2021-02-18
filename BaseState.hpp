@@ -16,7 +16,7 @@ public:
 	virtual void draw_scene(Renderer& renderer, const uint32_t fps, float dt) const = 0;
 	virtual bool render_previous() const = 0;
 	virtual GameState get_state() const = 0;
-	virtual void on_entrance(Renderer& renderer) const = 0;
+	virtual void on_entrance(Renderer& renderer) = 0;
 	virtual void on_bury() const = 0;
 };
 
