@@ -35,6 +35,7 @@ private:
 	void create_weapon(uint32_t& entity);
 	void create_container(uint32_t& entity);
 	void create_stackable(uint32_t& entity);
+	void create_body(uint32_t& entity);
 };
 
 

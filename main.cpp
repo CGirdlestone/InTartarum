@@ -25,6 +25,7 @@
 #include "CharacterCreationScreen.hpp"
 #include "GameScreen.hpp"
 #include "InventoryScreen.hpp"
+#include "ActionsState.hpp"
 
 void initialise_SDL() {
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
@@ -70,34 +71,35 @@ void RegisterComponents(World& world) {
 	world.RegisterComponent<Container>();
 	world.RegisterComponent<Stackable>();
 	world.RegisterComponent<AI>();
+	world.RegisterComponent<Body>();
 }
 
 void load_tiles(Renderer& renderer, TextureManager& tex_manager, unsigned int font_tileset, int tile_width, int tile_height) {
-	renderer.AddTile(TileType::EMPTY,			Sprite(font_tileset, 0 * tile_width, 0 * tile_height, tile_width, tile_height, 0));
-	renderer.AddTile(TileType::FLOOR,			Sprite(font_tileset, 14 * tile_width, 2 * tile_height, tile_width, tile_height, 0, 0x3D, 0x35, 0x2A));
-	renderer.AddTile(TileType::GRASS,			Sprite(font_tileset, 2 * tile_width, 2 * tile_height, tile_width, tile_height, 0, 0x86, 0xAF, 0x80));
-	renderer.AddTile(TileType::SHALLOW_WATER,	Sprite(font_tileset, 7 * tile_width, 15 * tile_height, tile_width, tile_height, 0, 0x87, 0xCE, 0xEB));
-	renderer.AddTile(TileType::DEEP_WATER,		Sprite(font_tileset, 7 * tile_width, 15 * tile_height, tile_width, tile_height, 0, 0x69, 0x95, 0xED));
-	renderer.AddTile(TileType::ROAD,			Sprite(font_tileset, 14 * tile_width, 7 * tile_height, tile_width, tile_height, 0, 0x55, 0x44, 0x44));
-	renderer.AddTile(TileType::WALL_TL,			Sprite(font_tileset, 9 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::WALL_TOP,		Sprite(font_tileset, 13 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::WALL_TR,			Sprite(font_tileset, 11 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::WALL_LEFT,		Sprite(font_tileset, 10 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::WALL_RIGHT,		Sprite(font_tileset, 10 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::WALL_BL,			Sprite(font_tileset, 8 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::WALL_BR,			Sprite(font_tileset, 12 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::WALL_BOTTOM,		Sprite(font_tileset, 13 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::WALL_LEFT_T,		Sprite(font_tileset, 12 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::WALL_RIGHT_T,	Sprite(font_tileset, 9 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::BORDER_TL,		Sprite(font_tileset, 10 * tile_width, 13 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::BORDER_TR,		Sprite(font_tileset, 15 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::EMPTY, Sprite(font_tileset, 0 * tile_width, 0 * tile_height, tile_width, tile_height, 0));
+	renderer.AddTile(TileType::FLOOR, Sprite(font_tileset, 14 * tile_width, 2 * tile_height, tile_width, tile_height, 0, 0x3D, 0x35, 0x2A));
+	renderer.AddTile(TileType::GRASS, Sprite(font_tileset, 2 * tile_width, 2 * tile_height, tile_width, tile_height, 0, 0x86, 0xAF, 0x80));
+	renderer.AddTile(TileType::SHALLOW_WATER, Sprite(font_tileset, 7 * tile_width, 15 * tile_height, tile_width, tile_height, 0, 0x87, 0xCE, 0xEB));
+	renderer.AddTile(TileType::DEEP_WATER, Sprite(font_tileset, 7 * tile_width, 15 * tile_height, tile_width, tile_height, 0, 0x69, 0x95, 0xED));
+	renderer.AddTile(TileType::ROAD, Sprite(font_tileset, 14 * tile_width, 7 * tile_height, tile_width, tile_height, 0, 0x55, 0x44, 0x44));
+	renderer.AddTile(TileType::WALL_TL, Sprite(font_tileset, 9 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::WALL_TOP, Sprite(font_tileset, 13 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::WALL_TR,	Sprite(font_tileset, 11 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::WALL_LEFT, Sprite(font_tileset, 10 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::WALL_RIGHT, Sprite(font_tileset, 10 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::WALL_BL, Sprite(font_tileset, 8 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::WALL_BR,	Sprite(font_tileset, 12 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::WALL_BOTTOM,	Sprite(font_tileset, 13 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::WALL_LEFT_T,	Sprite(font_tileset, 12 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::WALL_RIGHT_T, Sprite(font_tileset, 9 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::BORDER_TL, Sprite(font_tileset, 10 * tile_width, 13 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::BORDER_TR, Sprite(font_tileset, 15 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
 	renderer.AddTile(TileType::BORDER_HORIZONTAL, Sprite(font_tileset, 4 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
 	renderer.AddTile(TileType::BORDER_VERTICAL, Sprite(font_tileset, 3 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::BORDER_BL,		Sprite(font_tileset, 0 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::BORDER_BR,		Sprite(font_tileset, 9 * tile_width, 13 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::BORDER_LEFT_T,	Sprite(font_tileset, 3 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::BORDER_RIGHT_T,	Sprite(font_tileset, 4 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
-	renderer.AddTile(TileType::STAIRS,			Sprite(font_tileset, 14 * tile_width, 3 * tile_height, tile_width, tile_height, 0, 0xCD, 0x5C, 0x5C));
+	renderer.AddTile(TileType::BORDER_BL, Sprite(font_tileset, 0 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::BORDER_BR, Sprite(font_tileset, 9 * tile_width, 13 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::BORDER_LEFT_T, Sprite(font_tileset, 3 * tile_width, 12 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::BORDER_RIGHT_T, Sprite(font_tileset, 4 * tile_width, 11 * tile_height, tile_width, tile_height, 0, 0xBB, 0xAA, 0x99));
+	renderer.AddTile(TileType::STAIRS, Sprite(font_tileset, 14 * tile_width, 3 * tile_height, tile_width, tile_height, 0, 0xCD, 0x5C, 0x5C));
 }
 
 void build_town(Level& level, World& world, TextureManager& texture_manager, EntityFactory& entity_factory, unsigned int font_tileset, int tile_width, int tile_height) {
@@ -146,9 +148,7 @@ void build_town(Level& level, World& world, TextureManager& texture_manager, Ent
 
 	std::string arrow = "arrow";
 	entity_factory.create_item(arrow, 20, 20, 0);
-
-	std::string arrow2 = "arrow";
-	entity_factory.create_item(arrow2, 19, 20, 0);
+	entity_factory.create_item(arrow, 19, 20, 0);
 	
 	std::string fire = "camp_fire";
 	entity_factory.create_item(fire, 15, 13, 0);
@@ -256,6 +256,9 @@ int main(int argc, char* argv[])
 
 		auto inventory_screen = InventoryScreen(state_manager, world, event_manager, keyboard);
 		state_manager.add_state(GameState::INVENTORY, inventory_screen);
+
+		auto action_state = ActionsState(state_manager, world, event_manager, keyboard);
+		state_manager.add_state(GameState::ACTIONS, action_state);
 
 		SDL_Event event;
 

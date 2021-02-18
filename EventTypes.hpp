@@ -40,4 +40,5 @@ enum class EventTypes {
 	DROP_ITEM_STACK,
 	EQUIP_ITEM,
 	UNEQUIP_ITEM,
+	SEND_ITEM_TO_ACTION_STATE,
 };

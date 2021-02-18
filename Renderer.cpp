@@ -227,8 +227,8 @@ void Renderer::DrawMessageLog(MessageLog& message_log)
 {
 	auto& messages = message_log.get_messages();
 	auto it = messages.rbegin();
-	int j{ camera.get_height() + 2 * camera.get_offset_y() };
-	for (int i = 0; i < 10; i++) {
+	int j{ camera.get_height() + 2 * camera.get_offset_y() + 1};
+	for (int i = 0; i < 9; i++) {
 		const auto& msg = *(it + message_log.get_offset() + i);
 		auto & [r, g, b] = msg.get_colour();
 		DrawText(msg.text, camera.get_offset_x() * camera.get_zoom(), j++, r, g, b);
@@ -308,7 +308,7 @@ void Renderer::DrawPlayerInfo(WorldMap& world_map)
 
 	int hp = 20;
 	int max_hp = 20;
-	std::string health = "Health: " + std::to_string(hp) + '/' + std::to_string(max_hp);
+	std::string health = "Health: " + std::to_string(hp) + " / " + std::to_string(max_hp);
 	if (max_hp / hp >= 10) {
 		DrawText(health,  x, y, 0xCD, 0x5C, 0x5C);
 	}
@@ -319,7 +319,7 @@ void Renderer::DrawPlayerInfo(WorldMap& world_map)
 
 	int xp = 300;
 	int max_xp = 500;
-	std::string experience = "Exp: " + std::to_string(xp) + '/' + std::to_string(max_xp);
+	std::string experience = "Exp: " + std::to_string(xp) + " / " + std::to_string(max_xp);
 	DrawText(experience, x, y, 0xB0, 0xC4, 0xDE);
 }
 
@@ -412,7 +412,6 @@ void Renderer::DrawMapTexture(int x, int y)
 
 	SDL_RenderCopy(window.GetRenderer(), map_texture.get(), &srcrect, &dstrect);
 }
-
 
 void Renderer::DrawSprite(Position* pos, Sprite* sprite)
 {
@@ -521,15 +520,18 @@ void Renderer::DrawCharacterSelectionScene(const uint32_t fps, const std::map<in
 	}
 }
 
-void Renderer::DrawInventory(const std::vector<uint32_t>& items, int option)
+void Renderer::DrawInventory(const std::vector<uint32_t>& items, const std::vector<std::string>& equipment_slots, int option)
 {
+	auto components = world.GetComponents<Player, Body>();
+	auto& [player, body] = components[0];
+
 	int inventory_x{ 2 };
 	int inventory_width{ window.GetWidth() * 3 / 8 };
 	DrawBox(0, 0, inventory_width, window.GetHeight() - 1, false, false, true);
 	std::string inventory = "Inventory";
 	DrawText(inventory, inventory_x, 0, 0xBB, 0xAA, 0x99);
 
-	int stats_height{ window.GetHeight() * 2 / 6 };
+	int stats_height{ window.GetHeight() / 4 };
 	DrawBox(inventory_width + 1, 0, window.GetWidth() - inventory_width - 2, stats_height, false, false, true);
 	std::string stats = "Item Stats";
 	DrawText(stats, inventory_width + 3, 0, 0xBB, 0xAA, 0x99);
@@ -541,6 +543,20 @@ void Renderer::DrawInventory(const std::vector<uint32_t>& items, int option)
 	DrawBox(inventory_width + 1, 2 * stats_height + 1, window.GetWidth() - inventory_width - 2, window.GetHeight() - 2 * stats_height - 2, false, false, true);
 	std::string equipped_items = "Equipped Items";
 	DrawText(equipped_items, inventory_width + 3, 2 * stats_height + 1, 0xBB, 0xAA, 0x99);
+	int k{ 0 };
+	for (auto equipment_slot : equipment_slots) {
+		auto x{ inventory_width + 2 };
+		auto y{ 2 * stats_height + 1 + 2 * (k + 1) };
+		DrawText(equipment_slot, x, y, 0xBB, 0xAA, 0x99);
+		if (body->equipment[k++] == MAX_ENTITIES + 1) {
+			std::string s = "empty";
+			DrawText(s, x + 12, y, 0xBB, 0xAA, 0x99);
+		}
+		else {
+			auto* item = world.GetComponent<Item>(body->equipment[k]);
+			DrawText(item->name, x + 12, y, 0xBB, 0xAA, 0x99);
+		}
+	}
 
 	int j{ 0 };
 	for (auto e : items) {
@@ -600,6 +616,50 @@ void Renderer::DrawScene(uint32_t fps, WorldMap& world_map, MessageLog& message_
 	if (!message_log.get_messages().empty()){
 		DrawMessageLog(message_log);
 	}
+}
+
+void Renderer::DrawActions()
+{
+	int x{ window.GetWidth() / 2 - 5 };
+	int y{ window.GetHeight() / 2 - 5 };
+	int width{ 10 };
+	int height{ 10 };
+	for (int i = 0; i < width + 1; i++) {
+		for (int j = 0; j < height + 1; j++) {
+			auto background = window.GetBackground();
+			SDL_SetTextureColorMod(texture_manager.GetTexture(font_id), 0x3d, 0x35, 0x2a);
+			SDL_Rect dstrect;
+			dstrect.x = (x + i) * window.GetTileWidth();
+			dstrect.y = (y + j) * window.GetTileHeight();
+			dstrect.w = window.GetTileWidth();
+			dstrect.h = window.GetTileHeight();
+
+			SDL_Rect srcrect;
+			srcrect.x = 11 * window.GetTileWidth();
+			srcrect.y = 13 * window.GetTileHeight();
+			srcrect.w = window.GetTileWidth();
+			srcrect.h = window.GetTileHeight();
+
+			SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(font_id), &srcrect, &dstrect);
+		}
+	}
+	DrawBox(x, y, width, height);
+	
+	std::string drop = "d) drop";
+	DrawText(drop, x + 1, y + 1, 0xBB, 0xAA, 0x99);
+	y += 2;
+	std::string equip = "e) equip";
+	DrawText(equip, x + 1, y + 1, 0xBB, 0xAA, 0x99);
+	y += 2;
+	std::string look = "l) look";
+	DrawText(look, x + 1, y + 1, 0xBB, 0xAA, 0x99);
+	y += 2;
+	std::string quaff = "q) quaff";
+	DrawText(quaff, x + 1, y + 1, 0xBB, 0xAA, 0x99);
+	y += 2;
+	std::string use = "u) use";
+	DrawText(use, x + 1, y + 1, 0xBB, 0xAA, 0x99);
+	y += 2;
 }
 
 

@@ -34,7 +34,9 @@ void InventorySystem::receive(EventTypes event, uint32_t actor)
 
 void InventorySystem::receive(EventTypes event, uint32_t actor, uint32_t target)
 {
-
+	switch (event) {
+	case EventTypes::DROP_ITEM: drop(actor, target);
+	}
 }
 
 void InventorySystem::receive(EventTypes event, uint32_t actor, uint32_t target, uint32_t item)
@@ -105,7 +107,10 @@ void InventorySystem::pick_up(uint32_t actor)
 
 void InventorySystem::drop(uint32_t actor, uint32_t item)
 {
-
+	remove_from_inventory(actor, item);
+	auto* pos = world.GetComponent<Position>(actor);
+	world.AddComponent<Position>(item, pos->x, pos->y, pos->z);
+	world_map.get_entity_grid().add_entity(item, pos->x, pos->y);
 }
 
 void InventorySystem::equip(uint32_t actor, uint32_t item)
@@ -130,6 +135,12 @@ bool InventorySystem::can_pick_up(uint32_t actor, uint32_t item)
 	}
 
 	event_manager.push_event(EventTypes::OVERWEIGHT);
+	return false;
+}
+
+bool InventorySystem::is_slot_occupied(uint32_t actor, uint32_t item)
+{
+	// TO DO
 	return false;
 }
 
@@ -169,4 +180,11 @@ uint32_t InventorySystem::get_item_from_inventory(uint32_t actor, const std::str
 	else {
 		return MAX_ENTITIES + 1;
 	}
+}
+
+void InventorySystem::remove_from_inventory(uint32_t actor, uint32_t item)
+{
+	auto* container = world.GetComponent<Container>(actor);
+
+	container->inventory.erase(std::remove_if(container->inventory.begin(), container->inventory.end(), [item](const uint32_t e) { return item == e; }), container->inventory.end());
 }

@@ -308,3 +308,13 @@ void Stackable::deserialise(const char* buffer, size_t& offset)
 {
 	quantity = static_cast<int>(utils::deserialiseUint32(buffer, offset));
 }
+
+void Body::serialise(std::ofstream& file)
+{
+	utils::serialiseVector(file, equipment);
+}
+
+void Body::deserialise(const char* buffer, size_t& offset)
+{
+	equipment = utils::deserialiseVector(buffer, offset);
+}

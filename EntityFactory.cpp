@@ -156,6 +156,9 @@ void EntityFactory::create_entity(uint32_t& entity)
         else if (component == "stackable") {
             create_stackable(entity);
         }
+        else if (component == "body") {
+            create_body(entity);
+        }
         lua_pop(vm.get(), 2);
     }
     lua_pop(vm.get(), 1);
@@ -327,4 +330,9 @@ void EntityFactory::create_container(uint32_t& entity)
 void EntityFactory::create_stackable(uint32_t& entity)
 {
     world.AddComponent<Stackable>(entity);
+}
+
+void EntityFactory::create_body(uint32_t& entity)
+{
+    world.AddComponent<Body>(entity);
 }
