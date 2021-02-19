@@ -318,3 +318,13 @@ void Body::deserialise(const char* buffer, size_t& offset)
 {
 	equipment = utils::deserialiseVector(buffer, offset);
 }
+
+void ID::serialise(std::ofstream& file)
+{
+	utils::serialiseString(file, id);
+}
+
+void ID::deserialise(const char* buffer, size_t& offset)
+{
+	id = utils::deserialiseString(buffer, offset);
+}

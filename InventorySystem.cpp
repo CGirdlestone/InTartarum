@@ -129,7 +129,8 @@ void InventorySystem::drop_stack(uint32_t actor, uint32_t item, uint32_t quantit
 	auto* container = world.GetComponent<Container>(actor);
 
 	if (static_cast<int>(quantity) <= stack->quantity) {
-		std::string entity_name = _item->name;
+		auto* id = world.GetComponent<ID>(item);
+		std::string entity_name = id->id;
 		auto entity = entity_factory.create_item(entity_name, pos->x, pos->y, pos->z);
 		auto* new_stack = world.GetComponent<Stackable>(entity);
 		new_stack->quantity = quantity;

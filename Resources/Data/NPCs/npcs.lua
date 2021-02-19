@@ -12,4 +12,9 @@ npc =
     {
         blocks_view = false;
     };
+    id = 
+    {
+        uid = "npc";
+    };  
+    
 }

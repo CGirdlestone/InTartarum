@@ -246,12 +246,12 @@ void Renderer::DrawGameBorder(int x, int y, int width, int height, int height_di
 	DrawBox(x, y, width, height_divider, false, false, true);
 	
 	std::string log = "Message Log";
-	DrawBox(x, y + height_divider + 1, width / 2 - 1, height - height_divider - 2, false, false, true);
+	DrawBox(x, y + height_divider + 1, width * 3 / 4 - 1, height - height_divider - 2, false, false, true);
 	DrawText(log, x + 2, y + height_divider + 1, 0xBB, 0xAA, 0x99);
 
 	std::string info = "Character Info";
-	DrawBox(x + width / 2, y + height_divider + 1, width / 2 + 1, height - height_divider - 2, false, false, true);
-	DrawText(info, x + width / 2 + 2, y + height_divider + 1, 0xBB, 0xAA, 0x99);
+	DrawBox(x + width * 3 / 4, y + height_divider + 1, width / 4 + 1, height - height_divider - 2, false, false, true);
+	DrawText(info, x + width * 3 / 4 + 2, y + height_divider + 1, 0xBB, 0xAA, 0x99);
 }
 
 void Renderer::DrawHealth(int x, int y, int health, int max_health)
@@ -301,7 +301,7 @@ void Renderer::DrawPlayerInfo(WorldMap& world_map)
 	DrawText(depth, 2, 0, 0xBB, 0xAA, 0x99);
 	
 	int y{ camera.get_height() + 2 * camera.get_offset_y() + 2 };
-	int x{ window.GetWidth() / 2 + 1 };
+	int x{ window.GetWidth() * 3 / 4 + 1 };
 	std::string player_level = "Level: 1";
 	DrawText(player_level, x, y, 0xBB, 0xAA, 0x99);
 	y += 2;
@@ -545,9 +545,15 @@ void Renderer::DrawInventory(const std::vector<uint32_t>& items, const std::vect
 
 	int inventory_x{ 2 };
 	int inventory_width{ window.GetWidth() * 3 / 8 };
+	
 	DrawBox(0, 0, inventory_width, window.GetHeight() - 1, false, false, true);
 	std::string inventory = "Inventory";
-	DrawText(inventory, inventory_x, 0, 0xBB, 0xAA, 0x99);
+	if (!in_equipment_list) {
+		DrawText(inventory, inventory_x, 0, 0xB0, 0xC4, 0xDE);
+	}
+	else {
+		DrawText(inventory, inventory_x, 0, 0xBB, 0xAA, 0x99);
+	}
 
 	int stats_height{ window.GetHeight() / 4 };
 	DrawBox(inventory_width + 1, 0, window.GetWidth() - inventory_width - 2, stats_height, false, false, true);
@@ -560,7 +566,12 @@ void Renderer::DrawInventory(const std::vector<uint32_t>& items, const std::vect
 
 	DrawBox(inventory_width + 1, 2 * stats_height + 1, window.GetWidth() - inventory_width - 2, window.GetHeight() - 2 * stats_height - 2, false, false, true);
 	std::string equipped_items = "Equipped Items";
-	DrawText(equipped_items, inventory_width + 3, 2 * stats_height + 1, 0xBB, 0xAA, 0x99);
+	if (in_equipment_list) {
+		DrawText(equipped_items, inventory_width + 3, 2 * stats_height + 1, 0xB0, 0xC4, 0xDE);
+	}
+	else {
+		DrawText(equipped_items, inventory_width + 3, 2 * stats_height + 1, 0xBB, 0xAA, 0x99);
+	}
 	int k{ 0 };
 	for (auto equipment_slot : equipment_slots) {
 		auto x{ inventory_width + 2 };

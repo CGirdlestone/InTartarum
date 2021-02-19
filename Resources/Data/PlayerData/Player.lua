@@ -32,7 +32,11 @@ player_table =
     body = 
     {
         true;
-    }
+    };
+    id = 
+    {
+        uid = "player";
+    };
 }
 
 

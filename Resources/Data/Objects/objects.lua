@@ -10,6 +10,7 @@ ID =
     ["BOOTS"] = 7,
     ["RING"] = 8,
     ["QUIVER"] = 9,
+    ["BACK"] = 10,
 }
 
 width = 14; -- used for the animation frame clipping
@@ -35,7 +36,11 @@ arrow =
     stackable = 
     {
         true,
-    }
+    };
+    id = 
+    {
+        uid = "arrow";
+    };
 }
 
 fire_sword = 
@@ -70,6 +75,10 @@ fire_sword =
     {
         num_dice = 2,
         sides = 8,
+    };
+    id = 
+    {
+        uid = "fire_sword";
     };
 }
 
@@ -111,6 +120,10 @@ chest =
             { tilesheet = "Cooz-curses-14x16.png", clip_x = 11 * width, clip_y = 13 * height, width = width, height = height };
         }
     };
+    id = 
+    {
+        uid = "chest";
+    };
 }
 
 door = 
@@ -151,6 +164,10 @@ door =
             { tilesheet = "Cooz-curses-14x16.png", clip_x = 11 * width, clip_y = 2 * height, width = width, height = height };
         }
     };
+    id = 
+    {
+        uid = "door";
+    };
 }
 
 camp_fire = 
@@ -175,5 +192,9 @@ camp_fire =
             { tilesheet = "Cooz-curses-14x16.png", clip_x = 4 * width, clip_y = 2 * height, width = width, height = height };
             { tilesheet = "Cooz-curses-14x16.png", clip_x = 5 * width, clip_y = 1 * height, width = width, height = height };
         }
+    };
+    id = 
+    {
+        uid = "camp_fire";
     };
 }

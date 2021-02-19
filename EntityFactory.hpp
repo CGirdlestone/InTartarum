@@ -37,6 +37,7 @@ private:
 	void create_container(uint32_t& entity);
 	void create_stackable(uint32_t& entity);
 	void create_body(uint32_t& entity);
+	void create_id(uint32_t& entity);
 };
 
 

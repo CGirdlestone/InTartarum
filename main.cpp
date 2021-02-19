@@ -73,6 +73,7 @@ void RegisterComponents(World& world) {
 	world.RegisterComponent<Stackable>();
 	world.RegisterComponent<AI>();
 	world.RegisterComponent<Body>();
+	world.RegisterComponent<ID>();
 }
 
 void load_tiles(Renderer& renderer, TextureManager& tex_manager, unsigned int font_tileset, int tile_width, int tile_height) {

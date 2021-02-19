@@ -159,6 +159,9 @@ void EntityFactory::create_entity(uint32_t& entity)
         else if (component == "body") {
             create_body(entity);
         }
+        else if (component == "id") {
+            create_id(entity);
+        }
         lua_pop(vm.get(), 2);
     }
     lua_pop(vm.get(), 1);
@@ -335,4 +338,10 @@ void EntityFactory::create_stackable(uint32_t& entity)
 void EntityFactory::create_body(uint32_t& entity)
 {
     world.AddComponent<Body>(entity);
+}
+
+void EntityFactory::create_id(uint32_t& entity)
+{
+    auto uid = utils::read_lua_string(vm, "uid", -3);
+    world.AddComponent<ID>(entity, uid);
 }

@@ -269,3 +269,14 @@ struct Body : public ISerializeable {
 	virtual void serialise(std::ofstream& file) override;
 	virtual void deserialise(const char* buffer, size_t& offset) override;
 };
+
+struct ID : public ISerializeable {
+	ID() {};
+	~ID() {};
+	ID(std::string _id) : id(_id) {};
+
+	std::string id{ "" };
+
+	virtual void serialise(std::ofstream& file) override;
+	virtual void deserialise(const char* buffer, size_t& offset) override;
+};
