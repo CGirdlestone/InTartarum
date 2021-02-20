@@ -21,7 +21,7 @@ bat = {
     {
         tilesheet = "Cooz-curses-14x16.png", 
         clip_x = 2, clip_y = 6, 
-        width = 14, height = 16, depth = 10, -- depth = 10 ensures the player will be drawn above everything else
+        width = 14, height = 16, depth = 5, -- depth = 10 ensures the player will be drawn above everything else
         red = 100, green = 149, blue = 237,
     }; 
     --fighter = 

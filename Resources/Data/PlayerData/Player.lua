@@ -10,7 +10,7 @@ player_table =
     {
         tilesheet = "Cooz-curses-14x16.png", 
         clip_x = 0, clip_y = 4, 
-        width = 14, height = 16, depth = 1, -- depth = 1 ensures the player will be drawn above everything else
+        width = 14, height = 16, depth = 10, -- depth = 10 ensures the player will be drawn above everything else
         red = 255, green = 167, blue = 93;
     };
     player = 

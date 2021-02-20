@@ -139,6 +139,7 @@ void InventorySystem::drop_stack(uint32_t actor, uint32_t item, uint32_t quantit
 		}
 		else {
 			stack->quantity -= quantity;
+			container->weight -= _item->weight * quantity;
 		}
 		world_map.get_entity_grid().add_entity(entity, pos->x, pos->y);
 		event_manager.push_event(EventTypes::DROP_ITEM_STACK_MESSAGE, entity, quantity);

@@ -574,17 +574,23 @@ void Renderer::DrawInventory(const std::vector<uint32_t>& items, const std::vect
 		DrawText(equipped_items, inventory_width + 3, 2 * stats_height + 1, 0xBB, 0xAA, 0x99);
 	}
 	int k{ 0 };
+	int x{ inventory_width + 2 };
+	if (!in_equipment_list) {
+		x += 3;
+	}
+
 	for (auto equipment_slot : equipment_slots) {
-		auto x{ inventory_width + 2 };
 		auto y{ 2 * stats_height + 1 + 2 * (k + 1) };
 		std::string slot{ "" };
-		slot += static_cast<char>(97 + k);
-		slot += ") ";
+		if (in_equipment_list) {
+			slot += static_cast<char>(97 + k);
+			slot += ") ";
+		}
 		slot += equipment_slot;
 		DrawText(slot, x, y, 0xBB, 0xAA, 0x99);
 		if (body->equipment[k] == MAX_ENTITIES + 1) {
 			std::string s = "empty";
-			DrawText(s, x + 15, y, 0xBB, 0xAA, 0x99);
+			DrawText(s, inventory_width + 2 + 15, y, 0xBB, 0xAA, 0x99);
 		}
 		else {
 			auto* item = world.GetComponent<Item>(body->equipment[k]);
@@ -593,24 +599,28 @@ void Renderer::DrawInventory(const std::vector<uint32_t>& items, const std::vect
 			if (stack != nullptr) {
 				 line += " (" + std::to_string(stack->quantity) + ")";
 			}
-			DrawText(line, x + 15, y, 0xBB, 0xAA, 0x99);
+			DrawText(line, inventory_width + 2 + 15, y, 0xBB, 0xAA, 0x99);
 		}
 		k++;
 	}
 
 	int j{ 0 };
+	if (in_equipment_list) {
+		inventory_x += 3;
+	}
 	for (auto e : items) {
 		auto* item = world.GetComponent<Item>(e);
 		auto* stack = world.GetComponent<Stackable>(e);
 		std::string info{ "" };
-		info += static_cast<char>(97 + j);
-		info +=  ") ";
+		if (!in_equipment_list) {
+			info += static_cast<char>(97 + j);
+			info += ") ";
+		}
 		info += item->name;
 		if (stack != nullptr) {
 			info += " (" + std::to_string(stack->quantity) + ")";
 		}
 		if (j == option) {
-			DrawText(">", 1, 2 * j + 2, 0xBB, 0xAA, 0x99);
 			DrawText(info, inventory_x, 2 * j++ + 2, 0xBB, 0xAA, 0x99);
 			auto description_lines = WrapText(item->description, window.GetWidth() - inventory_width - 2);
 			int k{ 0 };
