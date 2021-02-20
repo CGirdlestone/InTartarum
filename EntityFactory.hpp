@@ -38,6 +38,7 @@ private:
 	void create_stackable(uint32_t& entity);
 	void create_body(uint32_t& entity);
 	void create_id(uint32_t& entity);
+	void create_ai(uint32_t& entity);
 };
 
 

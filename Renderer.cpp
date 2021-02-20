@@ -451,6 +451,7 @@ void Renderer::DrawSprite(Position* pos, Sprite* sprite)
 	srcrect.w = sprite->width;
 	srcrect.h = sprite->height;
 
+	DrawBackgroundTile(x + camera.get_offset_x(), y + camera.get_offset_y(), window.GetBackground().r, window.GetBackground().g, window.GetBackground().b);
 	SDL_SetTextureColorMod(texture_manager.GetTexture(sprite->id), sprite->r, sprite->g, sprite->b);
 	SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(sprite->id), &srcrect, &dstrect);
 }

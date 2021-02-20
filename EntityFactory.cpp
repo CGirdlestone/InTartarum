@@ -16,9 +16,10 @@ uint32_t EntityFactory::create_mob(std::string& entity_name, int x, int y, int z
     auto entity = world.CreateEntity();
     world.AddComponent<Position>(entity, x, y, z);
 
-    lua_getglobal(vm.get(), "mobs"); // push mobs table
-    lua_pushstring(vm.get(), entity_name.c_str()); // push mob name
-    lua_gettable(vm.get(), -2); // get mob sub-table on top of stack
+    lua_getglobal(vm.get(), entity_name.c_str()); // push object name
+    if (!lua_istable(vm.get(), -1)) {
+        printf("Expected table!");
+    }
 
     create_entity(entity);
     return entity;
@@ -162,6 +163,12 @@ void EntityFactory::create_entity(uint32_t& entity)
         else if (component == "id") {
             create_id(entity);
         }
+        else if (component == "ai") {
+            create_ai(entity);
+        }
+        else if (component == "actor") {
+            create_actor(entity);
+        }
         lua_pop(vm.get(), 2);
     }
     lua_pop(vm.get(), 1);
@@ -202,7 +209,9 @@ void EntityFactory::create_player(uint32_t& entity)
 
 void EntityFactory::create_actor(uint32_t& entity)
 {
-    world.AddComponent<Actor>(entity);
+    auto name = utils::read_lua_string(vm, "name", -3);
+    auto description = utils::read_lua_string(vm, "description", -3);
+    world.AddComponent<Actor>(entity, name, description);
 }
 
 void EntityFactory::create_blocker(uint32_t& entity)
@@ -344,4 +353,12 @@ void EntityFactory::create_id(uint32_t& entity)
 {
     auto uid = utils::read_lua_string(vm, "uid", -3);
     world.AddComponent<ID>(entity, uid);
+}
+
+void EntityFactory::create_ai(uint32_t& entity)
+{
+    auto uid = static_cast<Attitude>(utils::read_lua_int(vm, "state", -3));
+    auto blind = utils::read_lua_bool(vm, "blind", -3);
+    auto scent = utils::read_lua_bool(vm, "scent", -3);
+    world.AddComponent<AI>(entity, uid, blind, scent);
 }

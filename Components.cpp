@@ -28,12 +28,14 @@ void Player::deserialise(const char* buffer, size_t& offset)
 
 void Actor::serialise(std::ofstream& file)
 {
-	// nothing yet
+	utils::serialiseString(file, name);
+	utils::serialiseString(file, description);
 }
 
 void Actor::deserialise(const char* buffer, size_t& offset)
 {
-	// nothing yet
+	name = utils::deserialiseString(buffer, offset);
+	description = utils::deserialiseString(buffer, offset);
 }
 
 void Blocker::serialise(std::ofstream& file)
@@ -278,11 +280,15 @@ void Weapon::deserialise(const char* buffer, size_t& offset)
 void AI::serialise(std::ofstream& file)
 {
 	utils::serialiseUint32(file, static_cast<uint32_t>(attitude));
+	utils::serialiseUint32(file, static_cast<uint32_t>(blind));
+	utils::serialiseUint32(file, static_cast<uint32_t>(scent));
 }
 
 void AI::deserialise(const char* buffer, size_t& offset)
 {
 	attitude = static_cast<Attitude>(utils::deserialiseUint32(buffer, offset));
+	blind = static_cast<bool>(utils::deserialiseUint32(buffer, offset));
+	scent = static_cast<bool>(utils::deserialiseUint32(buffer, offset));
 }
 
 void Container::serialise(std::ofstream& file)

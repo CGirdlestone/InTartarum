@@ -19,7 +19,7 @@ player_table =
     };
     blocker = 
     {
-        blocks_vision = false;
+        blocks_view = false;
     };
     actor = 
     {

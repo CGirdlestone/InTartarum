@@ -54,6 +54,10 @@ struct Container : public ISerializeable {
 struct Actor : public ISerializeable {
 	Actor() {};
 	~Actor() {};
+	Actor(const std::string& _name, const std::string& _desc) : name(_name), description(_desc) {};
+
+	std::string name{ "" };
+	std::string description{ "" };
 
 	virtual void serialise(std::ofstream& file) override;
 	virtual void deserialise(const char* buffer, size_t& offset) override;
@@ -61,10 +65,12 @@ struct Actor : public ISerializeable {
 
 struct AI : public ISerializeable {
 	AI() {};
-	AI(Attitude _attitude) : attitude(_attitude) {};
+	AI(Attitude _attitude, bool _blind, bool _scent) : attitude(_attitude), blind(_blind), scent(_scent) {};
 	~AI() {};
 
 	Attitude attitude{ Attitude::NEUTRAL };
+	bool blind{ false };
+	bool scent{ false };
 
 	virtual void serialise(std::ofstream& file) override;
 	virtual void deserialise(const char* buffer, size_t& offset) override;

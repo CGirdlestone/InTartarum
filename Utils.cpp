@@ -80,7 +80,7 @@ namespace utils {
 
     void serialiseString(std::ofstream& file, std::string data)
     {
-        uint32_t string_length = data.length();
+        uint32_t string_length = static_cast<uint32_t>(data.length());
         serialiseUint32(file, string_length);
 
         for (uint32_t i = 0; i < string_length; i++) {
@@ -90,7 +90,7 @@ namespace utils {
 
     void serialiseVector(std::ofstream& file, std::vector<uint32_t>& data)
     {
-        uint32_t num_elements = data.size();
+        uint32_t num_elements = static_cast<uint32_t>(data.size());
         serialiseUint32(file, num_elements);
 
         for (uint32_t i = 0; i < num_elements; i++) {
@@ -188,7 +188,7 @@ namespace utils {
         auto val = lua_tointeger(vm.get(), -1);
         lua_pop(vm.get(), 1);
 
-        return val;
+        return static_cast<int>(val);
     }
 
     int read_lua_int(SmartLuaVM& vm, int key, int index)
@@ -203,7 +203,7 @@ namespace utils {
         auto val = lua_tointeger(vm.get(), -1);
         lua_pop(vm.get(), 1);
 
-        return val;
+        return static_cast<int>(val);
     }
 
     float read_lua_float(SmartLuaVM& vm, const char* key, int index)

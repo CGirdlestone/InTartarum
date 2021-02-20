@@ -154,6 +154,9 @@ void build_town(Level& level, World& world, TextureManager& texture_manager, Ent
 	
 	std::string fire = "camp_fire";
 	entity_factory.create_item(fire, 15, 13, 0);
+
+	std::string bat = "bat";
+	entity_factory.create_mob(bat, 15, 25, 0);
 }
 
 int main(int argc, char* argv[])
@@ -174,12 +177,12 @@ int main(int argc, char* argv[])
 
 			lua_getglobal(vm.get(), "tile_width");
 			if (lua_isnumber(vm.get(), -1)) {
-				tile_width = lua_tonumber(vm.get(), -1);
+				tile_width = lua_tointeger(vm.get(), -1);
 			}
 
 			lua_getglobal(vm.get(), "tile_height");
 			if (lua_isnumber(vm.get(), -1)) {
-				tile_height = lua_tonumber(vm.get(), -1);
+				tile_height = lua_tointeger(vm.get(), -1);
 			}
 
 			lua_getglobal(vm.get(), "tile_path");
