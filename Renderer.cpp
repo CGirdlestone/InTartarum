@@ -641,7 +641,11 @@ void Renderer::DrawScene(uint32_t fps, WorldMap& world_map, MessageLog& message_
 	auto components = world.GetComponents<Position, Sprite>();
 	// remove the entities that are not on this depth level.
 	components.erase(std::remove_if(components.begin(), components.end(), [&world_map](const std::tuple<Position*, Sprite*>& a) {
-		return std::get<0>(a)->z != world_map.get_current_depth();
+		auto* pos = std::get<0>(a);
+		auto* sprite = std::get<1>(a);
+		bool on_level = pos->z == world_map.get_current_depth();
+		bool in_overland_level = pos->world_x == world_map.get_world_x() && pos->world_y == world_map.get_world_y();
+		return !on_level || !in_overland_level;
 		}
 	), components.end());
 

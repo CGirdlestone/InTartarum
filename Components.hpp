@@ -17,11 +17,14 @@ enum class Attitude { NEUTRAL, HOSTILE, FRIENDLY };
 
 struct Position : public ISerializeable {
 	Position() {};
-	Position(int _x, int _y, int _z) : x(_x), y(_y), z(_z) { };
+	Position(int _x, int _y, int _z) : x(_x), y(_y), z(_z){ };
+	Position(int _x, int _y, int _z, int _world_x, int _world_y) : x(_x), y(_y), z(_z), world_x(_world_x), world_y(_world_y) { };
 	~Position() {};
 	int x{ 0 };
 	int y{ 0 };
 	int z{ 0 };
+	int world_x{ 0 };
+	int world_y{ 0 };
 
 	virtual void serialise(std::ofstream& file) override;
 	virtual void deserialise(const char* buffer, size_t& offset) override;

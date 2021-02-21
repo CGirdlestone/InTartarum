@@ -33,10 +33,33 @@ void MoveSystem::do_bump_script(uint32_t entity)
 	}
 }
 
+bool MoveSystem::is_move_within_level(int x, int y)
+{
+	auto& level = world_map.get_level();
+	auto& grid = level.get_grid();
+
+	return grid.in_bounds(x, y);
+}
+
+void MoveSystem::move_over_world(uint32_t mover, int x, int y)
+{
+
+}
+
+bool MoveSystem::in_world_bounds(int x, int y)
+{
+	return (x >= 0 && x < world_map.get_world_width() && y >= 0 && y < world_map.get_world_height());
+}
+
 bool MoveSystem::can_move(uint32_t mover, int x, int y)
 {
 	auto& level = world_map.get_level();
+	auto& grid = level.get_grid();
 	auto& tile = level.get_grid().get_tile(x, y);
+
+	if (!grid.in_bounds(x, y)) {
+		return false;
+	}
 	
 	if (!tile.walkable) {
 		return false;
@@ -87,7 +110,46 @@ void MoveSystem::move(std::tuple<int, int> direction, uint32_t actor)
 	}
 	else {
 		auto player = world.GetComponent<Player>(actor);
+		
 		if (player != nullptr) {
+			if (!is_move_within_level(pos->x + x, pos->y + y)) {
+				if (in_world_bounds(pos->world_x + x, pos->world_y + y)) {
+					// as we're moving in units (either tiles or levels), we can use the delta move to transition levels and ensure we get the right direction.
+					
+					// update the player's global (overworld) coordinates.
+					if (pos->x + x >= 0 && pos->x + x < world_map.get_level().get_width() && 
+						(pos->y + y < 0 || pos->y + y >= world_map.get_level().get_height())) {
+						pos->world_y += y;
+					}
+					else if (pos->y + y >= 0 && pos->y + y < world_map.get_level().get_height() &&
+						(pos->x + x < 0 || pos->x + x >= world_map.get_level().get_width())) {
+						pos->world_x += x;
+					}
+					else {
+						pos->world_x += x;
+						pos->world_y += y;
+					}
+
+					// update the player's local (level) coordinates.
+					if (pos->x + x < 0) {
+						pos->x = world_map.get_level().get_width() - 1;
+					}
+					else if (pos->x + x > world_map.get_level().get_width() - 1) {
+						pos->x = 0;
+					}
+
+					if (pos->y + y < 0) {
+						pos->y = world_map.get_level().get_height() - 1;
+					}
+					else if (pos->y + y > world_map.get_level().get_height() - 1) {
+						pos->y = 0;
+					}
+
+					event_manager.push_event(EventTypes::OVERWORLD_MOVEMENT);
+					//event_manager.push_event(EventTypes::TICK);
+					return;
+				}
+			}
 			event_manager.push_event(EventTypes::BLOCKED_MOVEMENT);
 		}
 	}

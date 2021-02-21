@@ -119,13 +119,13 @@ void CharacterCreationScreen::create_player()
 	world.AddComponent<Player>(entity, 8);
 	world.AddComponent<Blocker>(entity);
 	*/
-	entity_factory.create_player();
+	entity_factory.create_player(world_x, world_y);
 
 	state_manager.push(GameState::GAME);
 }
 
-CharacterCreationScreen::CharacterCreationScreen(StateManager& _state_manager, World& _world, TextureManager& _tex_manager, EventManager& _event_manager, Keyboard& _keyboard, EntityFactory& _entity_factory, int _tile_width, int _tile_height, unsigned int _tileset):
-	state_manager(_state_manager), world(_world), tex_manager(_tex_manager), event_manager(_event_manager), keyboard(_keyboard), entity_factory(_entity_factory), tile_width(_tile_width), tile_height(_tile_height), tileset(_tileset)
+CharacterCreationScreen::CharacterCreationScreen(StateManager& _state_manager, World& _world, TextureManager& _tex_manager, EventManager& _event_manager, Keyboard& _keyboard, EntityFactory& _entity_factory, int _tile_width, int _tile_height, unsigned int _tileset, int _world_x, int _world_y):
+	state_manager(_state_manager), world(_world), tex_manager(_tex_manager), event_manager(_event_manager), keyboard(_keyboard), entity_factory(_entity_factory), tile_width(_tile_width), tile_height(_tile_height), tileset(_tileset), world_x(_world_x), world_y(_world_y)
 {
 	stats = { "STR", "DEX", "CON", "WIS", "INT", "CHA" };
 

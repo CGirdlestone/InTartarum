@@ -104,61 +104,6 @@ void load_tiles(Renderer& renderer, TextureManager& tex_manager, unsigned int fo
 	renderer.AddTile(TileType::STAIRS, Sprite(font_tileset, 14 * tile_width, 3 * tile_height, tile_width, tile_height, 0, 0xCD, 0x5C, 0x5C));
 }
 
-void build_town(Level& level, World& world, TextureManager& texture_manager, EntityFactory& entity_factory, unsigned int font_tileset, int tile_width, int tile_height) {
-	// placeholder
-	auto& grid = level.get_grid();
-
-	for (int i = 0; i < grid.get_width(); i++) {
-		for (int j = 0; j < grid.get_height(); j++) {
-			if (i == 0 || j == 0 || i == grid.get_width() - 1 || j == grid.get_height() - 1) {
-				grid.set_tile(i, j, false, true, TileType::FLOOR);
-			}
-			else {
-				grid.set_tile(i, j, true, false, TileType::GRASS);
-			}
-		}
-	}
-	
-	for (int i = 10; i < 21; i++) {
-		for (int j = 10; j < 16; j++) {
-			if (i == 15 && j == 15) {
-				grid.set_tile(i, j, true, false, TileType::FLOOR);
-				continue;
-			}
-			if ( i == 10 || j == 10 || i == 21 - 1 || j == 16 - 1) {
-				grid.set_tile(i, j, false, true, TileType::FLOOR);
-			}
-			else {
-				grid.set_tile(i, j, true, false, TileType::FLOOR);
-			}
-		}
-	}
-
-	grid.set_tile(25, 25, true, false, TileType::STAIRS);
-
-	std::string door = "door";
-	entity_factory.create_item(door, 15, 15, 0);
-
-	std::string npc = "npc";
-	entity_factory.create_npc(npc, 15, 11, 0);
-
-	std::string chest = "chest";
-	entity_factory.create_item(chest, 11, 11, 0);
-
-	std::string sword = "fire_sword";
-	entity_factory.create_item(sword, 21, 21, 0);
-
-	std::string arrow = "arrow";
-	entity_factory.create_item(arrow, 20, 20, 0);
-	entity_factory.create_item(arrow, 19, 20, 0);
-	
-	std::string fire = "camp_fire";
-	entity_factory.create_item(fire, 15, 13, 0);
-
-	std::string bat = "bat";
-	entity_factory.create_mob(bat, 15, 25, 0);
-}
-
 int main(int argc, char* argv[])
 {
 	// create a new scope so all the SDL allocated objects are destroyed before the SDL quit functions are called. 
@@ -215,11 +160,8 @@ int main(int argc, char* argv[])
 
 		auto renderer = Renderer(world, window, tex_manager, camera);
 		load_tiles(renderer, tex_manager, font_tileset, tile_width, tile_height);
-		
-		auto town = Level();
-		build_town(town, world, tex_manager, entity_factory, font_tileset, tile_width, tile_height);
 
-		auto world_map = WorldMap(town, world);
+		auto world_map = WorldMap(world, entity_factory, tex_manager);
 
 		auto event_manager = EventManager(world);
 		
@@ -253,7 +195,7 @@ int main(int argc, char* argv[])
 		auto splash_screen = SplashScreen(state_manager, world, tex_manager, event_manager, keyboard, false, splash, intro_music);
 		state_manager.add_state(splash_screen.get_state(), splash_screen);
 
-		auto creation_screen = CharacterCreationScreen(state_manager, world, tex_manager, event_manager, keyboard, entity_factory, tile_width, tile_height, font_tileset);
+		auto creation_screen = CharacterCreationScreen(state_manager, world, tex_manager, event_manager, keyboard, entity_factory, tile_width, tile_height, font_tileset, world_map.get_world_x(), world_map.get_world_y());
 		state_manager.add_state(creation_screen.get_state(), creation_screen);
 
 		auto game_screen = GameScreen(state_manager, world, tex_manager, event_manager, world_map, renderer, camera, message_log, keyboard, false, wind);
