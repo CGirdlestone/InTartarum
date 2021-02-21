@@ -146,7 +146,7 @@ void MoveSystem::move(std::tuple<int, int> direction, uint32_t actor)
 					}
 
 					event_manager.push_event(EventTypes::OVERWORLD_MOVEMENT);
-					//event_manager.push_event(EventTypes::TICK);
+					camera.follow(pos->x, pos->y);
 					return;
 				}
 			}

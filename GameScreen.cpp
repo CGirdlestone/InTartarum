@@ -128,7 +128,6 @@ void GameScreen::handle_input(SDL_Event& event)
 	case SDLK_UP: message_log.scroll_up(); break;
 	case SDLK_DOWN: message_log.scroll_down(); break;
 	case SDLK_o: open_doors(); event_manager.push_event(EventTypes::TICK); break;
-	case SDLK_1: Prefab::create_explosion(world, pos->x, pos->y, pos->z, tex_manager.LoadTexture("./Resources/exp2_0.png")); break;
 	case SDLK_ESCAPE: state_manager.stop_playing(); save_game(); break;;
 	case SDLK_g: event_manager.push_event(EventTypes::TRY_PICK_UP_ITEM, entity); break;
 	case SDLK_i: state_manager.push(GameState::INVENTORY); break;

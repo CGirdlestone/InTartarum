@@ -389,14 +389,22 @@ std::vector<std::string> Renderer::WrapText(const std::string& text, int line_wi
 	return lines;
 }
 
-void Renderer::DrawBackgroundTile(int x, int y, uint8_t r, uint8_t g, uint8_t b)
+void Renderer::DrawBackgroundTile(int x, int y, uint8_t r, uint8_t g, uint8_t b, bool scale)
 {
 	SDL_SetTextureColorMod(texture_manager.GetTexture(font_id), r, g, b);
 	SDL_Rect dstrect;
-	dstrect.x = x * window.GetTileWidth();
-	dstrect.y = y * window.GetTileHeight();
-	dstrect.w = window.GetTileWidth();
-	dstrect.h = window.GetTileHeight();
+	if (scale) {
+		dstrect.x = (x * camera.get_zoom()) * window.GetTileWidth() + camera.get_offset_x() * window.GetTileWidth();
+		dstrect.y = (y * camera.get_zoom()) * window.GetTileHeight() + camera.get_offset_y() * window.GetTileHeight();
+		dstrect.w = window.GetTileWidth() * camera.get_zoom();
+		dstrect.h = window.GetTileHeight() * camera.get_zoom();
+	}
+	else {
+		dstrect.x = x * window.GetTileWidth();
+		dstrect.x = y * window.GetTileHeight();
+		dstrect.w = window.GetTileWidth();
+		dstrect.h = window.GetTileHeight();
+	}
 
 	SDL_Rect srcrect;
 	srcrect.x = 11 * window.GetTileWidth();
@@ -451,7 +459,7 @@ void Renderer::DrawSprite(Position* pos, Sprite* sprite)
 	srcrect.w = sprite->width;
 	srcrect.h = sprite->height;
 
-	DrawBackgroundTile(x + camera.get_offset_x(), y + camera.get_offset_y(), window.GetBackground().r, window.GetBackground().g, window.GetBackground().b);
+	DrawBackgroundTile(x, y, window.GetBackground().r, window.GetBackground().g, window.GetBackground().b, true);
 	SDL_SetTextureColorMod(texture_manager.GetTexture(sprite->id), sprite->r, sprite->g, sprite->b);
 	SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(sprite->id), &srcrect, &dstrect);
 }
@@ -678,12 +686,23 @@ void Renderer::DrawActions(bool in_equipment_list)
 	int y{ window.GetHeight() / 2 - 5 };
 	int width{ 12 };
 	int height{ 10 };
+
+	SDL_Rect dstrect;
+	dstrect.x = x * window.GetTileWidth();
+	dstrect.y = y * window.GetTileHeight();
+	dstrect.w = (width + 1) * window.GetTileWidth();
+	dstrect.h = (height + 2) * window.GetTileWidth();
+	SDL_SetRenderDrawColor(window.GetRenderer(), window.GetBackground().r, window.GetBackground().g, window.GetBackground().b, 0xFF);
+	SDL_RenderFillRect(window.GetRenderer(), &dstrect);
+	SDL_SetRenderDrawColor(window.GetRenderer(), window.GetBackground().r, window.GetBackground().g, window.GetBackground().b, 0xFF);
+	/*
 	for (int i = 0; i < width + 1; i++) {
 		for (int j = 0; j < height + 1; j++) {
 			auto background = window.GetBackground();
-			DrawBackgroundTile(x + i, y + j, background.r, background.g, background.b);
+			DrawBackgroundTile(x + i, y + j, background.r, background.g, background.b, false);
 		}
 	}
+	*/
 	DrawBox(x, y, width, height);
 	
 	std::string drop = "d) drop";

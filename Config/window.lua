@@ -20,7 +20,7 @@ info_panel_height = 10;
 --config data for the camera.
 camera_x = 1;
 camera_y = 1;
-camera_zoom = 1;
+camera_zoom = 2;
 camera_x_offset = 1;
 camera_y_offset = 1;
 camera_width = width - 2 * camera_x_offset;

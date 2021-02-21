@@ -38,7 +38,7 @@ private:
 	void DrawGameBorder(int x, int y, int width, int height, int height_divider);
 	void DrawHealth(int x, int y, int health, int max_health);
 	void DrawPlayerInfo(WorldMap& world_map);
-	void DrawBackgroundTile(int x, int y, uint8_t r, uint8_t g, uint8_t b);
+	void DrawBackgroundTile(int x, int y, uint8_t r, uint8_t g, uint8_t b, bool scale = false);
 	void LoadFont();
 	std::vector<std::string> WrapText(const std::string& text, int line_width);
 public:
