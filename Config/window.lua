@@ -1,7 +1,7 @@
 -- config data for the SDL window.
 title = "In Tartarum";
 width = 80;
-height = 58;
+height = 50;
 
 -- default renderer colour
 colour_r = 28;
@@ -9,8 +9,10 @@ colour_g = 28;
 colour_b = 28;
 
 -- config data for the world map.
-map_width = 120;
-map_height = 80;
+map_width = 100;
+map_height = 60;
+overworld_width = 5;
+overworld_height = 5;
 
 -- config data for info panel.
 info_panel_height = 10;
@@ -18,7 +20,7 @@ info_panel_height = 10;
 --config data for the camera.
 camera_x = 1;
 camera_y = 1;
-camera_zoom = 1;
+camera_zoom = 2;
 camera_x_offset = 1;
 camera_y_offset = 1;
 camera_width = width - 2 * camera_x_offset;

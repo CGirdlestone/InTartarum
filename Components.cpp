@@ -5,6 +5,8 @@ void Position::serialise(std::ofstream& file)
 	utils::serialiseUint32(file, static_cast<uint32_t>(x));
 	utils::serialiseUint32(file, static_cast<uint32_t>(y));
 	utils::serialiseUint32(file, static_cast<uint32_t>(z));
+	utils::serialiseUint32(file, static_cast<uint32_t>(world_x));
+	utils::serialiseUint32(file, static_cast<uint32_t>(world_y));
 }
 
 void Position::deserialise(const char* buffer, size_t& offset)
@@ -12,6 +14,8 @@ void Position::deserialise(const char* buffer, size_t& offset)
 	x = static_cast<int>(utils::deserialiseUint32(buffer, offset));
 	y = static_cast<int>(utils::deserialiseUint32(buffer, offset));
 	z = static_cast<int>(utils::deserialiseUint32(buffer, offset));
+	world_x = static_cast<int>(utils::deserialiseUint32(buffer, offset));
+	world_y = static_cast<int>(utils::deserialiseUint32(buffer, offset));
 }
 
 void Player::serialise(std::ofstream& file)

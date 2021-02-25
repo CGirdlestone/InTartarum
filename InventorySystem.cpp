@@ -116,7 +116,7 @@ void InventorySystem::drop(uint32_t actor, uint32_t item)
 {
 	remove_from_inventory(actor, item);
 	auto* pos = world.GetComponent<Position>(actor);
-	world.AddComponent<Position>(item, pos->x, pos->y, pos->z);
+	world.AddComponent<Position>(item, pos->x, pos->y, pos->z, pos->world_x, pos->world_y);
 	world_map.get_entity_grid().add_entity(item, pos->x, pos->y);
 	event_manager.push_event(EventTypes::DROP_ITEM_MESSAGE, item);
 }
@@ -131,7 +131,7 @@ void InventorySystem::drop_stack(uint32_t actor, uint32_t item, uint32_t quantit
 	if (static_cast<int>(quantity) <= stack->quantity) {
 		auto* id = world.GetComponent<ID>(item);
 		std::string entity_name = id->id;
-		auto entity = entity_factory.create_item(entity_name, pos->x, pos->y, pos->z);
+		auto entity = entity_factory.create_item(entity_name, pos->x, pos->y, pos->z, pos->world_x, pos->world_y);
 		auto* new_stack = world.GetComponent<Stackable>(entity);
 		new_stack->quantity = quantity;
 		if (static_cast<int>(quantity) == stack->quantity) {

@@ -7,7 +7,7 @@ struct Tile {
 	bool explored{ false };
 	bool blocks_view{ false };
 	bool visible{ false };
-	TileType type{ TileType::EMPTY };
+	TileType type{ TileType::GRASS };
 
 	inline void set(bool _walkable, bool _blocks_view, TileType _type) {
 		walkable = _walkable;

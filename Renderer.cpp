@@ -389,14 +389,22 @@ std::vector<std::string> Renderer::WrapText(const std::string& text, int line_wi
 	return lines;
 }
 
-void Renderer::DrawBackgroundTile(int x, int y, uint8_t r, uint8_t g, uint8_t b)
+void Renderer::DrawBackgroundTile(int x, int y, uint8_t r, uint8_t g, uint8_t b, bool scale)
 {
 	SDL_SetTextureColorMod(texture_manager.GetTexture(font_id), r, g, b);
 	SDL_Rect dstrect;
-	dstrect.x = x * window.GetTileWidth();
-	dstrect.y = y * window.GetTileHeight();
-	dstrect.w = window.GetTileWidth();
-	dstrect.h = window.GetTileHeight();
+	if (scale) {
+		dstrect.x = (x * camera.get_zoom()) * window.GetTileWidth() + camera.get_offset_x() * window.GetTileWidth();
+		dstrect.y = (y * camera.get_zoom()) * window.GetTileHeight() + camera.get_offset_y() * window.GetTileHeight();
+		dstrect.w = window.GetTileWidth() * camera.get_zoom();
+		dstrect.h = window.GetTileHeight() * camera.get_zoom();
+	}
+	else {
+		dstrect.x = x * window.GetTileWidth();
+		dstrect.x = y * window.GetTileHeight();
+		dstrect.w = window.GetTileWidth();
+		dstrect.h = window.GetTileHeight();
+	}
 
 	SDL_Rect srcrect;
 	srcrect.x = 11 * window.GetTileWidth();
@@ -451,7 +459,7 @@ void Renderer::DrawSprite(Position* pos, Sprite* sprite)
 	srcrect.w = sprite->width;
 	srcrect.h = sprite->height;
 
-	DrawBackgroundTile(x + camera.get_offset_x(), y + camera.get_offset_y(), window.GetBackground().r, window.GetBackground().g, window.GetBackground().b);
+	DrawBackgroundTile(x, y, window.GetBackground().r, window.GetBackground().g, window.GetBackground().b, true);
 	SDL_SetTextureColorMod(texture_manager.GetTexture(sprite->id), sprite->r, sprite->g, sprite->b);
 	SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(sprite->id), &srcrect, &dstrect);
 }
@@ -641,7 +649,11 @@ void Renderer::DrawScene(uint32_t fps, WorldMap& world_map, MessageLog& message_
 	auto components = world.GetComponents<Position, Sprite>();
 	// remove the entities that are not on this depth level.
 	components.erase(std::remove_if(components.begin(), components.end(), [&world_map](const std::tuple<Position*, Sprite*>& a) {
-		return std::get<0>(a)->z != world_map.get_current_depth();
+		auto* pos = std::get<0>(a);
+		auto* sprite = std::get<1>(a);
+		bool on_level = pos->z == world_map.get_current_depth();
+		bool in_overland_level = pos->world_x == world_map.get_world_x() && pos->world_y == world_map.get_world_y();
+		return !on_level || !in_overland_level;
 		}
 	), components.end());
 
@@ -674,12 +686,23 @@ void Renderer::DrawActions(bool in_equipment_list)
 	int y{ window.GetHeight() / 2 - 5 };
 	int width{ 12 };
 	int height{ 10 };
+
+	SDL_Rect dstrect;
+	dstrect.x = x * window.GetTileWidth();
+	dstrect.y = y * window.GetTileHeight();
+	dstrect.w = (width + 1) * window.GetTileWidth();
+	dstrect.h = (height + 2) * window.GetTileWidth();
+	SDL_SetRenderDrawColor(window.GetRenderer(), window.GetBackground().r, window.GetBackground().g, window.GetBackground().b, 0xFF);
+	SDL_RenderFillRect(window.GetRenderer(), &dstrect);
+	SDL_SetRenderDrawColor(window.GetRenderer(), window.GetBackground().r, window.GetBackground().g, window.GetBackground().b, 0xFF);
+	/*
 	for (int i = 0; i < width + 1; i++) {
 		for (int j = 0; j < height + 1; j++) {
 			auto background = window.GetBackground();
-			DrawBackgroundTile(x + i, y + j, background.r, background.g, background.b);
+			DrawBackgroundTile(x + i, y + j, background.r, background.g, background.b, false);
 		}
 	}
+	*/
 	DrawBox(x, y, width, height);
 	
 	std::string drop = "d) drop";

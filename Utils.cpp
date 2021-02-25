@@ -88,13 +88,23 @@ namespace utils {
         }
     }
 
-    void serialiseVector(std::ofstream& file, std::vector<uint32_t>& data)
+    void serialiseVector(std::ofstream& file, const std::vector<uint32_t>& data)
     {
         uint32_t num_elements = static_cast<uint32_t>(data.size());
         serialiseUint32(file, num_elements);
 
         for (uint32_t i = 0; i < num_elements; i++) {
             serialiseUint32(file, data[i]);
+        }
+    }
+
+    void serialiseVectorBool(std::ofstream& file, const std::vector<bool>& data)
+    {
+        uint32_t num_elements = static_cast<uint32_t>(data.size());
+        serialiseUint32(file, num_elements);
+
+        for (uint32_t i = 0; i < num_elements; i++) {
+            serialiseUint32(file, static_cast<uint32_t>(data[i]));
         }
     }
 
@@ -170,6 +180,20 @@ namespace utils {
 
         for (uint32_t i = 0; i < num_elements; i++) {
             uint32_t element = deserialiseUint32(buffer, offset);
+            contents.push_back(element);
+        }
+
+        return contents;
+    }
+
+    std::vector<bool> deserialiseVectorBool(const char* buffer, size_t& offset)
+    {
+        std::vector<bool> contents;
+
+        uint32_t num_elements = utils::deserialiseUint32(buffer, offset);
+
+        for (uint32_t i = 0; i < num_elements; i++) {
+            bool element = static_cast<bool>(deserialiseUint32(buffer, offset));
             contents.push_back(element);
         }
 

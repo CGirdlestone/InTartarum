@@ -28,6 +28,7 @@ private:
 
 	void descend_dungeon();
 	void return_to_safe_zone();
+	void overworld_movement();
 	void open_doors();
 public:
 	GameScreen(	StateManager& _state_manager, World& _world, TextureManager& _tex_manager, 

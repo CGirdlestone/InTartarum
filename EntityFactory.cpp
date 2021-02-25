@@ -6,7 +6,7 @@ EntityFactory::EntityFactory(World& _world, TextureManager& _texture_manager)
     vm.reset(luaL_newstate());
 }
 
-uint32_t EntityFactory::create_mob(std::string& entity_name, int x, int y, int z)
+uint32_t EntityFactory::create_mob(std::string& entity_name, int x, int y, int z, int world_x, int world_y)
 {
     /* Create the position component and push the corret table onto the lua stack. */
     vm.reset(luaL_newstate());
@@ -14,7 +14,7 @@ uint32_t EntityFactory::create_mob(std::string& entity_name, int x, int y, int z
     load_file(mob_file);
 
     auto entity = world.CreateEntity();
-    world.AddComponent<Position>(entity, x, y, z);
+    world.AddComponent<Position>(entity, x, y, z, world_x, world_y);
 
     lua_getglobal(vm.get(), entity_name.c_str()); // push object name
     if (!lua_istable(vm.get(), -1)) {
@@ -25,7 +25,7 @@ uint32_t EntityFactory::create_mob(std::string& entity_name, int x, int y, int z
     return entity;
 }
 
-uint32_t EntityFactory::create_player()
+uint32_t EntityFactory::create_player( int world_x, int world_y)
 {
     vm.reset(luaL_newstate());
     std::string player_file = "./Resources/Data/PlayerData/Player.lua";
@@ -39,10 +39,13 @@ uint32_t EntityFactory::create_player()
     }
     
     create_entity(entity);
+    auto* pos = world.GetComponent<Position>(entity);
+    pos->world_x = world_x;
+    pos->world_y = world_y;
     return entity;
 }
 
-uint32_t EntityFactory::create_item(std::string& entity_name, int x, int y, int z)
+uint32_t EntityFactory::create_item(std::string& entity_name, int x, int y, int z, int world_x, int world_y)
 {
     /* Create the position component and push the correct table onto the lua stack. */
     vm.reset(luaL_newstate());
@@ -50,7 +53,7 @@ uint32_t EntityFactory::create_item(std::string& entity_name, int x, int y, int 
     load_file(item_file);
 
     auto entity = world.CreateEntity();
-    world.AddComponent<Position>(entity, x, y, z);
+    world.AddComponent<Position>(entity, x, y, z, world_x, world_y);
 
     lua_getglobal(vm.get(), entity_name.c_str()); // push object name
     if (!lua_istable(vm.get(), -1)) {
@@ -78,14 +81,14 @@ uint32_t EntityFactory::create_item(std::string& entity_name)
     return entity;
 }
 
-uint32_t EntityFactory::create_npc(std::string& entity_name, int x, int y, int z)
+uint32_t EntityFactory::create_npc(std::string& entity_name, int x, int y, int z, int world_x, int world_y)
 {
     vm.reset(luaL_newstate());
     std::string item_file = "./Resources/Data/NPCs/npcs.lua";
     load_file(item_file);
 
     auto entity = world.CreateEntity();
-    world.AddComponent<Position>(entity, x, y, z);
+    world.AddComponent<Position>(entity, x, y, z, world_x, world_y);
 
     lua_getglobal(vm.get(), entity_name.c_str()); // push object name
     if (!lua_istable(vm.get(), -1)) {

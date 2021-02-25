@@ -2,11 +2,12 @@
 
 void GameScreen::descend_dungeon()
 {
+	auto components = world.GetComponents<Position, Player>();
+	auto& [pos, player] = components[0]; // there will only be one player.
+
 	world_map.set_depth(world_map.get_current_depth() + 1);
 	world_map.create_dungeon();
 	world_map.populate_entity_grid();
-	auto components = world.GetComponents<Position, Player>();
-	auto& [pos, player] = components[0]; // there will only be one player.
 	world_map.update_fov(pos->x, pos->y, player->vision);
 
 	auto& renderer = state_manager.get_renderer();
@@ -17,17 +18,30 @@ void GameScreen::descend_dungeon()
 
 void GameScreen::return_to_safe_zone()
 {
-	world_map.set_depth(0);
-	world_map.populate_entity_grid();
-
 	auto components = world.GetComponents<Position, Player>();
 	auto& [pos, player] = components[0]; // there will only be one player.
+
+	world_map.set_depth(0);
+	world_map.populate_entity_grid();
 	world_map.update_fov(pos->x, pos->y, player->vision);
 
 	auto& renderer = state_manager.get_renderer();
 	renderer.DrawMap(world_map.get_level());
 	
 	pos->z = 0;
+}
+
+void GameScreen::overworld_movement()
+{
+	auto components = world.GetComponents<Position, Player>();
+	auto& [pos, player] = components[0]; // there will only be one player.
+
+	world_map.load_overworld_level(pos->world_x, pos->world_y);
+	world_map.populate_entity_grid();
+	world_map.update_fov(pos->x, pos->y, player->vision);
+
+	auto& renderer = state_manager.get_renderer();
+	renderer.DrawMap(world_map.get_level());
 }
 
 void GameScreen::open_doors()
@@ -81,6 +95,7 @@ GameScreen::GameScreen(	StateManager& _state_manager, World& _world, TextureMana
 	event_manager.add_subscriber(EventTypes::DESCEND_DUNGEON, *this);
 	event_manager.add_subscriber(EventTypes::TICK, *this);
 	event_manager.add_subscriber(EventTypes::LOAD_GAME, *this);
+	event_manager.add_subscriber(EventTypes::OVERWORLD_MOVEMENT, *this);
 }
 
 void GameScreen::handle_input(SDL_Event& event)
@@ -113,7 +128,6 @@ void GameScreen::handle_input(SDL_Event& event)
 	case SDLK_UP: message_log.scroll_up(); break;
 	case SDLK_DOWN: message_log.scroll_down(); break;
 	case SDLK_o: open_doors(); event_manager.push_event(EventTypes::TICK); break;
-	case SDLK_1: Prefab::create_explosion(world, pos->x, pos->y, pos->z, tex_manager.LoadTexture("./Resources/exp2_0.png")); break;
 	case SDLK_ESCAPE: state_manager.stop_playing(); save_game(); break;;
 	case SDLK_g: event_manager.push_event(EventTypes::TRY_PICK_UP_ITEM, entity); break;
 	case SDLK_i: state_manager.push(GameState::INVENTORY); break;
@@ -175,6 +189,7 @@ void GameScreen::receive(EventTypes event)
 	case EventTypes::ASCEND_DUNGEON: return_to_safe_zone(); break;
 	case EventTypes::DESCEND_DUNGEON: descend_dungeon(); break;
 	case EventTypes::TICK: on_tick(); break;
+	case EventTypes::OVERWORLD_MOVEMENT: overworld_movement(); break;
 	case EventTypes::LOAD_GAME: load_game(); break;
 	case EventTypes::SAVE_GAME: save_game(); break;
 	}

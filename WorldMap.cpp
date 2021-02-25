@@ -1,7 +1,65 @@
 #include "WorldMap.hpp"
-#include <iostream>
 
-void WorldMap::__create_dungeon()
+void WorldMap::build_town()
+{
+	auto level = std::make_unique<Level>(map_width, map_height);
+	auto& grid = level.get()->get_grid();
+
+	for (int i = 0; i < grid.get_width(); i++) {
+		for (int j = 0; j < grid.get_height(); j++) {
+			/*if (i == 0 || j == 0 || i == grid.get_width() - 1 || j == grid.get_height() - 1) {
+				grid.set_tile(i, j, false, true, TileType::GRASS);
+			}
+			else {
+				grid.set_tile(i, j, true, false, TileType::GRASS);
+			}*/
+			grid.set_tile(i, j, true, false, TileType::GRASS);
+		}
+	}
+
+	for (int i = 10; i < 21; i++) {
+		for (int j = 10; j < 16; j++) {
+			if (i == 15 && j == 15) {
+				grid.set_tile(i, j, true, false, TileType::FLOOR);
+				continue;
+			}
+			if (i == 10 || j == 10 || i == 21 - 1 || j == 16 - 1) {
+				grid.set_tile(i, j, false, true, TileType::FLOOR);
+			}
+			else {
+				grid.set_tile(i, j, true, false, TileType::FLOOR);
+			}
+		}
+	}
+
+	grid.set_tile(25, 25, true, false, TileType::STAIRS);
+
+	std::string door = "door";
+	entity_factory.create_item(door, 15, 15, 0, world_x, world_y);
+
+	std::string npc = "npc";
+	entity_factory.create_npc(npc, 15, 11, 0, world_x, world_y);
+
+	std::string chest = "chest";
+	entity_factory.create_item(chest, 11, 11, 0, world_x, world_y);
+
+	std::string sword = "fire_sword";
+	entity_factory.create_item(sword, 21, 21, 0, world_x, world_y);
+
+	std::string arrow = "arrow";
+	entity_factory.create_item(arrow, 20, 20, 0, world_x, world_y);
+	entity_factory.create_item(arrow, 19, 20, 0, world_x, world_y);
+
+	std::string fire = "camp_fire";
+	entity_factory.create_item(fire, 15, 13, 0, world_x, world_y);
+
+	std::string bat = "bat";
+	entity_factory.create_mob(bat, 15, 25, 0, world_x, world_y);
+
+	town.swap(level);
+}
+
+void WorldMap::__create_dungeon(std::unique_ptr<Level>& _level)
 {
 	auto level = std::make_unique<Level>();
 	auto& grid = level.get()->get_grid();
@@ -19,7 +77,7 @@ void WorldMap::__create_dungeon()
 			}
 		}
 	}
-	dungeon.swap(level);
+	_level.swap(level);
 }
 
 void WorldMap::populate_town()
@@ -167,7 +225,9 @@ void WorldMap::do_bitmask()
 
 }
 
-WorldMap::WorldMap(Level& _town, World& _world): town(_town), world(_world), randomiser(), player_smells(), dungeon(nullptr), entity_grid(nullptr)
+WorldMap::WorldMap(World& _world, EntityFactory& _entity_factory, TextureManager& _texture_manager)
+	: world(_world), entity_factory(_entity_factory), texture_manager(_texture_manager), randomiser(), player_smells(), 
+	town(nullptr), overworld(nullptr), dungeon(nullptr), overworld_seeds({}), entity_grid(nullptr)
 {
 	SmartLuaVM vm(nullptr, &lua_close);
 	vm.reset(luaL_newstate());
@@ -181,6 +241,14 @@ WorldMap::WorldMap(Level& _town, World& _world): town(_town), world(_world), ran
 		lua_getglobal(vm.get(), "map_height");
 		if (lua_isnumber(vm.get(), -1)) {
 			map_height = static_cast<int>(lua_tonumber(vm.get(), -1));
+		}
+		lua_getglobal(vm.get(), "overworld_width");
+		if (lua_isnumber(vm.get(), -1)) {
+			overworld_width = static_cast<int>(lua_tonumber(vm.get(), -1));
+		}
+		lua_getglobal(vm.get(), "overworld_height");
+		if (lua_isnumber(vm.get(), -1)) {
+			overworld_height = static_cast<int>(lua_tonumber(vm.get(), -1));
 		}
 	}
 	else {
@@ -200,18 +268,88 @@ WorldMap::WorldMap(Level& _town, World& _world): town(_town), world(_world), ran
 		cos.push_back(std::cos(static_cast<double>(i) * pi / static_cast<double>(interval / 2)));
 	}
 
+	town_x = randomiser.sample(0, overworld_width);
+	town_y = randomiser.sample(0, overworld_height);
+	world_x = town_x;
+	world_y = town_y;
+	build_town();
 	do_bitmask();
+
+	for (int j = 0; j < overworld_height; j++) {
+		for (int i = 0; i < overworld_width; i++) {
+			randomiser.new_seed();
+			overworld_seeds.push_back(randomiser.seed);
+		}
+	}
+	
+	std::vector<bool> _explored(map_width * map_height, false);
+	std::vector<std::vector<bool> > _overworld_explored(overworld_width * overworld_height, _explored);
+	
+	overworld_explored = _overworld_explored;
+}
+
+Level& WorldMap::get_level()
+{
+	//check the dungeon depth, if it's 0, return the overworld map based on the players overworld x & y coords
+	if (dungeon_depth == 0) {
+		if (world_x == town_x && world_y == town_y) {
+			return *(town.get());
+		}
+
+		return *(overworld.get());
+	}
+	else {
+		return *(dungeon.get());
+	}
 }
 
 void WorldMap::create_dungeon()
 {
 	set_seed();
-	__create_dungeon();
+	__create_dungeon(dungeon);
+}
+
+void WorldMap::create_world()
+{
+	// Maybe needed?
 }
 
 void WorldMap::load_dungeon()
 {
-	__create_dungeon();
+	__create_dungeon(dungeon);
+}
+
+void WorldMap::store_overworld_exploration_data()
+{
+	auto& grid = get_level().get_grid();
+
+	for (int i = 0; i < grid.get_width(); i++) {
+		for (int j = 0; j < grid.get_height(); j++) {
+			overworld_explored[world_x + world_y * overworld_width][i + j * grid.get_width()] = grid.get_tile(i, j).explored;
+		}
+	}
+}
+
+void WorldMap::read_overworld_exploration_data()
+{
+	auto& grid = get_level().get_grid();
+
+	for (int i = 0; i < grid.get_width(); i++) {
+		for (int j = 0; j < grid.get_height(); j++) {
+			grid.get_tile(i, j).explored = overworld_explored[world_x + world_y * overworld_width][i + j * grid.get_width()];
+		}
+	}
+}
+
+void WorldMap::load_overworld_level(int x, int y)
+{
+	auto overworld_seed = overworld_seeds[x + y * overworld_width];
+	randomiser.set_seed(overworld_seed);
+	store_overworld_exploration_data();
+	set_world_x(x);
+	set_world_y(y);
+	__create_dungeon(overworld);
+	read_overworld_exploration_data();
 }
 
 void WorldMap::populate_entity_grid()
@@ -220,7 +358,9 @@ void WorldMap::populate_entity_grid()
 	// filter for only entities at this dungeon depth
 	entities.erase(std::remove_if(entities.begin(), entities.end(), [this](uint32_t e) { 
 		auto* p = this->world.GetComponent<Position>(e); 
-		return p->z != this->dungeon_depth; 
+		bool on_level = p->z == this->dungeon_depth;
+		bool in_overland_level = p->world_x == world_x && p->world_y == world_y;
+		return !on_level || !in_overland_level; 
 		}
 	), entities.end());
 
@@ -254,14 +394,26 @@ void WorldMap::serialise(std::ofstream& file)
 {
 	utils::serialiseUint32(file, static_cast<uint32_t>(dungeon_depth));
 	utils::serialiseUint64(file, static_cast<uint64_t>(randomiser.seed));
+	utils::serialiseUint32(file, static_cast<uint32_t>(town_x));
+	utils::serialiseUint32(file, static_cast<uint32_t>(town_y));
+	utils::serialiseUint32(file, static_cast<uint32_t>(world_x));
+	utils::serialiseUint32(file, static_cast<uint32_t>(world_y));
+	utils::serialiseVector(file, overworld_seeds);
 
-	auto& grid = get_level().get_grid();
+	utils::serialiseUint32(file, static_cast<uint32_t>(overworld_explored.size()));
+	for (const auto& vec : overworld_explored) {
+		utils::serialiseVectorBool(file, vec);
+	}
 
-	for (int i = 0; i < grid.get_width(); i++) {
-		for (int j = 0; j < grid.get_height(); j++) {
-			auto& tile = grid.get_tile(i, j);
-			utils::serialiseUint32(file, static_cast<uint32_t>(tile.visible));
-			utils::serialiseUint32(file, static_cast<uint32_t>(tile.explored));
+	// serialise the current level's visible and explored flags
+	{
+		auto& grid = get_level().get_grid();
+		for (int i = 0; i < grid.get_width(); i++) {
+			for (int j = 0; j < grid.get_height(); j++) {
+				auto& tile = grid.get_tile(i, j);
+				utils::serialiseUint32(file, static_cast<uint32_t>(tile.visible));
+				utils::serialiseUint32(file, static_cast<uint32_t>(tile.explored));
+			}
 		}
 	}
 }
@@ -270,12 +422,31 @@ void WorldMap::deserialise(const char* buffer, size_t& offset)
 {
 	dungeon_depth = static_cast<int>(utils::deserialiseUint32(buffer, offset));
 	auto level_seed = utils::deserialiseUint64(buffer, offset);
-	
-	randomiser.set_seed(static_cast<unsigned int>(level_seed));
-	load_dungeon();
-	
-	auto& grid = get_level().get_grid();
+	town_x = static_cast<int>(utils::deserialiseUint32(buffer, offset));
+	town_y = static_cast<int>(utils::deserialiseUint32(buffer, offset));
+	world_x = static_cast<int>(utils::deserialiseUint32(buffer, offset));
+	world_y = static_cast<int>(utils::deserialiseUint32(buffer, offset));
+	overworld_seeds = utils::deserialiseVector(buffer, offset);
 
+	auto num_vecs = utils::deserialiseUint32(buffer, offset);
+
+	for (uint32_t i = 0; i < num_vecs; i++) {
+		auto contents = utils::deserialiseVectorBool(buffer, offset);
+		overworld_explored[i] = contents;
+	}
+	
+	// rebuild current level from the seed if it's not the starting town.
+	randomiser.set_seed(static_cast<unsigned int>(level_seed));
+	if (!(world_x == town_x && world_y == town_y)) {
+		__create_dungeon(overworld);
+	}
+
+	if (dungeon_depth > 0) {
+		load_dungeon();
+	}
+	
+	// set the current levels visible and explored flags
+	auto& grid = get_level().get_grid();
 	for (int i = 0; i < grid.get_width(); i++) {
 		for (int j = 0; j < grid.get_height(); j++) {
 			auto& tile = grid.get_tile(i, j);

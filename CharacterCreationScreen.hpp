@@ -26,12 +26,14 @@ private:
 	std::map<int, CharacterClass> char_options;
 	std::vector<std::string> stats;
 	int selection{ 0 };
+	int world_x{ 0 };
+	int world_y{ 0 };
 
 	bool load_character_classes();
 	void create_player();
 
 public:
-	CharacterCreationScreen(StateManager& _state_manager, World& _world, TextureManager& _tex_manager, EventManager& _event_manager, Keyboard& _keyboard, EntityFactory& _entity_factory, int _tile_width, int _tile_height, unsigned int _tileset);
+	CharacterCreationScreen(StateManager& _state_manager, World& _world, TextureManager& _tex_manager, EventManager& _event_manager, Keyboard& _keyboard, EntityFactory& _entity_factory, int _tile_width, int _tile_height, unsigned int _tileset, int _world_x, int _world_y);
 	~CharacterCreationScreen() {};
 	virtual void handle_input(SDL_Event& event) override;
 	virtual void on_tick() override;

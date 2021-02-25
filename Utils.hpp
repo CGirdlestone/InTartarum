@@ -11,13 +11,15 @@ namespace utils {
 	void serialiseUint32(std::ofstream& file, uint32_t x);
 	void serialiseUint64(std::ofstream& file, uint64_t x);
 	void serialiseString(std::ofstream& file, std::string data);
-	void serialiseVector(std::ofstream& file, std::vector<uint32_t>& data);
+	void serialiseVector(std::ofstream& file, const std::vector<uint32_t>& data);
+	void serialiseVectorBool(std::ofstream& file, const std::vector<bool>& data);
 	uint8_t					deserialiseUint8(const char* buffer, size_t& offset);
 	uint16_t				deserialiseUint16(const char* buffer, size_t& offset);
 	uint32_t				deserialiseUint32(const char* buffer, size_t& offset);
 	uint64_t				deserialiseUint64(const char* buffer, size_t& offset);
 	std::string				deserialiseString(const char* buffer, size_t& offset);
 	std::vector<uint32_t>	deserialiseVector(const char* buffer, size_t& offset);
+	std::vector<bool>		deserialiseVectorBool(const char* buffer, size_t& offset);
 
 	int read_lua_int(SmartLuaVM& vm, const char* key, int index);
 	int read_lua_int(SmartLuaVM& vm, int key, int index);
