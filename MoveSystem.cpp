@@ -43,7 +43,36 @@ bool MoveSystem::is_move_within_level(int x, int y)
 
 void MoveSystem::move_over_world(uint32_t mover, int x, int y)
 {
+	auto* pos = world.GetComponent<Position>(mover);
 
+	// as we're moving in units (either tiles or levels), we can use the delta move to transition levels and ensure we get the right direction.
+	if (pos->x + x >= 0 && pos->x + x < world_map.get_level().get_width() &&
+		(pos->y + y < 0 || pos->y + y >= world_map.get_level().get_height())) {
+		pos->world_y += y;
+	}
+	else if (pos->y + y >= 0 && pos->y + y < world_map.get_level().get_height() &&
+		(pos->x + x < 0 || pos->x + x >= world_map.get_level().get_width())) {
+		pos->world_x += x;
+	}
+	else {
+		pos->world_x += x;
+		pos->world_y += y;
+	}
+
+	// update the player's local (level) coordinates.
+	if (pos->x + x < 0) {
+		pos->x = world_map.get_level().get_width() - 1;
+	}
+	else if (pos->x + x > world_map.get_level().get_width() - 1) {
+		pos->x = 0;
+	}
+
+	if (pos->y + y < 0) {
+		pos->y = world_map.get_level().get_height() - 1;
+	}
+	else if (pos->y + y > world_map.get_level().get_height() - 1) {
+		pos->y = 0;
+	}
 }
 
 bool MoveSystem::in_world_bounds(int x, int y)
@@ -111,40 +140,13 @@ void MoveSystem::move(std::tuple<int, int> direction, uint32_t actor)
 	else {
 		auto player = world.GetComponent<Player>(actor);
 		
+		// only the player can transition between overworld levels
 		if (player != nullptr) {
 			if (!is_move_within_level(pos->x + x, pos->y + y)) {
 				if (in_world_bounds(pos->world_x + x, pos->world_y + y)) {
-					// as we're moving in units (either tiles or levels), we can use the delta move to transition levels and ensure we get the right direction.
 					
 					// update the player's global (overworld) coordinates.
-					if (pos->x + x >= 0 && pos->x + x < world_map.get_level().get_width() && 
-						(pos->y + y < 0 || pos->y + y >= world_map.get_level().get_height())) {
-						pos->world_y += y;
-					}
-					else if (pos->y + y >= 0 && pos->y + y < world_map.get_level().get_height() &&
-						(pos->x + x < 0 || pos->x + x >= world_map.get_level().get_width())) {
-						pos->world_x += x;
-					}
-					else {
-						pos->world_x += x;
-						pos->world_y += y;
-					}
-
-					// update the player's local (level) coordinates.
-					if (pos->x + x < 0) {
-						pos->x = world_map.get_level().get_width() - 1;
-					}
-					else if (pos->x + x > world_map.get_level().get_width() - 1) {
-						pos->x = 0;
-					}
-
-					if (pos->y + y < 0) {
-						pos->y = world_map.get_level().get_height() - 1;
-					}
-					else if (pos->y + y > world_map.get_level().get_height() - 1) {
-						pos->y = 0;
-					}
-
+					move_over_world(actor, x, y);
 					event_manager.push_event(EventTypes::OVERWORLD_MOVEMENT);
 					camera.follow(pos->x, pos->y);
 					return;

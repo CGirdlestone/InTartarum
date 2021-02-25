@@ -341,3 +341,4 @@ healthchecksdb
 
 # User defined ignores
 *.txt
+*.py
