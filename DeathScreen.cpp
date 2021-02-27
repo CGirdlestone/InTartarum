@@ -33,12 +33,12 @@ void DeathScreen::draw_scene(Renderer& renderer, const uint32_t fps, float dt) c
 
 bool DeathScreen::render_previous() const 
 {
-
+	return render_prev;
 }
 
 GameState DeathScreen::get_state() const 
 {
-
+	return state;
 }
 
 void DeathScreen::on_entrance(Renderer& renderer) 

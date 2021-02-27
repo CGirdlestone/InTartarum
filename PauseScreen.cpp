@@ -33,12 +33,12 @@ void PauseScreen::draw_scene(Renderer& renderer, const uint32_t fps, float dt) c
 
 bool PauseScreen::render_previous() const 
 {
-
+	return render_prev;
 }
 
 GameState PauseScreen::get_state() const 
 {
-
+	return state;
 }
 
 void PauseScreen::on_entrance(Renderer& renderer) 

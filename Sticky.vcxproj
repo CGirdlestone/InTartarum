@@ -154,7 +154,9 @@
     <ClCompile Include="Animator.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CharacterCreationScreen.cpp" />
+    <ClCompile Include="CombatSystem.cpp" />
     <ClCompile Include="Components.cpp" />
+    <ClCompile Include="DeathScreen.cpp" />
     <ClCompile Include="EntityFactory.cpp" />
     <ClCompile Include="GameScreen.cpp" />
     <ClCompile Include="Grid.cpp" />
@@ -165,6 +167,7 @@
     <ClCompile Include="MessageLog.cpp" />
     <ClCompile Include="MoveSystem.cpp" />
     <ClCompile Include="Pathfinding.cpp" />
+    <ClCompile Include="PauseScreen.cpp" />
     <ClCompile Include="QuantityState.cpp" />
     <ClCompile Include="ScriptSystem.cpp" />
     <ClCompile Include="SoundManager.cpp" />
@@ -176,7 +179,10 @@
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="Prefabs.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="TargetingScreen.cpp" />
     <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="TradingScreen.cpp" />
+    <ClCompile Include="TradingSystem.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WorldMap.cpp" />
@@ -189,9 +195,11 @@
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="CharacterClass.hpp" />
     <ClInclude Include="CharacterCreationScreen.hpp" />
+    <ClInclude Include="CombatSystem.hpp" />
     <ClInclude Include="Commands.hpp" />
     <ClInclude Include="Common.hpp" />
     <ClInclude Include="Components.hpp" />
+    <ClInclude Include="DeathScreen.hpp" />
     <ClInclude Include="EntityFactory.hpp" />
     <ClInclude Include="EntityGrid.hpp" />
     <ClInclude Include="Environment.hpp" />
@@ -207,6 +215,7 @@
     <ClInclude Include="MoveSystem.hpp" />
     <ClInclude Include="ParticleSystem.hpp" />
     <ClInclude Include="Pathfinding.hpp" />
+    <ClInclude Include="PauseScreen.hpp" />
     <ClInclude Include="Prefabs.hpp" />
     <ClInclude Include="QuantityState.hpp" />
     <ClInclude Include="RandomNumberGenerator.hpp" />
@@ -216,9 +225,12 @@
     <ClInclude Include="SoundSystem.hpp" />
     <ClInclude Include="SplashScreen.hpp" />
     <ClInclude Include="StateManager.hpp" />
+    <ClInclude Include="TargetingScreen.hpp" />
     <ClInclude Include="TextureManager.hpp" />
     <ClInclude Include="Tile.hpp" />
     <ClInclude Include="TileType.hpp" />
+    <ClInclude Include="TradingScreen.hpp" />
+    <ClInclude Include="TradingSystem.hpp" />
     <ClInclude Include="Utils.hpp" />
     <ClInclude Include="Window.hpp" />
     <ClInclude Include="World.hpp" />

@@ -33,12 +33,12 @@ void TradingScreen::draw_scene(Renderer& renderer, const uint32_t fps, float dt)
 
 bool TradingScreen::render_previous() const 
 {
-
+	return render_prev;
 }
 
 GameState TradingScreen::get_state() const 
 {
-
+	return state;
 }
 
 void TradingScreen::on_entrance(Renderer& renderer) 

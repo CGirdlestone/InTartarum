@@ -33,12 +33,12 @@ void TargetingScreen::draw_scene(Renderer& renderer, const uint32_t fps, float d
 
 bool TargetingScreen::render_previous() const 
 {
-
+	return render_prev;
 }
 
 GameState TargetingScreen::get_state() const 
 {
-
+	return state;
 }
 
 void TargetingScreen::on_entrance(Renderer& renderer) 
