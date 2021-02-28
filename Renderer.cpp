@@ -25,7 +25,7 @@ void Renderer::DrawMap(Level& level)
 			dstrect.w = window.GetTileWidth();
 			dstrect.h = window.GetTileHeight();
 
-			auto sprite = tile_sprites.at(tile.type);
+			auto& sprite = tile_sprites.at(tile.type);
 
 			if (!tile.explored) {
 				sprite = tile_sprites.at(TileType::EMPTY);
@@ -587,7 +587,7 @@ void Renderer::DrawInventory(const std::vector<uint32_t>& items, const std::vect
 		x += 3;
 	}
 
-	for (auto equipment_slot : equipment_slots) {
+	for (auto& equipment_slot : equipment_slots) {
 		auto y{ 2 * stats_height + 1 + 2 * (k + 1) };
 		std::string slot{ "" };
 		if (in_equipment_list) {
@@ -737,7 +737,7 @@ void Renderer::DrawQuantity(const std::string& quantity)
 	int height{ 5 };
 	for (int i = 0; i < width + 1; i++) {
 		for (int j = 0; j < height + 1; j++) {
-			auto background = window.GetBackground();
+			auto& background = window.GetBackground();
 			SDL_SetTextureColorMod(texture_manager.GetTexture(font_id), 0x3d, 0x35, 0x2a);
 			SDL_Rect dstrect;
 			dstrect.x = (x + i) * window.GetTileWidth();
