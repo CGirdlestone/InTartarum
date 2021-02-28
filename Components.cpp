@@ -173,6 +173,10 @@ void Scriptable::serialise(std::ofstream& file)
 	utils::serialiseString(file, OnUpdate);
 	utils::serialiseString(file, OnBump);
 	utils::serialiseString(file, OnDeath);
+	utils::serialiseString(file, OnUse);
+	utils::serialiseString(file, OnEquip);
+	utils::serialiseString(file, OnUnequip);
+	utils::serialiseString(file, OnHit);
 }
 
 void Scriptable::deserialise(const char* buffer, size_t& offset)
@@ -182,6 +186,10 @@ void Scriptable::deserialise(const char* buffer, size_t& offset)
 	OnUpdate = utils::deserialiseString(buffer, offset);
 	OnBump = utils::deserialiseString(buffer, offset);
 	OnDeath = utils::deserialiseString(buffer, offset);
+	OnUse = utils::deserialiseString(buffer, offset);
+	OnEquip = utils::deserialiseString(buffer, offset);
+	OnUnequip = utils::deserialiseString(buffer, offset);
+	OnHit = utils::deserialiseString(buffer, offset);
 }
 
 Fighter::Fighter(int _hp, int _defence, int _str, int _dex, int _con, int _wis, int _int, int _cha)
@@ -341,10 +349,12 @@ void ID::deserialise(const char* buffer, size_t& offset)
 
 void Useable::serialise(std::ofstream& file)
 {
-
+	utils::serialiseUint32(file, static_cast<uint32_t>(type));
+	utils::serialiseUint32(file, static_cast<uint32_t>(charges));
 }
 
 void Useable::deserialise(const char* buffer, size_t& offset)
 {
-
+	type = static_cast<UseableType>(utils::deserialiseUint32(buffer, offset));
+	charges = static_cast<int>(utils::deserialiseUint32(buffer, offset));
 }

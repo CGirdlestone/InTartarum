@@ -253,6 +253,7 @@ void GameScreen::load_game()
 	world.Deserialise<Equipable>(buffer.get(), offset);
 	world.Deserialise<Body>(buffer.get(), offset);
 	world.Deserialise<ID>(buffer.get(), offset);
+	world.Deserialise<Useable>(buffer.get(), offset);
 
 	world_map.deserialise(buffer.get(), offset);
 
@@ -285,6 +286,7 @@ void GameScreen::save_game()
 	world.Serialise<Equipable>(file);
 	world.Serialise<Body>(file);
 	world.Serialise<ID>(file);
+	world.Serialise<Useable>(file);
 
 	world_map.serialise(file);
 
