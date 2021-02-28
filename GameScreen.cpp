@@ -132,6 +132,12 @@ void GameScreen::handle_input(SDL_Event& event)
 	case SDLK_g: event_manager.push_event(EventTypes::TRY_PICK_UP_ITEM, entity); break;
 	case SDLK_i: state_manager.push(GameState::INVENTORY); break;
 	case SDLK_l: state_manager.push(GameState::TARGETING); event_manager.push_event(EventTypes::LOOK, entity);  break;
+	case SDLK_SLASH: {
+		if (keyboard.is_pressed(SDLK_LSHIFT) || keyboard.is_pressed(SDLK_RSHIFT)) {
+			state_manager.push(GameState::HELP);
+			break;
+		}
+	}
 	}
 }
 

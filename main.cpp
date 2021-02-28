@@ -28,6 +28,7 @@
 #include "ActionsState.hpp"
 #include "QuantityState.hpp"
 #include "TargetingScreen.hpp"
+#include "HelpScreen.hpp"
 
 void initialise_SDL() {
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
@@ -202,19 +203,22 @@ int main(int argc, char* argv[])
 		state_manager.add_state(creation_screen.get_state(), creation_screen);
 
 		auto game_screen = GameScreen(state_manager, world, tex_manager, event_manager, world_map, renderer, camera, message_log, keyboard, false, wind);
-		state_manager.add_state(GameState::GAME, game_screen);
+		state_manager.add_state(game_screen.get_state(), game_screen);
 
 		auto inventory_screen = InventoryScreen(state_manager, world, event_manager, keyboard);
-		state_manager.add_state(GameState::INVENTORY, inventory_screen);
+		state_manager.add_state(inventory_screen.get_state(), inventory_screen);
 
 		auto action_state = ActionsState(state_manager, world, event_manager, keyboard);
-		state_manager.add_state(GameState::ACTIONS, action_state);
+		state_manager.add_state(action_state.get_state(), action_state);
 
 		auto quantity_state = QuantityState(state_manager, world, event_manager, keyboard);
-		state_manager.add_state(GameState::QUANTITY, quantity_state);
+		state_manager.add_state(quantity_state.get_state(), quantity_state);
 
 		auto targeting_state = TargetingScreen(state_manager, world, world_map, event_manager, keyboard);
-		state_manager.add_state(GameState::TARGETING, targeting_state);
+		state_manager.add_state(targeting_state.get_state(), targeting_state);
+
+		auto help_state = HelpScreen(state_manager, world, event_manager, keyboard);
+		state_manager.add_state(help_state.get_state(), help_state);
 
 		SDL_Event event;
 

@@ -840,4 +840,11 @@ void Renderer::DrawLook(int x, int y)
 	SDL_SetRenderDrawColor(window.GetRenderer(), window.GetBackground().r, window.GetBackground().g, window.GetBackground().b, 0xFF);
 }
 
+void Renderer::DrawHelp()
+{
+	DrawBox(0, 0, window.GetWidth() - 1, window.GetHeight() - 1, false, false, true);
+	std::string help = "Controls - press escape to return to game";
+	DrawText(help, 2, 0, 0xBB, 0xAA, 0x99);
+}
+
 

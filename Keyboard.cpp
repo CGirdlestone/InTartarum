@@ -71,6 +71,8 @@ Keyboard::Keyboard()
 	keys.insert({ SDLK_LSHIFT, false });
 	keys.insert({ SDLK_LCTRL, false });
 	keys.insert({ SDLK_LALT, false });
+	keys.insert({ SDLK_RSHIFT, false });
+	keys.insert({ SDLK_RCTRL, false });
 	keys.insert({ SDLK_TAB, false });
 	keys.insert({ SDLK_SPACE, false });
 	keys.insert({ SDLK_RETURN, false });

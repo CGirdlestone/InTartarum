@@ -4,7 +4,20 @@
 #include "TextureManager.hpp"
 #include "Renderer.hpp"
 
-enum class GameState { SPLASH_MENU, CHARACTER_CREATION, GAME, PAUSED, ACTIONS, INVENTORY, QUANTITY, CHARACTER_SCREEN, GAME_OVER, GAME_WIN, TARGETING};
+enum class GameState { 
+	SPLASH_MENU, 
+	CHARACTER_CREATION, 
+	GAME, 
+	PAUSED, 
+	ACTIONS, 
+	INVENTORY, 
+	QUANTITY, 
+	CHARACTER_SCREEN, 
+	GAME_OVER, 
+	GAME_WIN, 
+	TARGETING, 
+	HELP,
+};
 
 class BaseState
 {
