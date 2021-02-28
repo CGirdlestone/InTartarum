@@ -8,7 +8,7 @@
 #include "World.hpp"
 #include "WorldMap.hpp"
 
-using Script = void(*)(World& world, EventManager& event_manager, SoundManager& sound_manager, TextureManager& texture_manager, int tile_width, int tile_height, uint32_t entity, uint32_t target);
+using Script = void(*)(World& world, WorldMap& world_map, EventManager& event_manager, SoundManager& sound_manager, TextureManager& texture_manager, int tile_width, int tile_height, uint32_t entity, uint32_t target, uint32_t item);
 
 class ScriptSystem : public BaseSystem
 {
@@ -33,6 +33,14 @@ private:
 	std::map<std::string, Script> death_scripts;
 	void load_death_scripts();
 	void do_death(uint32_t entity);
+
+	std::map<std::string, Script> consume_scripts;
+	void load_consume_scripts();
+	void do_consume(uint32_t actor, uint32_t item);
+
+	std::map<std::string, Script> use_scripts;
+	void load_use_scripts();
+	void do_use(uint32_t actor, uint32_t target, uint32_t item);
 public:
 	ScriptSystem(World& _world, EventManager& _event_manager, WorldMap& _world_map, SoundManager& _sound_manager, TextureManager& _texture_manager);
 	~ScriptSystem();

@@ -289,3 +289,16 @@ struct ID : public ISerializeable {
 	virtual void serialise(std::ofstream& file) override;
 	virtual void deserialise(const char* buffer, size_t& offset) override;
 };
+
+enum class UseableType { CONSUMABLE, TARGETED, TARGETED_AOE };
+struct Useable : public ISerializeable {
+	Useable() {};
+	~Useable() {};
+	Useable(UseableType _type, int _charges) : type(_type), charges(_charges) {};
+
+	UseableType type{ UseableType::CONSUMABLE };
+	int charges{ -1 };
+	virtual void serialise(std::ofstream& file) override;
+	virtual void deserialise(const char* buffer, size_t& offset) override;
+};
+

@@ -9,6 +9,9 @@ InventorySystem::InventorySystem(World& _world, EventManager& _event_manager, Wo
 	event_manager.add_subscriber(EventTypes::EQUIP_ITEM, *this);
 	event_manager.add_subscriber(EventTypes::UNEQUIP_ITEM, *this);
 	event_manager.add_subscriber(EventTypes::DROP_EQUIPPED_ITEM, *this);
+	event_manager.add_subscriber(EventTypes::USE_ITEM, *this);
+	event_manager.add_subscriber(EventTypes::CONSUME, *this);
+	event_manager.add_subscriber(EventTypes::DECREASE_CHARGE, *this);
 	
 }
 
@@ -27,10 +30,10 @@ void InventorySystem::receive(EventTypes event)
 
 }
 
-void InventorySystem::receive(EventTypes event, uint32_t actor)
+void InventorySystem::receive(EventTypes event, uint32_t entity)
 {
 	switch (event) {
-	case EventTypes::TRY_PICK_UP_ITEM: pick_up(actor);
+	case EventTypes::TRY_PICK_UP_ITEM: pick_up(entity); break;
 	}
 }
 
@@ -41,6 +44,8 @@ void InventorySystem::receive(EventTypes event, uint32_t actor, uint32_t item)
 	case EventTypes::EQUIP_ITEM: equip(actor, item); break;
 	case EventTypes::UNEQUIP_ITEM: unequip(actor, item); break;
 	case EventTypes::DROP_EQUIPPED_ITEM: drop_equipped(actor, item); break;
+	case EventTypes::CONSUME: use_consumable(actor, item); break;
+	case EventTypes::DECREASE_CHARGE: decrease_charges(actor, item); break;
 	}
 }
 
@@ -48,6 +53,7 @@ void InventorySystem::receive(EventTypes event, uint32_t actor, uint32_t item, u
 {
 	switch (event) {
 	case EventTypes::DROP_ITEM_STACK: drop_stack(actor, item, quantity); break;
+	case EventTypes::USE_ITEM: use_targetable(actor, item, quantity); break;
 	}
 }
 
@@ -183,6 +189,43 @@ void InventorySystem::drop_equipped(uint32_t actor, uint32_t item)
 	}
 	else {
 		event_manager.push_event(EventTypes::DROP_ITEM_STACK, actor, item, static_cast<uint32_t>(stack->quantity));
+	}
+}
+
+void InventorySystem::use_consumable(uint32_t actor, uint32_t item)
+{
+	auto* script = world.GetComponent<Scriptable>(item);
+	event_manager.push_event(EventTypes::ON_USE_SCRIPT, actor, item);
+}
+
+void InventorySystem::use_targetable(uint32_t actor, uint32_t target, uint32_t item)
+{
+	auto* script = world.GetComponent<Scriptable>(item);
+	event_manager.push_event(EventTypes::ON_USE_SCRIPT, actor, target, item);
+}
+
+void InventorySystem::decrease_charges(uint32_t owner, uint32_t item)
+{
+	auto* useable = world.GetComponent<Useable>(item);
+	// -1 means unlimited uses
+	if (useable->charges == -1) {
+		return;
+	}
+
+	useable->charges -= 1;
+	if (useable->charges == 0) {
+		auto* stack = world.GetComponent<Stackable>(item);
+		if (stack != nullptr) {
+			stack->quantity -= 1;
+			if (stack->quantity == 0) {
+				remove_from_inventory(owner, item);
+				world.KillEntity(item);
+			}
+		}
+		else {
+			remove_from_inventory(owner, item);
+			world.KillEntity(item);
+		}
 	}
 }
 

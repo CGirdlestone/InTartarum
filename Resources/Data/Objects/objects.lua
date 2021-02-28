@@ -13,6 +13,13 @@ ID =
     ["BACK"] = 10,
 }
 
+UseableType =
+{
+    ["CONSUMABLE"] = 0,
+    ["TARGETED"] = 1,
+    ["TARGETED_AOE"] = 2,
+}
+
 width = 14; -- used for the animation frame clipping
 height = 16; -- used for the animation frame clipping
 
@@ -43,6 +50,84 @@ arrow =
     };
 }
 
+health_potion = 
+{
+    item = 
+    {
+        name = "health potion", description = "A vial of thick, redish liquid.", weight = 1;
+    };
+    sprite = 
+    {
+        tilesheet = "Cooz-curses-14x16.png", 
+        clip_x = 1, clip_y = 2, 
+        width = width, height = height, depth = 1,
+        red = 205, green = 92, blue = 92,
+    };
+    stackable = 
+    {
+        true,
+    };
+    id = 
+    {
+        uid = "health_potion";
+    };
+    useable = 
+    {
+        type = UseableType["CONSUMABLE"];
+        charges = 1;
+    };
+    script = 
+    {
+        --OnInit = "";
+        --OnUpdate = "";
+        --OnBump = "";
+        --OnDeath = "";
+        --OnEquip = "buff_strength",
+        --OnUnequip = "debuff_strength",
+        OnUse = "heal";
+        --OnHit = "";
+    };
+}
+
+fireball_scroll = 
+{
+    item = 
+    {
+        name = "scroll of fireball", description = "A piece of parchment which could destroy a whole town.", weight = 1;
+    };
+    sprite = 
+    {
+        tilesheet = "Cooz-curses-14x16.png", 
+        clip_x = 14, clip_y = 7, 
+        width = width, height = height, depth = 1,
+        red = 205, green = 92, blue = 92,
+    };
+    stackable = 
+    {
+        true,
+    };
+    id = 
+    {
+        uid = "fireball_scroll";
+    };
+    useable = 
+    {
+        type = UseableType["TARGETED"];
+        charges = 1;
+    };
+    script = 
+    {
+        --OnInit = "";
+        --OnUpdate = "";
+        --OnBump = "";
+        --OnDeath = "";
+        --OnEquip = "buff_strength",
+        --OnUnequip = "debuff_strength",
+        OnUse = "fireball";
+        --OnHit = "";
+    };
+}
+
 fire_sword = 
 {
     item = 
@@ -58,7 +143,7 @@ fire_sword =
     };
     equipable = 
     {
-        slot = ID["RIGHT_HAND"]
+        slot = ID["RIGHT_HAND"];
     };
     script = 
     {
@@ -79,6 +164,10 @@ fire_sword =
     id = 
     {
         uid = "fire_sword";
+    };
+    useable = 
+    {
+        type = UseableType["TARGETED"];
     };
 }
 

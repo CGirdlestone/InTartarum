@@ -27,6 +27,7 @@
 #include "InventoryScreen.hpp"
 #include "ActionsState.hpp"
 #include "QuantityState.hpp"
+#include "TargetingScreen.hpp"
 
 void initialise_SDL() {
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
@@ -74,6 +75,8 @@ void RegisterComponents(World& world) {
 	world.RegisterComponent<AI>();
 	world.RegisterComponent<Body>();
 	world.RegisterComponent<ID>();
+	world.RegisterComponent<Useable>();
+	world.RegisterComponent<Fighter>();
 }
 
 void load_tiles(Renderer& renderer, TextureManager& tex_manager, unsigned int font_tileset, int tile_width, int tile_height) {
@@ -209,6 +212,9 @@ int main(int argc, char* argv[])
 
 		auto quantity_state = QuantityState(state_manager, world, event_manager, keyboard);
 		state_manager.add_state(GameState::QUANTITY, quantity_state);
+
+		auto targeting_state = TargetingScreen(state_manager, world, world_map, event_manager, keyboard);
+		state_manager.add_state(GameState::TARGETING, targeting_state);
 
 		SDL_Event event;
 

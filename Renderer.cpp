@@ -45,7 +45,7 @@ void Renderer::DrawMap(Level& level)
 				SDL_SetRenderDrawColor(window.GetRenderer(), 50, 50, 50, 128);
 				SDL_SetRenderDrawBlendMode(window.GetRenderer(), SDL_BLENDMODE_BLEND);
 				SDL_RenderFillRect(window.GetRenderer(), &dstrect);
-				SDL_SetRenderDrawColor(window.GetRenderer(), window.GetBackground().r, window.GetBackground().g, window.GetBackground().b, 0);
+				SDL_SetRenderDrawColor(window.GetRenderer(), window.GetBackground().r, window.GetBackground().g, window.GetBackground().b, 255);
 			}
 		}
 	}
@@ -389,7 +389,7 @@ std::vector<std::string> Renderer::WrapText(const std::string& text, int line_wi
 	return lines;
 }
 
-void Renderer::DrawBackgroundTile(int x, int y, uint8_t r, uint8_t g, uint8_t b, bool scale)
+void Renderer::DrawBackgroundTile(int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a, bool scale)
 {
 	SDL_SetTextureColorMod(texture_manager.GetTexture(font_id), r, g, b);
 	SDL_Rect dstrect;
@@ -459,7 +459,7 @@ void Renderer::DrawSprite(Position* pos, Sprite* sprite)
 	srcrect.w = sprite->width;
 	srcrect.h = sprite->height;
 
-	DrawBackgroundTile(x, y, window.GetBackground().r, window.GetBackground().g, window.GetBackground().b, true);
+	SDL_RenderFillRect(window.GetRenderer(), &dstrect);
 	SDL_SetTextureColorMod(texture_manager.GetTexture(sprite->id), sprite->r, sprite->g, sprite->b);
 	SDL_RenderCopy(window.GetRenderer(), texture_manager.GetTexture(sprite->id), &srcrect, &dstrect);
 }
@@ -760,6 +760,53 @@ void Renderer::DrawQuantity(const std::string& quantity)
 	std::string prompt = ">";
 	DrawText(prompt, x + 1, y + 2, 0xBB, 0xAA, 0x99);
 	DrawText(quantity, x + 2, y + 2, 0xBB, 0xAA, 0x99);
+}
+
+void Renderer::DrawTargeting(int x, int y, const std::vector<std::tuple<int, int> >& path, int range)
+{
+	for (auto& [i, j] : path) {
+		SDL_Rect dstrect;
+		auto [_x, _y] = camera.viewport(i, j);
+		auto [cam_x, cam_y] = camera.get_position();
+		dstrect.x = (_x * camera.get_zoom()) * window.GetTileWidth() + camera.get_offset_x() * window.GetTileWidth();
+		dstrect.y = (_y * camera.get_zoom()) * window.GetTileHeight() + camera.get_offset_y() * window.GetTileHeight();
+
+		if (dstrect.x == 0 || dstrect.x == window.GetWidth() - 1 || dstrect.y == 0 || dstrect.y == window.GetHeight() - 1) {
+			return;
+		}
+		dstrect.w = window.GetTileWidth() * camera.get_zoom();
+		dstrect.h = window.GetTileHeight() * camera.get_zoom();
+
+		if ((x - i) * (x - i) + (y - j) * (y - j) < range * range) {
+			SDL_SetRenderDrawColor(window.GetRenderer(), 136, 170, 34, 128);
+		}
+		else {
+			SDL_SetRenderDrawColor(window.GetRenderer(), 205, 92, 92, 128);
+		}
+		SDL_SetRenderDrawBlendMode(window.GetRenderer(), SDL_BLENDMODE_BLEND);
+		SDL_RenderFillRect(window.GetRenderer(), &dstrect);
+		SDL_SetRenderDrawColor(window.GetRenderer(), window.GetBackground().r, window.GetBackground().g, window.GetBackground().b, 0);
+	}
+}
+
+void Renderer::DrawLook(int x, int y)
+{
+	SDL_Rect dstrect;
+	auto [_x, _y] = camera.viewport(x, y);
+	auto [cam_x, cam_y] = camera.get_position();
+	dstrect.x = (_x * camera.get_zoom()) * window.GetTileWidth() + camera.get_offset_x() * window.GetTileWidth();
+	dstrect.y = (_y * camera.get_zoom()) * window.GetTileHeight() + camera.get_offset_y() * window.GetTileHeight();
+
+	if (dstrect.x == 0 || dstrect.x == window.GetWidth() - 1 || dstrect.y == 0 || dstrect.y == window.GetHeight() - 1) {
+		return;
+	}
+	dstrect.w = window.GetTileWidth() * camera.get_zoom();
+	dstrect.h = window.GetTileHeight() * camera.get_zoom();
+
+	SDL_SetRenderDrawColor(window.GetRenderer(), 136, 170, 34, 128);
+	SDL_SetRenderDrawBlendMode(window.GetRenderer(), SDL_BLENDMODE_BLEND);
+	SDL_RenderFillRect(window.GetRenderer(), &dstrect);
+	SDL_SetRenderDrawColor(window.GetRenderer(), window.GetBackground().r, window.GetBackground().g, window.GetBackground().b, 0xFF);
 }
 
 

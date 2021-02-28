@@ -338,3 +338,13 @@ void ID::deserialise(const char* buffer, size_t& offset)
 {
 	id = utils::deserialiseString(buffer, offset);
 }
+
+void Useable::serialise(std::ofstream& file)
+{
+
+}
+
+void Useable::deserialise(const char* buffer, size_t& offset)
+{
+
+}

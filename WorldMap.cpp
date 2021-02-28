@@ -53,6 +53,12 @@ void WorldMap::build_town()
 	std::string fire = "camp_fire";
 	entity_factory.create_item(fire, 15, 13, 0, world_x, world_y);
 
+	std::string health_potion = "health_potion";
+	entity_factory.create_item(health_potion, 18, 25, 0, world_x, world_y);
+
+	std::string fireball = "fireball_scroll";
+	entity_factory.create_item(fireball, 19, 22, 0, world_x, world_y);
+
 	std::string bat = "bat";
 	entity_factory.create_mob(bat, 15, 25, 0, world_x, world_y);
 

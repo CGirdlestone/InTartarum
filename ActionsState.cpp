@@ -106,6 +106,41 @@ void ActionsState::handle_inventory_input(SDL_Event& event)
 		state_manager.pop(2);
 		break;
 	}
+	case SDLK_u: {
+		auto* useable = world.GetComponent<Useable>(selected_item);
+		auto* script = world.GetComponent<Scriptable>(selected_item);
+		if (useable == nullptr || script == nullptr) {
+			event_manager.push_event(EventTypes::NO_USE);
+			break;
+		}
+		if (useable->type == UseableType::TARGETED) {
+			state_manager.pop(2);
+			state_manager.push(GameState::TARGETING);
+			event_manager.push_event(EventTypes::SEND_ITEM_TO_TARGETING_STATE, player_id, selected_item);
+			break;
+		}
+		else if (useable->type == UseableType::TARGETED_AOE) {
+			state_manager.pop(2);
+			state_manager.push(GameState::TARGETING);
+			event_manager.push_event(EventTypes::SEND_AOE_ITEM_TO_TARGETING_STATE, player_id, selected_item);
+			break;
+		}
+		break;
+	}
+	case SDLK_q: {
+		auto* useable = world.GetComponent<Useable>(selected_item);
+		auto* script = world.GetComponent<Scriptable>(selected_item);
+		if (useable == nullptr || script == nullptr) {
+			event_manager.push_event(EventTypes::NO_USE);
+			break;
+		}
+		if (useable->type == UseableType::CONSUMABLE) {
+			event_manager.push_event(EventTypes::CONSUME, player_id, selected_item);
+			state_manager.pop(2);
+			break;
+		}
+		break;
+	}
 	}
 }
 

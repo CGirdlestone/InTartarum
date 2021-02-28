@@ -29,6 +29,9 @@ private:
 	void equip(uint32_t actor, uint32_t item);
 	void unequip(uint32_t actor, uint32_t item);
 	void drop_equipped(uint32_t actor, uint32_t item);
+	void use_consumable(uint32_t actor, uint32_t item);
+	void use_targetable(uint32_t actor, uint32_t target, uint32_t item);
+	void decrease_charges(uint32_t owner, uint32_t item);
 
 	bool can_pick_up(uint32_t actor, uint32_t item);
 	bool is_slot_occupied(uint32_t actor, uint32_t item);

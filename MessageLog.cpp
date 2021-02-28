@@ -40,6 +40,10 @@ MessageLog::MessageLog(World& _world, EventManager& _event_manager)
 	event_manager.add_subscriber(EventTypes::NO_ITEM_PRESENT, *this);
 	event_manager.add_subscriber(EventTypes::DROP_ITEM_MESSAGE, *this);
 	event_manager.add_subscriber(EventTypes::DROP_ITEM_STACK_MESSAGE, *this);
+	event_manager.add_subscriber(EventTypes::NO_USE, *this);
+	event_manager.add_subscriber(EventTypes::INVALID_TARGET, *this);
+	event_manager.add_subscriber(EventTypes::HEAL, *this);
+	event_manager.add_subscriber(EventTypes::CAST, *this);
 }
 
 void MessageLog::update(float dt)
@@ -57,6 +61,26 @@ void MessageLog::receive(EventTypes event)
 	switch (event) {
 	case EventTypes::NO_ITEM_PRESENT: {
 		auto msg = Message("There's nothing to pick up here!");
+		add_message(msg);
+		break;
+	}
+	case EventTypes::NO_USE: {
+		auto msg = Message("You can't use that!");
+		add_message(msg);
+		break;
+	}
+	case EventTypes::INVALID_TARGET: {
+		auto msg = Message("You must select a valid target!");
+		add_message(msg);
+		break;
+	}
+	case EventTypes::TEMP_SCRIPT_USE: {
+		auto msg = Message("You cast a spell!");
+		add_message(msg);
+		break;
+	}
+	case EventTypes::HEAL: {
+		auto msg = Message("You quaff the potion and feel much better!");
 		add_message(msg);
 		break;
 	}
@@ -109,7 +133,19 @@ void MessageLog::receive(EventTypes event, uint32_t actor, uint32_t target)
 
 void MessageLog::receive(EventTypes event, uint32_t actor, uint32_t target, uint32_t item)
 {
+	switch (event) {
+	case EventTypes::CAST: {
+		auto* user = world.GetComponent<Actor>(actor);
+		auto* enemy = world.GetComponent<Actor>(target);
+		auto* used_item = world.GetComponent<Scriptable>(item);
 
+		std::string text{ "$ casts $ at $." };
+		interpolate(text, user->name, used_item->OnUse, enemy->name);
+		auto msg = Message(text);
+		add_message(msg);
+		break;
+	}
+	}
 }
 
 void MessageLog::serialise(std::ofstream& file)

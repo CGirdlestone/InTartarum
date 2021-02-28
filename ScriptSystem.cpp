@@ -2,7 +2,7 @@
 
 void ScriptSystem::load_bump_scripts()
 {
-	auto open_chest_script = [](World& world, EventManager& event_manager, SoundManager& sound_manager, TextureManager& texture_manager, int tile_width, int tile_height, uint32_t entity, uint32_t target) {
+	auto open_chest_script = [](World& world, WorldMap& world_map, EventManager& event_manager, SoundManager& sound_manager, TextureManager& texture_manager, int tile_width, int tile_height, uint32_t entity, uint32_t target, uint32_t item) {
 		auto* anim = world.GetComponent<Animation>(entity);
 		auto* sprite = world.GetComponent<Sprite>(entity);
 		auto* interactable = world.GetComponent<Interactable>(entity);
@@ -26,7 +26,7 @@ void ScriptSystem::load_bump_scripts()
 		sprite->height = state.height;
 	};
 
-	auto open_door_script = [](World& world, EventManager& event_manager, SoundManager& sound_manager, TextureManager& texture_manager, int tile_width, int tile_height, uint32_t entity, uint32_t target) {
+	auto open_door_script = [](World& world, WorldMap& world_map, EventManager& event_manager, SoundManager& sound_manager, TextureManager& texture_manager, int tile_width, int tile_height, uint32_t entity, uint32_t target, uint32_t item) {
 		auto* anim = world.GetComponent<Animation>(entity);
 		auto* sprite = world.GetComponent<Sprite>(entity);
 		auto* interactable = world.GetComponent<Interactable>(entity);
@@ -59,7 +59,7 @@ void ScriptSystem::load_bump_scripts()
 void ScriptSystem::do_bump(uint32_t entity)
 {
 	auto* script = world.GetComponent<Scriptable>(entity);
-	bump_scripts.at(script->OnBump)(world, event_manager, sound_manager, texture_manager, tile_width, tile_height, entity, MAX_ENTITIES + 1);
+	bump_scripts.at(script->OnBump)(world, world_map, event_manager, sound_manager, texture_manager, tile_width, tile_height, entity, MAX_ENTITIES + 1, MAX_ENTITIES + 1);
 }
 
 void ScriptSystem::load_update_scripts()
@@ -69,7 +69,7 @@ void ScriptSystem::load_update_scripts()
 
 void ScriptSystem::load_death_scripts()
 {
-	auto spawn_explosion_script = [](World& world, EventManager& event_manager, SoundManager& sound_manager, TextureManager& texture_manager, int tile_width, int tile_height, uint32_t entity, uint32_t target) {
+	auto spawn_explosion_script = [](World& world, WorldMap& world_map, EventManager& event_manager, SoundManager& sound_manager, TextureManager& texture_manager, int tile_width, int tile_height, uint32_t entity, uint32_t target, uint32_t item) {
 		auto* pos = world.GetComponent<Position>(entity);
 		auto* script = world.GetComponent<Scriptable>(entity);
 		Prefab::create_explosion(world, pos->x * tile_width, pos->y * tile_height, pos->z, texture_manager.LoadTexture("./Resources/exp2_0.png"));
@@ -82,7 +82,40 @@ void ScriptSystem::load_death_scripts()
 void ScriptSystem::do_death(uint32_t entity)
 {
 	auto* script = world.GetComponent<Scriptable>(entity);
-	death_scripts.at(script->OnDeath)(world, event_manager, sound_manager, texture_manager, tile_width, tile_height, entity, MAX_ENTITIES + 1);
+	death_scripts.at(script->OnDeath)(world, world_map, event_manager, sound_manager, texture_manager, tile_width, tile_height, entity, MAX_ENTITIES + 1, MAX_ENTITIES + 1);
+}
+
+void ScriptSystem::load_consume_scripts()
+{
+	auto heal = [](World& world, WorldMap& world_map, EventManager& event_manager, SoundManager& sound_manager, TextureManager& texture_manager, int tile_width, int tile_height, uint32_t entity, uint32_t target, uint32_t item) {
+		event_manager.push_event(EventTypes::HEAL);
+		event_manager.push_event(EventTypes::DECREASE_CHARGE, entity, item);
+	};
+
+	consume_scripts.insert({ "heal", heal });
+}
+
+void ScriptSystem::do_consume(uint32_t entity, uint32_t item)
+{
+	auto* script = world.GetComponent<Scriptable>(item);
+	consume_scripts.at(script->OnUse)(world, world_map, event_manager, sound_manager, texture_manager, tile_width, tile_height, entity, MAX_ENTITIES + 1, item);
+}
+
+void ScriptSystem::load_use_scripts()
+{
+	auto fireball = [](World& world, WorldMap& world_map, EventManager& event_manager, SoundManager& sound_manager, TextureManager& texture_manager, int tile_width, int tile_height, uint32_t entity, uint32_t target, uint32_t item) {
+		auto* pos = world.GetComponent<Position>(target);
+		event_manager.push_event(EventTypes::CAST, entity, target, item);
+		event_manager.push_event(EventTypes::DECREASE_CHARGE, entity, item);
+	};
+
+	use_scripts.insert({ "fireball", fireball });
+}
+
+void ScriptSystem::do_use(uint32_t entity, uint32_t target, uint32_t item)
+{
+	auto* script = world.GetComponent<Scriptable>(item);
+	use_scripts.at(script->OnUse)(world, world_map, event_manager, sound_manager, texture_manager, tile_width, tile_height, entity, target, item);
 }
 
 ScriptSystem::ScriptSystem(World& _world, EventManager& _event_manager, WorldMap& _world_map, SoundManager& _sound_manager, TextureManager& _texture_manager)
@@ -106,6 +139,7 @@ ScriptSystem::ScriptSystem(World& _world, EventManager& _event_manager, WorldMap
 	}
 
 	event_manager.add_subscriber(EventTypes::BUMP_SCRIPT, *this);
+	event_manager.add_subscriber(EventTypes::ON_USE_SCRIPT, *this);
 	Lua_VM.reset(luaL_newstate());
 }
 
@@ -119,6 +153,8 @@ void ScriptSystem::init()
 	load_bump_scripts();
 	load_update_scripts();
 	load_death_scripts();
+	load_consume_scripts();
+	load_use_scripts();
 }
 
 void ScriptSystem::update(float dt)
@@ -127,7 +163,7 @@ void ScriptSystem::update(float dt)
 	for (auto e : entities) {
 		auto* script = world.GetComponent<Scriptable>(e);
 		if (script->OnUpdate != "") {
-			update_scripts.at(script->OnUpdate)(world, event_manager, sound_manager, texture_manager, tile_width, tile_height, e, MAX_ENTITIES + 1);
+			update_scripts.at(script->OnUpdate)(world, world_map, event_manager, sound_manager, texture_manager, tile_width, tile_height, e, MAX_ENTITIES + 1, MAX_ENTITIES + 1);
 		}
 	}
 }
@@ -151,10 +187,14 @@ void ScriptSystem::receive(EventTypes event, uint32_t actor)
 
 void ScriptSystem::receive(EventTypes event, uint32_t actor, uint32_t target)
 {
-
+	switch (event) {
+	case EventTypes::ON_USE_SCRIPT: do_consume(actor, target); break;
+	}
 }
 
 void ScriptSystem::receive(EventTypes event, uint32_t actor, uint32_t target, uint32_t item)
 {
-
+	switch (event) {
+	case EventTypes::ON_USE_SCRIPT: do_use(actor, target, item); break;
+	}
 }

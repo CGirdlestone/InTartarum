@@ -172,6 +172,9 @@ void EntityFactory::create_entity(uint32_t& entity)
         else if (component == "actor") {
             create_actor(entity);
         }
+        else if (component == "useable") {
+            create_useable(entity);
+        }
         lua_pop(vm.get(), 2);
     }
     lua_pop(vm.get(), 1);
@@ -364,4 +367,11 @@ void EntityFactory::create_ai(uint32_t& entity)
     auto blind = utils::read_lua_bool(vm, "blind", -3);
     auto scent = utils::read_lua_bool(vm, "scent", -3);
     world.AddComponent<AI>(entity, uid, blind, scent);
+}
+
+void EntityFactory::create_useable(uint32_t& entity)
+{
+    auto type = static_cast<UseableType>(utils::read_lua_int(vm, "type", -3));
+    auto charges = utils::read_lua_int(vm, "charges", -3);
+    world.AddComponent<Useable>(entity, type, charges);
 }
