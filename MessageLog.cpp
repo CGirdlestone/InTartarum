@@ -44,6 +44,8 @@ MessageLog::MessageLog(World& _world, EventManager& _event_manager)
 	event_manager.add_subscriber(EventTypes::INVALID_TARGET, *this);
 	event_manager.add_subscriber(EventTypes::HEAL, *this);
 	event_manager.add_subscriber(EventTypes::CAST, *this);
+	event_manager.add_subscriber(EventTypes::BUFF_HEALTH, *this);
+	event_manager.add_subscriber(EventTypes::DEBUFF_HEALTH, *this);
 }
 
 void MessageLog::update(float dt)
@@ -71,11 +73,6 @@ void MessageLog::receive(EventTypes event)
 	}
 	case EventTypes::INVALID_TARGET: {
 		auto msg = Message("You must select a valid target!");
-		add_message(msg);
-		break;
-	}
-	case EventTypes::TEMP_SCRIPT_USE: {
-		auto msg = Message("You cast a spell!");
 		add_message(msg);
 		break;
 	}
@@ -124,6 +121,22 @@ void MessageLog::receive(EventTypes event, uint32_t actor, uint32_t target)
 			text = "You drop $ $s on the ground.";
 			interpolate(text, quantity, item->name);
 		}
+		auto msg = Message(text);
+		add_message(msg);
+		break;
+	}
+	case EventTypes::BUFF_HEALTH: {
+		auto* item = world.GetComponent<Item>(target);
+		std::string text{ "You equip the $ and feel stronger!" };
+		interpolate(text, item->name);
+		auto msg = Message(text);
+		add_message(msg);
+		break;
+	}
+	case EventTypes::DEBUFF_HEALTH: {
+		auto* item = world.GetComponent<Item>(target);
+		std::string text{ "You unequip the $ and feel weaker!" };
+		interpolate(text, item->name);
 		auto msg = Message(text);
 		add_message(msg);
 		break;

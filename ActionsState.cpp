@@ -11,11 +11,11 @@ void ActionsState::handle_input(SDL_Event& event)
 {
 	SDL_PollEvent(&event);
 
-	if (!in_equipment_list) {
-		handle_inventory_input(event);
+	if (in_equipment_list) {
+		handle_equipment_input(event);
 	}
 	else {
-		handle_equipment_input(event);
+		handle_inventory_input(event);
 	}
 }
 
@@ -124,6 +124,10 @@ void ActionsState::handle_inventory_input(SDL_Event& event)
 			state_manager.push(GameState::TARGETING);
 			event_manager.push_event(EventTypes::SEND_AOE_ITEM_TO_TARGETING_STATE, player_id, selected_item);
 			break;
+		} else if (useable->type == UseableType::CONSUMABLE) {
+			event_manager.push_event(EventTypes::CONSUME, player_id, selected_item);
+			state_manager.pop(2);
+			break;
 		}
 		break;
 	}
@@ -138,6 +142,9 @@ void ActionsState::handle_inventory_input(SDL_Event& event)
 			event_manager.push_event(EventTypes::CONSUME, player_id, selected_item);
 			state_manager.pop(2);
 			break;
+		}
+		else {
+
 		}
 		break;
 	}

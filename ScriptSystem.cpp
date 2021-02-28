@@ -118,6 +118,37 @@ void ScriptSystem::do_use(uint32_t entity, uint32_t target, uint32_t item)
 	use_scripts.at(script->OnUse)(world, world_map, event_manager, sound_manager, texture_manager, tile_width, tile_height, entity, target, item);
 }
 
+void ScriptSystem::load_equip_scripts()
+{
+	auto buff_health = [](World& world, WorldMap& world_map, EventManager& event_manager, SoundManager& sound_manager, TextureManager& texture_manager, int tile_width, int tile_height, uint32_t entity, uint32_t target, uint32_t item) {
+		event_manager.push_event(EventTypes::BUFF_HEALTH, entity, item);
+	};
+
+	equip_scripts.insert({ "buff_health", buff_health });
+}
+
+void ScriptSystem::do_equip(uint32_t entity, uint32_t item)
+{
+	auto* script = world.GetComponent<Scriptable>(item);
+	equip_scripts.at(script->OnEquip)(world, world_map, event_manager, sound_manager, texture_manager, tile_width, tile_height, entity, MAX_ENTITIES + 1, item);
+}
+
+void ScriptSystem::load_unequip_scripts()
+{
+	auto debuff_health = [](World& world, WorldMap& world_map, EventManager& event_manager, SoundManager& sound_manager, TextureManager& texture_manager, int tile_width, int tile_height, uint32_t entity, uint32_t target, uint32_t item) {
+		event_manager.push_event(EventTypes::DEBUFF_HEALTH, entity, item);
+	};
+
+	unequip_scripts.insert({ "debuff_health", debuff_health });
+
+}
+
+void ScriptSystem::do_unequip(uint32_t entity, uint32_t item)
+{
+	auto* script = world.GetComponent<Scriptable>(item);
+	unequip_scripts.at(script->OnUnequip)(world, world_map, event_manager, sound_manager, texture_manager, tile_width, tile_height, entity, MAX_ENTITIES + 1, item);
+}
+
 ScriptSystem::ScriptSystem(World& _world, EventManager& _event_manager, WorldMap& _world_map, SoundManager& _sound_manager, TextureManager& _texture_manager)
 	: world(_world), event_manager(_event_manager), world_map(_world_map), sound_manager(_sound_manager), texture_manager(_texture_manager),
 	tile_width(0), tile_height(0), Lua_VM(nullptr, lua_close)
@@ -140,6 +171,8 @@ ScriptSystem::ScriptSystem(World& _world, EventManager& _event_manager, WorldMap
 
 	event_manager.add_subscriber(EventTypes::BUMP_SCRIPT, *this);
 	event_manager.add_subscriber(EventTypes::ON_USE_SCRIPT, *this);
+	event_manager.add_subscriber(EventTypes::ON_EQUIP_SCRIPT, *this);
+	event_manager.add_subscriber(EventTypes::ON_UNEQUIP_SCRIPT, *this);
 	Lua_VM.reset(luaL_newstate());
 }
 
@@ -155,6 +188,8 @@ void ScriptSystem::init()
 	load_death_scripts();
 	load_consume_scripts();
 	load_use_scripts();
+	load_equip_scripts();
+	load_unequip_scripts();
 }
 
 void ScriptSystem::update(float dt)
@@ -185,10 +220,12 @@ void ScriptSystem::receive(EventTypes event, uint32_t actor)
 	}
 }
 
-void ScriptSystem::receive(EventTypes event, uint32_t actor, uint32_t target)
+void ScriptSystem::receive(EventTypes event, uint32_t actor, uint32_t item)
 {
 	switch (event) {
-	case EventTypes::ON_USE_SCRIPT: do_consume(actor, target); break;
+	case EventTypes::ON_USE_SCRIPT: do_consume(actor, item); break;
+	case EventTypes::ON_EQUIP_SCRIPT: do_equip(actor, item); break;
+	case EventTypes::ON_UNEQUIP_SCRIPT: do_unequip(actor, item); break;
 	}
 }
 

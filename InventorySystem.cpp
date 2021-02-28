@@ -12,7 +12,6 @@ InventorySystem::InventorySystem(World& _world, EventManager& _event_manager, Wo
 	event_manager.add_subscriber(EventTypes::USE_ITEM, *this);
 	event_manager.add_subscriber(EventTypes::CONSUME, *this);
 	event_manager.add_subscriber(EventTypes::DECREASE_CHARGE, *this);
-	
 }
 
 void InventorySystem::update(float dt)
@@ -165,6 +164,10 @@ void InventorySystem::equip(uint32_t actor, uint32_t item)
 			remove_from_inventory(actor, item);
 			auto* body = world.GetComponent<Body>(actor);
 			body->equipment[static_cast<int>(slot)] = item;
+			auto* script = world.GetComponent<Scriptable>(item);
+			if (script->OnEquip != "") {
+				event_manager.push_event(EventTypes::ON_EQUIP_SCRIPT, actor, item);
+			}
 		}
 	}
 }
@@ -173,10 +176,15 @@ void InventorySystem::unequip(uint32_t actor, uint32_t item)
 {
 	auto* equipable = world.GetComponent<Equipable>(item);
 	auto* body = world.GetComponent<Body>(actor);
-
+	// if actor has space in their inventory, add the item to it.
 	if (can_pick_up(actor, item)) {
 		add_to_inventory(actor, item);
-		body->equipment[static_cast<int>(equipable->slot)] = MAX_ENTITIES + 1;
+	}
+
+	body->equipment[static_cast<int>(equipable->slot)] = MAX_ENTITIES + 1;
+	auto* script = world.GetComponent<Scriptable>(item);
+	if (script->OnUnequip != "") {
+		event_manager.push_event(EventTypes::ON_UNEQUIP_SCRIPT, actor, item);
 	}
 }
 

@@ -33,7 +33,7 @@ private:
 	bool render_prev{ false };
 	GameState state{ GameState::INVENTORY };
 	int option{ 0 };
-	int in_equipment_list{ false };
+	bool in_equipment_list{ false };
 	std::vector<std::string> equipment_slots{ "Head", "Chest", "Left hand", "Right hand", "Neck", "Legs", "Hands", "Boots", "Ring", "Quiver", "Back" };
 
 	void handle_inventory_input(SDL_Event& event);

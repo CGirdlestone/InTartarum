@@ -41,6 +41,14 @@ private:
 	std::map<std::string, Script> use_scripts;
 	void load_use_scripts();
 	void do_use(uint32_t actor, uint32_t target, uint32_t item);
+
+	std::map<std::string, Script> equip_scripts;
+	void load_equip_scripts();
+	void do_equip(uint32_t entity, uint32_t item);
+
+	std::map<std::string, Script> unequip_scripts;
+	void load_unequip_scripts();
+	void do_unequip(uint32_t entity, uint32_t item);
 public:
 	ScriptSystem(World& _world, EventManager& _event_manager, WorldMap& _world_map, SoundManager& _sound_manager, TextureManager& _texture_manager);
 	~ScriptSystem();
@@ -49,7 +57,7 @@ public:
 	virtual void on_tick() override;
 	virtual void receive(EventTypes event) override;
 	virtual void receive(EventTypes event, uint32_t actor) override;
-	virtual void receive(EventTypes event, uint32_t actor, uint32_t target) override;
+	virtual void receive(EventTypes event, uint32_t actor, uint32_t item) override;
 	virtual void receive(EventTypes event, uint32_t actor, uint32_t target, uint32_t item) override;
 };
 

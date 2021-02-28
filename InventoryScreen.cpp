@@ -4,11 +4,11 @@ void InventoryScreen::handle_input(SDL_Event& event)
 {
 	SDL_PollEvent(&event);
 
-	if (!in_equipment_list) {
-		handle_inventory_input(event);
+	if (in_equipment_list) {
+		handle_equipment_input(event);
 	}
 	else {
-		handle_equipment_input(event);
+		handle_inventory_input(event);
 	}
 }
 

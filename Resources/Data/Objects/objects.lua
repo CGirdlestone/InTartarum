@@ -121,8 +121,8 @@ fireball_scroll =
         --OnUpdate = "";
         --OnBump = "";
         --OnDeath = "";
-        --OnEquip = "buff_strength",
-        --OnUnequip = "debuff_strength",
+        --OnEquip = "",
+        --OnUnequip = "",
         OnUse = "fireball";
         --OnHit = "";
     };
@@ -151,8 +151,8 @@ fire_sword =
         --OnUpdate = "";
         --OnBump = "";
         --OnDeath = "";
-        OnEquip = "buff_strength",
-        OnUnequip = "debuff_strength",
+        OnEquip = "buff_health",
+        OnUnequip = "debuff_health",
         --OnUse = "";
         --OnHit = "";
     };
