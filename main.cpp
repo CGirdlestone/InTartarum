@@ -218,6 +218,7 @@ int main(int argc, char* argv[])
 		state_manager.add_state(targeting_state.get_state(), targeting_state);
 
 		auto help_state = HelpScreen(state_manager, world, event_manager, keyboard);
+		help_state.load_controls();
 		state_manager.add_state(help_state.get_state(), help_state);
 
 		SDL_Event event;

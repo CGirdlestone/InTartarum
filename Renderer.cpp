@@ -633,7 +633,7 @@ void Renderer::DrawInventory(const std::vector<uint32_t>& items, const std::vect
 			auto description_lines = WrapText(item->description, window.GetWidth() - inventory_width - 2);
 			int k{ 0 };
 			for (auto& line : description_lines) {
-				DrawText(line, inventory_width + 2, stats_height + 3, 0xBB, 0xAA, 0x99);
+				DrawText(line, inventory_width + 2, stats_height + 3 + k++, 0xBB, 0xAA, 0x99);
 			}
 		}
 		else {
@@ -840,11 +840,21 @@ void Renderer::DrawLook(int x, int y)
 	SDL_SetRenderDrawColor(window.GetRenderer(), window.GetBackground().r, window.GetBackground().g, window.GetBackground().b, 0xFF);
 }
 
-void Renderer::DrawHelp()
+void Renderer::DrawHelp(const std::vector<std::string>& controls)
 {
 	DrawBox(0, 0, window.GetWidth() - 1, window.GetHeight() - 1, false, false, true);
 	std::string help = "Controls - press escape to return to game";
 	DrawText(help, 2, 0, 0xBB, 0xAA, 0x99);
+
+	int j{ 2 };
+	for (auto& s : controls) {
+		if (s[0] == '[') {
+			DrawText(s, 2, j++, 0xBB, 0xAA, 0x99);
+		}
+		else {
+			DrawText(s, 2, j++, 0xB0, 0x4C, 0xDE);
+		}
+	}
 }
 
 

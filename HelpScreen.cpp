@@ -34,7 +34,7 @@ void HelpScreen::update(float dt)
 
 void HelpScreen::draw_scene(Renderer& renderer, const uint32_t fps, float dt) const 
 {
-	renderer.DrawHelp();
+	renderer.DrawHelp(controls);
 }
 
 bool HelpScreen::render_previous() const 
@@ -55,5 +55,18 @@ void HelpScreen::on_entrance(Renderer& renderer)
 void HelpScreen::on_bury() const 
 {
 
+}
+
+void HelpScreen::load_controls()
+{
+	std::ifstream file;
+	std::string line;
+
+	file.open("./Resources/Data/controls.txt");
+	if (file.is_open()) {
+		while (std::getline(file, line)) {
+			controls.push_back(line);
+		}
+	}
 }
 

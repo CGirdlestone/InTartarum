@@ -21,6 +21,7 @@ public:
 	virtual GameState get_state() const override;
 	virtual void on_entrance(Renderer& renderer) override;
 	virtual void on_bury() const override;
+	void load_controls();
 private:
 	StateManager& state_manager;
 	World& world;
@@ -28,4 +29,5 @@ private:
 	Keyboard& keyboard;
 	bool render_prev{ false };
 	GameState state{ GameState::HELP };
+	std::vector<std::string> controls;
 };
