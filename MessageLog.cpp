@@ -44,8 +44,10 @@ MessageLog::MessageLog(World& _world, EventManager& _event_manager)
 	event_manager.add_subscriber(EventTypes::INVALID_TARGET, *this);
 	event_manager.add_subscriber(EventTypes::HEAL, *this);
 	event_manager.add_subscriber(EventTypes::CAST, *this);
+	event_manager.add_subscriber(EventTypes::AOE_CAST, *this);
 	event_manager.add_subscriber(EventTypes::BUFF_HEALTH, *this);
 	event_manager.add_subscriber(EventTypes::DEBUFF_HEALTH, *this);
+	event_manager.add_subscriber(EventTypes::OUT_OF_RANGE, *this);
 }
 
 void MessageLog::update(float dt)
@@ -78,6 +80,11 @@ void MessageLog::receive(EventTypes event)
 	}
 	case EventTypes::HEAL: {
 		auto msg = Message("You quaff the potion and feel much better!");
+		add_message(msg);
+		break;
+	}
+	case EventTypes::OUT_OF_RANGE: {
+		auto msg = Message("Target out of range!");
 		add_message(msg);
 		break;
 	}
@@ -136,6 +143,14 @@ void MessageLog::receive(EventTypes event, uint32_t actor, uint32_t target)
 	case EventTypes::DEBUFF_HEALTH: {
 		auto* item = world.GetComponent<Item>(target);
 		std::string text{ "You unequip the $ and feel weaker!" };
+		interpolate(text, item->name);
+		auto msg = Message(text);
+		add_message(msg);
+		break;
+	}
+	case EventTypes::AOE_CAST: {
+		auto* item = world.GetComponent<Item>(target);
+		std::string text{ "You cast $!" };
 		interpolate(text, item->name);
 		auto msg = Message(text);
 		add_message(msg);

@@ -165,8 +165,10 @@ void InventorySystem::equip(uint32_t actor, uint32_t item)
 			auto* body = world.GetComponent<Body>(actor);
 			body->equipment[static_cast<int>(slot)] = item;
 			auto* script = world.GetComponent<Scriptable>(item);
-			if (script->OnEquip != "") {
-				event_manager.push_event(EventTypes::ON_EQUIP_SCRIPT, actor, item);
+			if (script != nullptr) {
+				if (script->OnEquip != "") {
+					event_manager.push_event(EventTypes::ON_EQUIP_SCRIPT, actor, item);
+				}
 			}
 		}
 	}
@@ -183,8 +185,10 @@ void InventorySystem::unequip(uint32_t actor, uint32_t item)
 
 	body->equipment[static_cast<int>(equipable->slot)] = MAX_ENTITIES + 1;
 	auto* script = world.GetComponent<Scriptable>(item);
-	if (script->OnUnequip != "") {
-		event_manager.push_event(EventTypes::ON_UNEQUIP_SCRIPT, actor, item);
+	if (script != nullptr) {
+		if (script->OnUnequip != "") {
+			event_manager.push_event(EventTypes::ON_UNEQUIP_SCRIPT, actor, item);
+		}
 	}
 }
 

@@ -104,9 +104,17 @@ void ScriptSystem::do_consume(uint32_t entity, uint32_t item)
 void ScriptSystem::load_use_scripts()
 {
 	auto fireball = [](World& world, WorldMap& world_map, EventManager& event_manager, SoundManager& sound_manager, TextureManager& texture_manager, int tile_width, int tile_height, uint32_t entity, uint32_t target, uint32_t item) {
-		auto* pos = world.GetComponent<Position>(target);
-		event_manager.push_event(EventTypes::CAST, entity, target, item);
+		
+		if (target != MAX_ENTITIES + 1) {
+			auto* pos = world.GetComponent<Position>(target);
+			event_manager.push_event(EventTypes::CAST, entity, target, item);
+		}
+		else {
+			event_manager.push_event(EventTypes::AOE_CAST, entity, item);
+		}
+
 		event_manager.push_event(EventTypes::DECREASE_CHARGE, entity, item);
+
 	};
 
 	use_scripts.insert({ "fireball", fireball });

@@ -113,6 +113,9 @@ void ActionsState::handle_inventory_input(SDL_Event& event)
 			event_manager.push_event(EventTypes::NO_USE);
 			break;
 		}
+		if (script->OnUse == "") {
+			break;
+		}
 		if (useable->type == UseableType::TARGETED) {
 			state_manager.pop(2);
 			state_manager.push(GameState::TARGETING);
@@ -127,6 +130,8 @@ void ActionsState::handle_inventory_input(SDL_Event& event)
 		} else if (useable->type == UseableType::CONSUMABLE) {
 			event_manager.push_event(EventTypes::CONSUME, player_id, selected_item);
 			state_manager.pop(2);
+			set_item(MAX_ENTITIES + 1);
+			event_manager.push_event(EventTypes::TICK);
 			break;
 		}
 		break;
@@ -141,10 +146,9 @@ void ActionsState::handle_inventory_input(SDL_Event& event)
 		if (useable->type == UseableType::CONSUMABLE) {
 			event_manager.push_event(EventTypes::CONSUME, player_id, selected_item);
 			state_manager.pop(2);
+			set_item(MAX_ENTITIES + 1);
+			event_manager.push_event(EventTypes::TICK);
 			break;
-		}
-		else {
-
 		}
 		break;
 	}
@@ -172,6 +176,8 @@ void ActionsState::handle_equipment_input(SDL_Event& event)
 	case SDLK_e: {
 		event_manager.push_event(EventTypes::UNEQUIP_ITEM, player_id, selected_item);
 		state_manager.pop(2);
+		set_item(MAX_ENTITIES + 1);
+		event_manager.push_event(EventTypes::TICK);
 		break;
 	}
 	}

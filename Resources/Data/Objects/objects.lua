@@ -112,7 +112,7 @@ fireball_scroll =
     };
     useable = 
     {
-        type = UseableType["TARGETED"];
+        type = UseableType["TARGETED_AOE"];
         charges = 1;
     };
     script = 

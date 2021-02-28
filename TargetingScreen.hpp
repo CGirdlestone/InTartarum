@@ -50,4 +50,5 @@ private:
 	void get_path();
 	uint32_t get_target();
 	void use_item();
+	void reset();
 };

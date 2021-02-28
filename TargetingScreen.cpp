@@ -54,7 +54,7 @@ void TargetingScreen::draw_scene(Renderer& renderer, const uint32_t fps, float d
 		renderer.DrawLook(tx, ty);
 	}
 	else {
-		renderer.DrawTargeting(x, y, path, 10);
+		renderer.DrawTargeting(x, y, path, 10, aoe);
 	}
 }
 
@@ -76,6 +76,7 @@ void TargetingScreen::on_entrance(Renderer& renderer)
 	ty = 0;
 	path = { std::make_tuple(x, y) };
 	selected_item = MAX_ENTITIES + 1;
+	aoe = 0;
 }
 
 void TargetingScreen::on_bury() const 
@@ -111,7 +112,7 @@ void TargetingScreen::receive(EventTypes event, uint32_t actor, uint32_t target,
 
 void TargetingScreen::set_cursor_pos(uint32_t actor)
 {
-	auto pos = world.GetComponent<Position>(actor);
+	auto* pos = world.GetComponent<Position>(actor);
 	x = pos->x;
 	y = pos->y;
 	tx = x;
@@ -120,7 +121,7 @@ void TargetingScreen::set_cursor_pos(uint32_t actor)
 
 void TargetingScreen::set_aoe(uint32_t item)
 {
-	// TO DO
+	aoe = 3;
 }
 
 void TargetingScreen::get_path()
@@ -143,14 +144,24 @@ uint32_t TargetingScreen::get_target()
 
 void TargetingScreen::use_item()
 {
+	if ((x - tx) * (x - tx) + (y - ty) * (y - ty) > (10) * (10)) {
+		event_manager.push_event(EventTypes::OUT_OF_RANGE);
+		return;
+	}
+
 	if (selected_item != MAX_ENTITIES + 1) {
 		auto target = get_target();
-		if (target == MAX_ENTITIES + 1) {
+		if (target == MAX_ENTITIES + 1 && aoe == 0) {
 			event_manager.push_event(EventTypes::INVALID_TARGET);
 			return;
 		}
 		event_manager.push_event(EventTypes::USE_ITEM, user, target, selected_item);
 		state_manager.pop(1);
+		event_manager.push_event(EventTypes::TICK);
 	}
+}
+
+void TargetingScreen::reset()
+{
 }
 

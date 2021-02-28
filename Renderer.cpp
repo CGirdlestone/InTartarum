@@ -762,7 +762,7 @@ void Renderer::DrawQuantity(const std::string& quantity)
 	DrawText(quantity, x + 2, y + 2, 0xBB, 0xAA, 0x99);
 }
 
-void Renderer::DrawTargeting(int x, int y, const std::vector<std::tuple<int, int> >& path, int range)
+void Renderer::DrawTargeting(int x, int y, const std::vector<std::tuple<int, int> >& path, int range, int aoe)
 {
 	for (auto& [i, j] : path) {
 		SDL_Rect dstrect;
@@ -786,6 +786,37 @@ void Renderer::DrawTargeting(int x, int y, const std::vector<std::tuple<int, int
 		SDL_SetRenderDrawBlendMode(window.GetRenderer(), SDL_BLENDMODE_BLEND);
 		SDL_RenderFillRect(window.GetRenderer(), &dstrect);
 		SDL_SetRenderDrawColor(window.GetRenderer(), window.GetBackground().r, window.GetBackground().g, window.GetBackground().b, 0);
+	}
+
+	if (aoe > 0) {
+		auto& [_tx, _ty] = path.back();
+		for (int i = -aoe; i < aoe; i++) {
+			for (int j = -aoe; j < aoe; j++) {
+				SDL_Rect dstrect;
+				auto [_x, _y] = camera.viewport(_tx + i, _ty + j);
+				auto [cam_x, cam_y] = camera.get_position();
+				dstrect.x = (_x * camera.get_zoom()) * window.GetTileWidth() + camera.get_offset_x() * window.GetTileWidth();
+				dstrect.y = (_y * camera.get_zoom()) * window.GetTileHeight() + camera.get_offset_y() * window.GetTileHeight();
+
+				if (dstrect.x == 0 || dstrect.x == window.GetWidth() - 1 || dstrect.y == 0 || dstrect.y == window.GetHeight() - 1) {
+					return;
+				}
+				dstrect.w = window.GetTileWidth() * camera.get_zoom();
+				dstrect.h = window.GetTileHeight() * camera.get_zoom();
+
+				if ((x - _tx) * (x - _tx) + (y - _ty) * (y - _ty) < range * range) {
+					SDL_SetRenderDrawColor(window.GetRenderer(), 136, 170, 34, 128);
+				}
+				else {
+					SDL_SetRenderDrawColor(window.GetRenderer(), 205, 92, 92, 128);
+				}
+				if ((i) * (i) + (j) * (j) < aoe * aoe) {
+					SDL_SetRenderDrawBlendMode(window.GetRenderer(), SDL_BLENDMODE_BLEND);
+					SDL_RenderFillRect(window.GetRenderer(), &dstrect);
+				}
+				SDL_SetRenderDrawColor(window.GetRenderer(), window.GetBackground().r, window.GetBackground().g, window.GetBackground().b, 0);
+			}
+		}
 	}
 }
 

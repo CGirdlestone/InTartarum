@@ -64,4 +64,6 @@ enum class EventTypes {
 	HEAL,
 	CAST,
 	DECREASE_CHARGE,
+	AOE_CAST,
+	OUT_OF_RANGE,
 };

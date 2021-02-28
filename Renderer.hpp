@@ -57,6 +57,6 @@ public:
 	void DrawActions(bool in_equipment_list);
 	void DrawQuantity(const std::string& quantity);
 	void DrawLook(int x, int y);
-	void DrawTargeting(int x, int y, const std::vector<std::tuple<int, int> >& path, int range);
+	void DrawTargeting(int x, int y, const std::vector<std::tuple<int, int> >& path, int range, int aoe);
 	void SetFont(unsigned int id, int width, int height) { font_id = id; font_width = width; font_height = height; };
 };
