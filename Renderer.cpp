@@ -25,7 +25,7 @@ void Renderer::DrawMap(Level& level)
 			dstrect.w = window.GetTileWidth();
 			dstrect.h = window.GetTileHeight();
 
-			auto& sprite = tile_sprites.at(tile.type);
+			auto sprite = tile_sprites.at(tile.type);
 
 			if (!tile.explored) {
 				sprite = tile_sprites.at(TileType::EMPTY);
@@ -230,7 +230,7 @@ void Renderer::DrawMessageLog(MessageLog& message_log)
 	int j{ camera.get_height() + 2 * camera.get_offset_y() + 1};
 	for (int i = 0; i < 9; i++) {
 		const auto& msg = *(it + message_log.get_offset() + i);
-		auto & [r, g, b] = msg.get_colour();
+		auto& [r, g, b] = msg.get_colour();
 		DrawText(msg.text, camera.get_offset_x() * camera.get_zoom(), j++, r, g, b);
 		if ((it + message_log.get_offset()) + i + 1 == messages.rend()) {
 			break;

@@ -22,7 +22,7 @@ MessageLog::MessageLog(World& _world, EventManager& _event_manager)
 		}
 		lua_getglobal(vm.get(), "message_log_num_lines");
 		if (lua_isnumber(vm.get(), -1)) {
-			num_lines = static_cast<uint32_t>(lua_tonumber(vm.get(), -1));
+			num_lines = static_cast<int>(lua_tonumber(vm.get(), -1));
 		}
 	}
 
@@ -178,12 +178,21 @@ void MessageLog::receive(EventTypes event, uint32_t actor, uint32_t target, uint
 
 void MessageLog::serialise(std::ofstream& file)
 {
-
+	auto num_messages = static_cast<uint32_t>(message_queue.size());
+	utils::serialiseUint32(file, num_messages);
+	utils::serialiseUint32(file, static_cast<uint32_t>(offset));
+	std::for_each(message_queue.begin(), message_queue.end(), [&file](Message& m) {m.serialise(file); });
 }
 
-void MessageLog::deserialise(const char* buffer, size_t& offset)
+void MessageLog::deserialise(const char* buffer, size_t& _offset)
 {
-
+	auto num_messages = utils::deserialiseUint32(buffer, _offset);
+	offset = utils::deserialiseUint32(buffer, _offset);
+	for (int i = 0; i < num_messages; i++) {
+		Message m;
+		m.deserialise(buffer, _offset);
+		message_queue.push_back(m);
+	}
 }
 
 void MessageLog::load_descriptions(const char* path)
@@ -199,4 +208,18 @@ void MessageLog::add_message(Message& message)
 	}
 }
 
+void Message::serialise(std::ofstream& file)
+{
+	utils::serialiseUint8(file, r);
+	utils::serialiseUint8(file, g);
+	utils::serialiseUint8(file, b);
+	utils::serialiseString(file, text);
+}
 
+void Message::deserialise(const char* buffer, size_t& offset)
+{
+	r = utils::deserialiseUint8(buffer, offset);
+	g = utils::deserialiseUint8(buffer, offset);
+	b = utils::deserialiseUint8(buffer, offset);
+	text = utils::deserialiseString(buffer, offset);
+}

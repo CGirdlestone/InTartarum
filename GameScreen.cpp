@@ -233,6 +233,8 @@ void GameScreen::load_game()
 
 	size_t offset{ 0 };
 
+	message_log.deserialise(buffer.get(), offset);
+
 	world.Deserialise(buffer.get(), offset);
 
 	world.Deserialise<Position>(buffer.get(), offset);
@@ -265,6 +267,8 @@ void GameScreen::load_game()
 void GameScreen::save_game()
 {
 	std::ofstream file("save.txt", std::ios::binary);
+
+	message_log.serialise(file);
 
 	world.Serialise(file);
 	

@@ -11,8 +11,9 @@ enum class MessageTopic {
 	DEATH,
 };
 
-struct Message
+struct Message : public ISerializeable
 {
+	Message() {};
 	Message(std::string _text) : text(_text) { };
 	Message(const char* _text) : text(_text) { };
 	Message(std::string _text, uint8_t _r, uint8_t _g, uint8_t _b) : text(_text), r(_r), g(_g), b(_b) { };
@@ -21,6 +22,9 @@ struct Message
 	uint8_t r{ 0xBB };
 	uint8_t g{ 0xAA };
 	uint8_t b{ 0x99 };
+
+	virtual void serialise(std::ofstream& file) override;
+	virtual void deserialise(const char* buffer, size_t& offset) override;
 };
 
 class MessageLog : public BaseSystem
