@@ -184,6 +184,7 @@ int main(int argc, char* argv[])
 		systems.push_back(std::reference_wrapper(move_system));
 
 		auto message_log = MessageLog(world, event_manager);
+		message_log.load_intro("./Resources/Data/intro.txt");
 		systems.push_back(std::reference_wrapper(message_log));
 
 		auto inventory_system = InventorySystem(world, event_manager, world_map, entity_factory);

@@ -195,6 +195,20 @@ void MessageLog::deserialise(const char* buffer, size_t& _offset)
 	}
 }
 
+void MessageLog::load_intro(const char* path)
+{
+	std::ifstream file;
+	std::string line;
+
+	file.open(path);
+	if (file.is_open()) {
+		while (std::getline(file, line)) {
+			auto m = Message(line);
+			message_queue.push_back(m);
+		}
+	}
+}
+
 void MessageLog::load_descriptions(const char* path)
 {
 

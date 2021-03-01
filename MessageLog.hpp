@@ -45,6 +45,7 @@ public:
 	virtual void receive(EventTypes event, uint32_t actor, uint32_t target, uint32_t item) override;
 	void serialise(std::ofstream& file);
 	void deserialise(const char* buffer, size_t& offset);
+	void load_intro(const char* path);
 
 private:
 	World& world;
@@ -58,6 +59,7 @@ private:
 	int offset{ 0 };
 	int num_lines{ 0 };
 
+	
 	void load_descriptions(const char* path);
 	void add_message(Message& message);
 
