@@ -19,28 +19,29 @@ public:
 private:
 	World& world;
 	TextureManager& texture_manager;
-	SmartLuaVM vm;
 	
-	bool load_file(const std::string& lua_file);
-	void create_entity(uint32_t& entity);
-	void create_position(uint32_t& entity);
-	void create_sprite(uint32_t& entity);
-	void create_player(uint32_t& entity);
-	void create_actor(uint32_t& entity);
-	void create_blocker(uint32_t& entity);
-	void create_interactable(uint32_t& entity);
-	void create_animation(uint32_t& entity);
-	void create_particle(uint32_t& entity);
-	void create_script(uint32_t& entity);
-	void create_item(uint32_t& entity);
-	void create_equipable(uint32_t& entity);
-	void create_weapon(uint32_t& entity);
-	void create_container(uint32_t& entity);
-	void create_stackable(uint32_t& entity);
-	void create_body(uint32_t& entity);
-	void create_id(uint32_t& entity);
-	void create_ai(uint32_t& entity);
-	void create_useable(uint32_t& entity);
+	bool load_file(SmartLuaVM& vm, const std::string& lua_file);
+	void create_entity(SmartLuaVM& vm, uint32_t& entity);
+	void create_position(SmartLuaVM& vm, uint32_t& entity);
+	void create_sprite(SmartLuaVM& vm, uint32_t& entity);
+	void create_player(SmartLuaVM& vm, uint32_t& entity);
+	void create_actor(SmartLuaVM& vm, uint32_t& entity);
+	void create_blocker(SmartLuaVM& vm, uint32_t& entity);
+	void create_interactable(SmartLuaVM& vm, uint32_t& entity);
+	void create_animation(SmartLuaVM& vm, uint32_t& entity);
+	void create_particle(SmartLuaVM& vm, uint32_t& entity);
+	void create_script(SmartLuaVM& vm, uint32_t& entity);
+	void create_item(SmartLuaVM& vm, uint32_t& entity);
+	void create_equipable(SmartLuaVM& vm, uint32_t& entity);
+	void create_weapon(SmartLuaVM& vm, uint32_t& entity);
+	void create_container(SmartLuaVM& vm, uint32_t& entity);
+	void create_stackable(SmartLuaVM& vm, uint32_t& entity);
+	void create_body(SmartLuaVM& vm, uint32_t& entity);
+	void create_id(SmartLuaVM& vm, uint32_t& entity);
+	void create_ai(SmartLuaVM& vm, uint32_t& entity);
+	void create_useable(SmartLuaVM& vm, uint32_t& entity);
+
+	std::vector<uint32_t> load_starting_equipment();
 };
 
 

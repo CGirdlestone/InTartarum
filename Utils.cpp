@@ -205,7 +205,6 @@ namespace utils {
         lua_pushstring(vm.get(), key);
         lua_gettable(vm.get(), index);
         if (!lua_isnumber(vm.get(), -1)) {
-            printf("Expected number!");
             lua_pop(vm.get(), 1);
             return -1;
         }
@@ -220,7 +219,6 @@ namespace utils {
         lua_pushnumber(vm.get(), key);
         lua_gettable(vm.get(), index);
         if (!lua_isnumber(vm.get(), -1)) {
-            printf("Expected number!");
             lua_pop(vm.get(), 1);
             return -1;
         }
@@ -235,7 +233,6 @@ namespace utils {
         lua_pushstring(vm.get(), key);
         lua_gettable(vm.get(), index);
         if (!lua_isnumber(vm.get(), -1)) {
-            printf("Expected number!");
             lua_pop(vm.get(), 1);
             return -1;
         }
@@ -250,7 +247,6 @@ namespace utils {
         lua_pushnumber(vm.get(), key);
         lua_gettable(vm.get(), index);
         if (!lua_isnumber(vm.get(), -1)) {
-            printf("Expected number!");
             lua_pop(vm.get(), 1);
             return -1;
         }
@@ -265,7 +261,6 @@ namespace utils {
         lua_pushstring(vm.get(), key);
         lua_gettable(vm.get(), index);
         if (!lua_isboolean(vm.get(), -1)) {
-            printf("Expected bool!");
             lua_pop(vm.get(), 1);
             return -1;
         }
@@ -280,7 +275,6 @@ namespace utils {
         lua_pushnumber(vm.get(), key);
         lua_gettable(vm.get(), index);
         if (!lua_isboolean(vm.get(), -1)) {
-            printf("Expected bool!");
             lua_pop(vm.get(), 1);
             return -1;
         }
@@ -295,7 +289,6 @@ namespace utils {
         lua_pushstring(vm.get(), key);
         lua_gettable(vm.get(), index);
         if (!lua_isstring(vm.get(), -1)) {
-            printf("Expected string!");
             lua_pop(vm.get(), 1);
             return std::string(" ");
         }
@@ -310,7 +303,6 @@ namespace utils {
         lua_pushnumber(vm.get(), key);
         lua_gettable(vm.get(), index);
         if (!lua_isstring(vm.get(), -1)) {
-            printf("Expected number!");
             lua_pop(vm.get(), 1);
             return std::string(" ");
         }

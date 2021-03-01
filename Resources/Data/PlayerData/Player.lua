@@ -28,6 +28,10 @@ player_table =
     container = 
     {
         weight_capacity = 100;
+        starting_equipment = 
+        { 
+            "health_potion";
+        };
     };
     body = 
     {
