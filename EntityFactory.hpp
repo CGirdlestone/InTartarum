@@ -11,6 +11,7 @@ public:
 
 	uint32_t create_mob(std::string& entity_name, int x, int y, int z, int world_x, int world_y);
 	uint32_t create_player(int world_x, int world_y);
+	uint32_t create_prop(std::string& entity_name, int x, int y, int z, int world_x, int world_y);
 	uint32_t create_item(std::string& entity_name, int x, int y, int z, int world_x, int world_y);
 	uint32_t create_item(std::string& entity_name); // used to create items that are owned (inventory or equipped) by an actor
 	uint32_t create_npc(std::string& entity_name, int x, int y, int z, int world_x, int world_y);

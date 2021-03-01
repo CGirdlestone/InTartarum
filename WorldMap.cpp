@@ -34,14 +34,19 @@ void WorldMap::build_town()
 
 	grid.set_tile(25, 25, true, false, TileType::STAIRS);
 
-	std::string door = "door";
-	entity_factory.create_item(door, 15, 15, 0, world_x, world_y);
-
 	std::string npc = "npc";
 	entity_factory.create_npc(npc, 15, 11, 0, world_x, world_y);
 
+
+	std::string door = "door";
+	entity_factory.create_prop(door, 15, 15, 0, world_x, world_y);
+
 	std::string chest = "chest";
-	entity_factory.create_item(chest, 11, 11, 0, world_x, world_y);
+	entity_factory.create_prop(chest, 11, 11, 0, world_x, world_y);
+
+	std::string fire = "camp_fire";
+	entity_factory.create_prop(fire, 15, 13, 0, world_x, world_y);
+
 
 	std::string sword = "fire_sword";
 	entity_factory.create_item(sword, 21, 21, 0, world_x, world_y);
@@ -50,14 +55,12 @@ void WorldMap::build_town()
 	entity_factory.create_item(arrow, 20, 20, 0, world_x, world_y);
 	entity_factory.create_item(arrow, 19, 20, 0, world_x, world_y);
 
-	std::string fire = "camp_fire";
-	entity_factory.create_item(fire, 15, 13, 0, world_x, world_y);
-
 	std::string health_potion = "health_potion";
 	entity_factory.create_item(health_potion, 18, 25, 0, world_x, world_y);
 
 	std::string fireball = "fireball_scroll";
 	entity_factory.create_item(fireball, 19, 22, 0, world_x, world_y);
+
 
 	std::string bat = "bat";
 	entity_factory.create_mob(bat, 15, 25, 0, world_x, world_y);

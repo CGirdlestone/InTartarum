@@ -45,6 +45,25 @@ uint32_t EntityFactory::create_player( int world_x, int world_y)
     return entity;
 }
 
+uint32_t EntityFactory::create_prop(std::string& entity_name, int x, int y, int z, int world_x, int world_y)
+{
+    /* Create the position component and push the correct table onto the lua stack. */
+    vm.reset(luaL_newstate());
+    std::string prop_file = "./Resources/Data/Objects/props.lua";
+    load_file(prop_file);
+
+    auto entity = world.CreateEntity();
+    world.AddComponent<Position>(entity, x, y, z, world_x, world_y);
+
+    lua_getglobal(vm.get(), entity_name.c_str()); // push object name
+    if (!lua_istable(vm.get(), -1)) {
+        printf("Expected table!");
+    }
+
+    create_entity(entity);
+    return entity;
+}
+
 uint32_t EntityFactory::create_item(std::string& entity_name, int x, int y, int z, int world_x, int world_y)
 {
     /* Create the position component and push the correct table onto the lua stack. */
