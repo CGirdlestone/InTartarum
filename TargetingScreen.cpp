@@ -30,7 +30,7 @@ void TargetingScreen::handle_input(SDL_Event& event)
 	case SDLK_KP_4: tx -= 1; get_path(); break;
 	case SDLK_KP_5: break;
 	case SDLK_KP_6: tx += 1; get_path(); break;
-	case SDLK_KP_7: tx -= 1; ty = -1; get_path(); break;
+	case SDLK_KP_7: tx -= 1; ty -= -1; get_path(); break;
 	case SDLK_KP_8: ty -= 1; get_path(); break;
 	case SDLK_KP_9: tx += 1; ty -= 1; get_path(); break;
 	case SDLK_ESCAPE: state_manager.pop(1); break;
