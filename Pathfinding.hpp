@@ -24,8 +24,8 @@ namespace Path {
 
         std::pair<int, int> track(int x, int y);
     private:
-        int width;
-        int height;
+        int width{ 0 };
+        int height{ 0 };
         std::vector<int> map;
     };
 
