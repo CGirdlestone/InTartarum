@@ -14,23 +14,23 @@
 
 struct Pool
 {
-	char* components{ nullptr };
+	std::unique_ptr<char[]> components{ nullptr };
 	size_t stride{ 1 };
 	uint16_t num_elements{ 0 };
 	uint16_t max_elements{ 0 };
 
-	Pool(uint16_t elements, size_t component_size) {
-		components = new char[elements * component_size];
+	Pool(uint16_t elements, size_t component_size) : components(nullptr) {
+		components = std::make_unique<char[]>(elements * component_size);
 		stride = component_size;
 		max_elements = elements;
 	};
 
 	~Pool() {
-		delete[] components;
+
 	};
 
 	inline void* get_addr(const size_t index) const {
-		return components + index * stride;
+		return components.get() + index * stride;
 	};
 
 	template <typename Component, typename... Args>
@@ -44,12 +44,12 @@ struct Pool
 			return nullptr;
 		}
 
-		return reinterpret_cast<Component*>(components + index * stride);
+		return reinterpret_cast<Component*>(components.get() + index * stride);
 	}
 
 	void swap(const size_t i, const size_t j) {
-		auto* c1 = components + i * stride;
-		auto* c2 = components + j * stride;
+		auto* c1 = components.get() + i * stride;
+		auto* c2 = components.get() + j * stride;
 		std::memcpy(c1, c2, stride);
 	}
 
