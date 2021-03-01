@@ -30,7 +30,7 @@ player_table =
         weight_capacity = 100;
         starting_equipment = 
         { 
-            "health_potion";
+            "health_potion", "fireball_scroll";
         };
     };
     body = 

@@ -373,20 +373,19 @@ void EntityFactory::create_container(SmartLuaVM& vm, uint32_t& entity)
     lua_pushstring(vm.get(), "starting_equipment");
     lua_gettable(vm.get(), -3);
     if (!lua_istable(vm.get(), -1)) {
-        // 
-        printf("not table\n");
+        lua_pop(vm.get(), 1);
+        return;
     } 
-    else {
-        // parse the starting equipment
-        auto* container = world.GetComponent<Container>(entity);
-        auto num_items = lua_rawlen(vm.get(), -1);
-        for (int i = 1; i < num_items + 1; i++) {
-            auto item_name = utils::read_lua_string(vm, i, -2);
-            auto item = create_item(item_name);
-            auto* item_component = world.GetComponent<Item>(item);
-            container->inventory.push_back(item);
-            container->weight += item_component->weight;
-        }
+
+    // parse the starting equipment and add it to the inventory 
+    auto* container = world.GetComponent<Container>(entity);
+    auto num_items = lua_rawlen(vm.get(), -1);
+    for (int i = 1; i < num_items + 1; i++) {
+        auto item_name = utils::read_lua_string(vm, i, -2);
+        auto item = create_item(item_name);
+        auto* item_component = world.GetComponent<Item>(item);
+        container->inventory.push_back(item);
+       container->weight += item_component->weight;
     }
     lua_pop(vm.get(), 1);
 }
