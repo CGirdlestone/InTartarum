@@ -247,11 +247,11 @@ void Renderer::DrawGameBorder(int x, int y, int width, int height, int height_di
 	
 	std::string log = "Message Log";
 	DrawBox(x, y + height_divider + 1, width * 3 / 4 - 1, height - height_divider - 2, false, false, true);
-	DrawText(log, x + 2, y + height_divider + 1, 0xBB, 0xAA, 0x99);
+	DrawText(log, x + 2, y + height_divider + 1, 0x87, 0xCE, 0xEB);
 
 	std::string info = "Character Info";
 	DrawBox(x + width * 3 / 4, y + height_divider + 1, width / 4 + 1, height - height_divider - 2, false, false, true);
-	DrawText(info, x + width * 3 / 4 + 2, y + height_divider + 1, 0xBB, 0xAA, 0x99);
+	DrawText(info, x + width * 3 / 4 + 2, y + height_divider + 1, 0x87, 0xCE, 0xEB);
 }
 
 void Renderer::DrawHealth(int x, int y, int health, int max_health)
@@ -298,7 +298,7 @@ void Renderer::DrawPlayerInfo(WorldMap& world_map)
 	std::string depth = "Dungeon depth: ";
 	auto dungeon_depth = std::to_string(world_map.get_current_depth());
 	depth += dungeon_depth;
-	DrawText(depth, 2, 0, 0xBB, 0xAA, 0x99);
+	DrawText(depth, 2, 0, 0x87, 0xCE, 0xEB);
 	
 	int y{ camera.get_height() + 2 * camera.get_offset_y() + 2 };
 	int x{ window.GetWidth() * 3 / 4 + 1 };
@@ -558,7 +558,7 @@ void Renderer::DrawInventory(const std::vector<uint32_t>& items, const std::vect
 	DrawBox(0, 0, inventory_width, window.GetHeight() - 1, false, false, true);
 	std::string inventory = "Inventory";
 	if (!in_equipment_list) {
-		DrawText(inventory, inventory_x, 0, 0xB0, 0xC4, 0xDE);
+		DrawText(inventory, inventory_x, 0, 0x87, 0xCE, 0xEB);
 	}
 	else {
 		DrawText(inventory, inventory_x, 0, 0xBB, 0xAA, 0x99);
@@ -576,7 +576,7 @@ void Renderer::DrawInventory(const std::vector<uint32_t>& items, const std::vect
 	DrawBox(inventory_width + 1, 2 * stats_height + 1, window.GetWidth() - inventory_width - 2, window.GetHeight() - 2 * stats_height - 2, false, false, true);
 	std::string equipped_items = "Equipped Items";
 	if (in_equipment_list) {
-		DrawText(equipped_items, inventory_width + 3, 2 * stats_height + 1, 0xB0, 0xC4, 0xDE);
+		DrawText(equipped_items, inventory_width + 3, 2 * stats_height + 1, 0x87, 0xCE, 0xEB);
 	}
 	else {
 		DrawText(equipped_items, inventory_width + 3, 2 * stats_height + 1, 0xBB, 0xAA, 0x99);
@@ -852,7 +852,7 @@ void Renderer::DrawHelp(const std::vector<std::string>& controls)
 			DrawText(s, 2, j++, 0xBB, 0xAA, 0x99);
 		}
 		else {
-			DrawText(s, 2, j++, 0xB0, 0x4C, 0xDE);
+			DrawText(s, 2, j++, 0x87, 0xCE, 0xEB);
 		}
 	}
 }
