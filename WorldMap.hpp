@@ -50,6 +50,7 @@ private:
 
 	void build_town();
 	void __create_dungeon(std::unique_ptr<Level>& _level);
+	void __create_overworld(std::unique_ptr<Level>& level);
 	void populate_town();
 	void populate_level();
 	void ray_cast(int x, int y, int radius);

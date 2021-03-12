@@ -11,17 +11,23 @@ private:
 	int height{ 0 };
 
 public:
-	Grid(int _width, int _height) :grid(nullptr), width(_width), height(_height) { 
+	Grid(int _width, int _height, bool overworld = false) :grid(nullptr), width(_width), height(_height) { 
 		grid = std::make_unique<Tile[]>(width * height);
 		for (int i = 0; i < _width; i++) {
 			for (int j = 0; j < _height; j++) {
-				set_tile(i, j, true, false, TileType::FLOOR);
+				if (overworld) {
+					set_tile(i, j, true, false, true, TileType::FLOOR);
+				}
+				else {
+					set_tile(i, j, true, false, TileType::FLOOR);
+				}
 			}
 		}
 	}
 
 	inline Tile& get_tile(int x, int y) { return grid.get()[x + y * width];};
 	void set_tile(int x, int y, bool _walkable, bool _blocks_view, TileType _type);
+	void set_tile(int x, int y, bool _walkable, bool _blocks_view, bool _explored, TileType _type);
 
 	inline const int get_width() const { return width; };
 

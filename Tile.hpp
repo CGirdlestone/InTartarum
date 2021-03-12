@@ -14,6 +14,13 @@ struct Tile {
 		blocks_view = _blocks_view;
 		type = _type;
 	};
+
+	inline void set(bool _walkable, bool _blocks_view, bool _explored, TileType _type) {
+		walkable = _walkable;
+		blocks_view = _blocks_view;
+		explored = _explored;
+		type = _type;
+	};
 };
 
 

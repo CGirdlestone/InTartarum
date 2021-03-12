@@ -11,8 +11,8 @@ colour_b = 28;
 -- config data for the world map.
 map_width = 100;
 map_height = 60;
-overworld_width = 5;
-overworld_height = 5;
+overworld_width = 200;
+overworld_height = 150;
 
 -- config data for info panel.
 info_panel_height = 10;
