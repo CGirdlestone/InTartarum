@@ -40,6 +40,7 @@ private:
 	void create_id(SmartLuaVM& vm, uint32_t& entity);
 	void create_ai(SmartLuaVM& vm, uint32_t& entity);
 	void create_useable(SmartLuaVM& vm, uint32_t& entity);
+	void create_fighter(SmartLuaVM& vm, uint32_t& entity);
 
 	std::vector<uint32_t> load_starting_equipment();
 };

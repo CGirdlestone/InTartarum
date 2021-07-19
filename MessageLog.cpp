@@ -48,6 +48,8 @@ MessageLog::MessageLog(World& _world, EventManager& _event_manager)
 	event_manager.add_subscriber(EventTypes::BUFF_HEALTH, *this);
 	event_manager.add_subscriber(EventTypes::DEBUFF_HEALTH, *this);
 	event_manager.add_subscriber(EventTypes::OUT_OF_RANGE, *this);
+	event_manager.add_subscriber(EventTypes::DEAL_DAMAGE, *this);
+	
 }
 
 void MessageLog::update(float dt)
@@ -169,6 +171,17 @@ void MessageLog::receive(EventTypes event, uint32_t actor, uint32_t target, uint
 
 		std::string text{ "$ casts $ at $." };
 		interpolate(text, user->name, used_item->OnUse, enemy->name);
+		auto msg = Message(text);
+		add_message(msg);
+		break;
+	}
+	case EventTypes::DEAL_DAMAGE: {
+		auto* user = world.GetComponent<Actor>(actor);
+		auto* enemy = world.GetComponent<Actor>(target);
+		auto dmg = static_cast<int>(item);
+
+		std::string text{ "$ hits $ for $ damage." };
+		interpolate(text, user->name, enemy->name, dmg);
 		auto msg = Message(text);
 		add_message(msg);
 		break;

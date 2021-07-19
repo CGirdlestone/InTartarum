@@ -118,7 +118,7 @@ bool MoveSystem::can_move(uint32_t mover, int x, int y)
 		return true;
 	}
 
-	for (auto entity : entities) {
+	for (uint32_t entity : entities) {
 		auto* blocker = world.GetComponent<Blocker>(entity);
 		if (blocker == nullptr) {
 			//do_bump_script(entity);
@@ -127,7 +127,7 @@ bool MoveSystem::can_move(uint32_t mover, int x, int y)
 
 		auto* actor = world.GetComponent<Actor>(entity);
 		if (actor != nullptr) {
-			//event_manager.push_event(EventTypes::BUMP_ATTACK, mover, entity); // don't have a combat system to handle this yet...
+			event_manager.push_event(EventTypes::BUMP_ATTACK, mover, entity); // don't have a combat system to handle this yet...
 			return false;
 		}
 
@@ -150,7 +150,6 @@ void MoveSystem::move(std::tuple<int, int> direction, uint32_t actor)
 		world_map.get_entity_grid().add_entity(actor, pos->x, pos->y);
 		auto player = world.GetComponent<Player>(actor);
 		if (player != nullptr) {
-			event_manager.push_event(EventTypes::MELEE_HIT);
 			camera.follow(pos->x, pos->y);
 			event_manager.push_event(EventTypes::TICK);
 		}

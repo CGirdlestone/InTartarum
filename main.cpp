@@ -20,6 +20,7 @@
 #include "ScriptSystem.hpp"
 #include "InventorySystem.hpp"
 #include "AISystem.hpp"
+#include "CombatSystem.hpp"
 #include "Prefabs.hpp"
 #include "StateManager.hpp"
 #include "SplashScreen.hpp"
@@ -197,6 +198,9 @@ int main(int argc, char* argv[])
 
 		auto ai_system = AISystem(world, event_manager, world_map);
 		systems.push_back(std::reference_wrapper(ai_system));
+
+		auto combat_system = CombatSystem(world, event_manager, world_map);
+		systems.push_back(std::reference_wrapper(combat_system));
 		
 
 		auto state_manager = StateManager(world, renderer, event_manager);

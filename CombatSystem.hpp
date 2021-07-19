@@ -20,4 +20,6 @@ private:
 	World& world;
 	EventManager& event_manager;
 	WorldMap& world_map;
+
+	void try_hit(uint32_t actor, uint32_t target);
 };

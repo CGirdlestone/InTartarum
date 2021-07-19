@@ -201,6 +201,9 @@ void EntityFactory::create_entity(SmartLuaVM& vm, uint32_t& entity)
         else if (component == "useable") {
             create_useable(vm, entity);
         }
+        else if (component == "fighter") {
+            create_fighter(vm, entity);
+        }
         lua_pop(vm.get(), 2);
     }
     lua_pop(vm.get(), 1);
@@ -385,7 +388,7 @@ void EntityFactory::create_container(SmartLuaVM& vm, uint32_t& entity)
         auto item = create_item(item_name);
         auto* item_component = world.GetComponent<Item>(item);
         container->inventory.push_back(item);
-       container->weight += item_component->weight;
+        container->weight += item_component->weight;
     }
     lua_pop(vm.get(), 1);
 }
@@ -420,6 +423,19 @@ void EntityFactory::create_useable(SmartLuaVM& vm, uint32_t& entity)
     auto type = static_cast<UseableType>(utils::read_lua_int(vm, "type", -3));
     auto charges = utils::read_lua_int(vm, "charges", -3);
     world.AddComponent<Useable>(entity, type, charges);
+}
+
+void EntityFactory::create_fighter(SmartLuaVM& vm, uint32_t& entity)
+{
+    auto hp = utils::read_lua_int(vm, "hp", -3);
+    auto defence = utils::read_lua_int(vm, "defence", -3);
+    auto str = utils::read_lua_int(vm, "str", -3);
+    auto dex = utils::read_lua_int(vm, "dex", -3);
+    auto con = utils::read_lua_int(vm, "con", -3);
+    auto wis = utils::read_lua_int(vm, "wis", -3);
+    auto intelligence = utils::read_lua_int(vm, "int", -3);
+    auto cha = utils::read_lua_int(vm, "cha", -3);
+    world.AddComponent<Fighter>(entity, hp, defence, str, dex, con, wis, intelligence, cha);
 }
 
 std::vector<uint32_t> EntityFactory::load_starting_equipment()

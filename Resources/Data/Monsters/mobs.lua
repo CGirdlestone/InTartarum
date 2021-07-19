@@ -15,7 +15,7 @@ bat = {
     {
         state = attitude["hostile"], 
         smart = false,
-        blind = true, 
+        blind = false, 
         scent = false
     };
     sprite = 
@@ -27,7 +27,7 @@ bat = {
     }; 
     fighter = 
     {
-        hp = 10, defence = 3, attributes = { 10, 10, 10, 10, 10, 10 }
+        hp = 10, defence = 3, str = 5, dex = 5, con = 5, wis = 5, int = 5, cha = 5,
     };
     id = 
     {

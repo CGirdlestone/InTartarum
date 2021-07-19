@@ -67,4 +67,5 @@ enum class EventTypes {
 	AOE_CAST,
 	OUT_OF_RANGE,
 	TELEPORT,
+	DEAL_DAMAGE,
 };
