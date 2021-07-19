@@ -56,6 +56,8 @@ std::vector<std::tuple<int, int> > a_star(Level& level, int xi, int yi, int xf, 
         return n1.get()->g + n1.get()->h > n2.get()->g + n2.get()->h;
     };
 
+    std::vector<std::shared_ptr<Node> > closed_array(grid.get_width() * grid.get_height(), nullptr);
+
     std::priority_queue<std::shared_ptr<Node>, std::vector<std::shared_ptr<Node> >, decltype(cmp_f)> open_queue(cmp_f);
     std::unordered_map<int, std::shared_ptr<Node> > closed;
 
@@ -65,6 +67,7 @@ std::vector<std::tuple<int, int> > a_star(Level& level, int xi, int yi, int xf, 
     while (!open_queue.empty()) {
         auto current = open_queue.top();
         closed.insert({ current->x + current->y * grid.get_width(), current });
+        closed_array.push_back(current);
         open_queue.pop();
 
         if (current.get()->x == xf && current.get()->y == yf) {

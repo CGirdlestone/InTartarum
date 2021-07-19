@@ -74,6 +74,7 @@ struct AI : public ISerializeable {
 	Attitude attitude{ Attitude::NEUTRAL };
 	bool blind{ false };
 	bool scent{ false };
+	std::vector<std::tuple<int, int> > path{};
 
 	virtual void serialise(std::ofstream& file) override;
 	virtual void deserialise(const char* buffer, size_t& offset) override;
