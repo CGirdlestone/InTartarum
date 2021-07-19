@@ -13,7 +13,8 @@ bat = {
     };
     ai = 
     {
-        state = attitude["neutral"], 
+        state = attitude["hostile"], 
+        smart = false,
         blind = true, 
         scent = false
     };
@@ -24,10 +25,10 @@ bat = {
         width = 14, height = 16, depth = 5, -- depth = 10 ensures the player will be drawn above everything else
         red = 100, green = 149, blue = 237,
     }; 
-    --fighter = 
-    --{
-    --    hp = 10, defence = 3, attributes = { 10, 10, 10, 10, 10, 10 }
-    --};
+    fighter = 
+    {
+        hp = 10, defence = 3, attributes = { 10, 10, 10, 10, 10, 10 }
+    };
     id = 
     {
         uid = "bat";

@@ -138,6 +138,14 @@ void GameScreen::handle_input(SDL_Event& event)
 			break;
 		}
 	}
+	case SDLK_PERIOD: {
+		if (keyboard.is_pressed(SDLK_LSHIFT) || keyboard.is_pressed(SDLK_RSHIFT)) {
+			if (world_map.get_level().get_grid().get_tile(pos->x, pos->y).type == TileType::STAIRS) {
+				event_manager.push_event(EventTypes::DESCEND_DUNGEON);
+			}
+		}
+		break;
+	}
 	}
 }
 

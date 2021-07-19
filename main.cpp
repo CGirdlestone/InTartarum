@@ -19,6 +19,7 @@
 #include "MoveSystem.hpp"
 #include "ScriptSystem.hpp"
 #include "InventorySystem.hpp"
+#include "AISystem.hpp"
 #include "Prefabs.hpp"
 #include "StateManager.hpp"
 #include "SplashScreen.hpp"
@@ -180,7 +181,7 @@ int main(int argc, char* argv[])
 		auto sound_system = SoundSystem(event_manager, sound_manager);
 		systems.push_back(std::reference_wrapper(sound_system));
 
-		auto move_system = MoveSystem(world, event_manager, camera, world_map);
+		auto move_system = MoveSystem(world, event_manager, camera, world_map, sound_manager);
 		systems.push_back(std::reference_wrapper(move_system));
 
 		auto message_log = MessageLog(world, event_manager);
@@ -193,6 +194,9 @@ int main(int argc, char* argv[])
 		auto script_system = ScriptSystem(world, event_manager, world_map, sound_manager, tex_manager);
 		script_system.init();
 		systems.push_back(std::reference_wrapper(script_system));
+
+		auto ai_system = AISystem(world, event_manager, world_map);
+		systems.push_back(std::reference_wrapper(ai_system));
 		
 
 		auto state_manager = StateManager(world, renderer, event_manager);

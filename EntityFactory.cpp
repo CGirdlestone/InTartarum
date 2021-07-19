@@ -411,7 +411,8 @@ void EntityFactory::create_ai(SmartLuaVM& vm, uint32_t& entity)
     auto uid = static_cast<Attitude>(utils::read_lua_int(vm, "state", -3));
     auto blind = utils::read_lua_bool(vm, "blind", -3);
     auto scent = utils::read_lua_bool(vm, "scent", -3);
-    world.AddComponent<AI>(entity, uid, blind, scent);
+    auto smart = utils::read_lua_bool(vm, "smart", -3);
+    world.AddComponent<AI>(entity, uid, blind, scent, smart);
 }
 
 void EntityFactory::create_useable(SmartLuaVM& vm, uint32_t& entity)

@@ -151,6 +151,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ActionsState.cpp" />
+    <ClCompile Include="AISystem.cpp" />
     <ClCompile Include="Animator.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CharacterCreationScreen.cpp" />
@@ -190,6 +191,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionsState.hpp" />
+    <ClInclude Include="AISystem.hpp" />
     <ClInclude Include="Animator.hpp" />
     <ClInclude Include="BaseState.hpp" />
     <ClInclude Include="BaseSystem.hpp" />

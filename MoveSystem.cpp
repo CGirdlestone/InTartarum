@@ -1,7 +1,7 @@
 #include "MoveSystem.hpp"
 
-MoveSystem::MoveSystem(World& _world, EventManager& _event_manager, Camera& _camera, WorldMap& _world_map)
-	: world(_world), camera(_camera), event_manager(_event_manager), world_map(_world_map)
+MoveSystem::MoveSystem(World& _world, EventManager& _event_manager, Camera& _camera, WorldMap& _world_map, SoundManager& _sound_manager)
+	: world(_world), camera(_camera), event_manager(_event_manager), world_map(_world_map), sound_manager(_sound_manager)
 {
 	event_manager.add_subscriber(EventTypes::MOVE_NORTH, *this);
 	event_manager.add_subscriber(EventTypes::MOVE_NORTH_WEST, *this);
@@ -78,6 +78,24 @@ void MoveSystem::move_over_world(uint32_t mover, int x, int y)
 bool MoveSystem::in_world_bounds(int x, int y)
 {
 	return (x >= 0 && x < world_map.get_world_width() && y >= 0 && y < world_map.get_world_height());
+}
+
+void MoveSystem::teleport(uint32_t entity, int x, int y)
+{
+	if (can_move(entity, x, y)) {
+		auto* pos = world.GetComponent<Position>(entity);
+		world_map.get_entity_grid().remove_entity(entity, pos->x, pos->y);
+		pos->x = x;
+		pos->y = y;
+		world_map.get_entity_grid().add_entity(entity, pos->x, pos->y);
+		auto player = world.GetComponent<Player>(entity);
+		if (player != nullptr) {
+			camera.follow(pos->x, pos->y);
+			auto id = sound_manager.LoadChunk("./Resources/Sounds/SFX/teleport_01.ogg");
+			event_manager.push_event(EventTypes::PLAY_CHUNK, id);
+			event_manager.push_event(EventTypes::TICK);
+		}
+	}
 }
 
 bool MoveSystem::can_move(uint32_t mover, int x, int y)
@@ -192,7 +210,9 @@ void MoveSystem::receive(EventTypes event, uint32_t actor, uint32_t target)
 
 }
 
-void MoveSystem::receive(EventTypes event, uint32_t actor, uint32_t target, uint32_t item)
+void MoveSystem::receive(EventTypes event, uint32_t actor, uint32_t x, uint32_t y)
 {
-
+	switch (event) {
+	case EventTypes::TELEPORT: teleport(actor, static_cast<int>(x), static_cast<int>(y)); break;
+	}
 }

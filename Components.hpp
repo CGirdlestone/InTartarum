@@ -68,10 +68,11 @@ struct Actor : public ISerializeable {
 
 struct AI : public ISerializeable {
 	AI() {};
-	AI(Attitude _attitude, bool _blind, bool _scent) : attitude(_attitude), blind(_blind), scent(_scent) {};
+	AI(Attitude _attitude, bool _blind, bool _scent, bool _smart) : attitude(_attitude), blind(_blind), scent(_scent), smart(_smart) {};
 	~AI() {};
 
 	Attitude attitude{ Attitude::NEUTRAL };
+	bool smart{ false };
 	bool blind{ false };
 	bool scent{ false };
 	std::vector<std::tuple<int, int> > path{};

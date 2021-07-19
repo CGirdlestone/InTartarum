@@ -66,4 +66,5 @@ enum class EventTypes {
 	DECREASE_CHARGE,
 	AOE_CAST,
 	OUT_OF_RANGE,
+	TELEPORT,
 };
