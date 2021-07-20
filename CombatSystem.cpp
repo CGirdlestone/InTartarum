@@ -52,8 +52,5 @@ void CombatSystem::try_hit(uint32_t actor, uint32_t target)
 		fighter->hp -= dmg;
 		event_manager.push_event(EventTypes::DEAL_DAMAGE, actor, target, static_cast<uint32_t>(dmg));
 	}
-	else {
-		event_manager.push_event(EventTypes::NO_USE);
-	}
 }
 

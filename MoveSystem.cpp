@@ -128,6 +128,9 @@ bool MoveSystem::can_move(uint32_t mover, int x, int y)
 		auto* actor = world.GetComponent<Actor>(entity);
 		if (actor != nullptr) {
 			event_manager.push_event(EventTypes::BUMP_ATTACK, mover, entity); // don't have a combat system to handle this yet...
+			if (world.GetComponent<Player>(mover) != nullptr) {
+				event_manager.push_event(EventTypes::TICK);
+			}
 			return false;
 		}
 
@@ -172,7 +175,6 @@ void MoveSystem::move(std::tuple<int, int> direction, uint32_t actor)
 			event_manager.push_event(EventTypes::BLOCKED_MOVEMENT);
 		}
 	}
-
 }
 
 void MoveSystem::update(float dt)

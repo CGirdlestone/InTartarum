@@ -15,7 +15,7 @@ bat = {
     {
         state = attitude["hostile"], 
         smart = false,
-        blind = false, 
+        blind = true, 
         scent = false
     };
     sprite = 

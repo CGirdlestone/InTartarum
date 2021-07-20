@@ -119,7 +119,10 @@ void CharacterCreationScreen::create_player()
 	world.AddComponent<Player>(entity, 8);
 	world.AddComponent<Blocker>(entity);
 	*/
-	entity_factory.create_player(world_x, world_y);
+	auto player = entity_factory.create_player(world_x, world_y);
+
+	auto& stats = char_options.at(selection).stats;
+	world.AddComponent<Fighter>(player, 20, 5, stats[0], stats[1], stats[2], stats[3], stats[4], stats[5]);
 
 	state_manager.push(GameState::GAME);
 }

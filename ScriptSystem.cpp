@@ -110,7 +110,7 @@ void ScriptSystem::load_use_scripts()
 			event_manager.push_event(EventTypes::CAST, entity, target, item);
 		}
 		else {
-			event_manager.push_event(EventTypes::AOE_CAST, entity, item);
+			event_manager.push_event(EventTypes::AOE_CAST, entity, target, item);
 		}
 
 		event_manager.push_event(EventTypes::DECREASE_CHARGE, entity, item);

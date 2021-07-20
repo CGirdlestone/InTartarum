@@ -118,7 +118,7 @@ void GameScreen::handle_input(SDL_Event& event)
 	case SDLK_KP_2: event_manager.push_event(EventTypes::MOVE_SOUTH, entity); break;
 	case SDLK_KP_3: event_manager.push_event(EventTypes::MOVE_SOUTH_EAST, entity); break;
 	case SDLK_KP_4: event_manager.push_event(EventTypes::MOVE_WEST, entity); break;
-	case SDLK_KP_5: break;
+	case SDLK_KP_5: event_manager.push_event(EventTypes::TICK); break;
 	case SDLK_KP_6: event_manager.push_event(EventTypes::MOVE_EAST, entity); break;
 	case SDLK_KP_7: event_manager.push_event(EventTypes::MOVE_NORTH_WEST, entity); break;
 	case SDLK_KP_8: event_manager.push_event(EventTypes::MOVE_NORTH, entity); break;
