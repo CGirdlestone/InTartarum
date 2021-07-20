@@ -444,8 +444,8 @@ void Renderer::DrawSprite(Position* pos, Sprite* sprite)
 	SDL_Rect dstrect;
 	auto [x, y] = camera.viewport(pos->x, pos->y);
 	auto [cam_x, cam_y] = camera.get_position();
-	dstrect.x = (x * camera.get_zoom()) * window.GetTileWidth() + camera.get_offset_x() * window.GetTileWidth();
-	dstrect.y = (y * camera.get_zoom()) * window.GetTileHeight() + camera.get_offset_y() * window.GetTileHeight();
+	dstrect.x = (x * camera.get_zoom()) * window.GetTileWidth() + camera.get_offset_x() * window.GetTileWidth() + pos->x_offset;
+	dstrect.y = (y * camera.get_zoom()) * window.GetTileHeight() + camera.get_offset_y() * window.GetTileHeight() + pos->y_offset;
 
 	if (dstrect.x == 0 || dstrect.x == window.GetWidth() - 1 || dstrect.y == 0 || dstrect.y == window.GetHeight() - 1) {
 		return;

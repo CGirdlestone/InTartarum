@@ -127,6 +127,10 @@ bool MoveSystem::can_move(uint32_t mover, int x, int y)
 
 		auto* actor = world.GetComponent<Actor>(entity);
 		if (actor != nullptr) {
+			auto* pos = world.GetComponent<Position>(mover);
+			auto* sprite = world.GetComponent<Sprite>(mover);
+			pos->x_offset = (x - pos->x) * sprite->width / 2;
+			pos->y_offset = (y - pos->y) * sprite->height / 2;
 			event_manager.push_event(EventTypes::BUMP_ATTACK, mover, entity); // don't have a combat system to handle this yet...
 			if (world.GetComponent<Player>(mover) != nullptr) {
 				event_manager.push_event(EventTypes::TICK);
@@ -179,7 +183,21 @@ void MoveSystem::move(std::tuple<int, int> direction, uint32_t actor)
 
 void MoveSystem::update(float dt)
 {
-
+	auto positions = world.GetComponents<Position>();
+	for (auto* pos : positions) {
+		if (pos->x_offset > 0) {
+			pos->x_offset -= 1;
+		}
+		else if (pos->x_offset < 0) {
+			pos->x_offset += 1;
+		}
+		if (pos->y_offset > 0) {
+			pos->y_offset -= 1;
+		}
+		else if (pos->y_offset < 0) {
+			pos->y_offset += 1;
+		}
+	}
 }
 
 void MoveSystem::on_tick()

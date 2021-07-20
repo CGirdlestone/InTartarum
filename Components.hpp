@@ -25,6 +25,8 @@ struct Position : public ISerializeable {
 	int z{ 0 };
 	int world_x{ 0 };
 	int world_y{ 0 };
+	int x_offset{ 0 };
+	int y_offset{ 0 };
 
 	virtual void serialise(std::ofstream& file) override;
 	virtual void deserialise(const char* buffer, size_t& offset) override;
