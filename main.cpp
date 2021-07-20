@@ -159,10 +159,12 @@ int main(int argc, char* argv[])
 		
 		auto sound_manager = SoundManager();
 		auto intro_music = sound_manager.LoadMusic("./Resources/Sounds/bleeding_out2.ogg");
-		auto button_click = sound_manager.LoadChunk("./Resources/Sounds/SFX/click3.wav");
 		auto wind = sound_manager.LoadMusic("./Resources/Sounds/wind2.wav");
+
+		auto button_click = sound_manager.LoadChunk("./Resources/Sounds/SFX/click3.wav");
 		auto door_open = sound_manager.LoadChunk("./Resources/Sounds/SFX/doorOpen_2.ogg");
 		auto door_close = sound_manager.LoadChunk("./Resources/Sounds/SFX/doorClose_2.ogg");
+		auto hit_1 = sound_manager.LoadChunk("./Resources/Sounds/SFX/explosion_01.ogg");
 
 		auto renderer = Renderer(world, window, tex_manager, camera);
 		load_tiles(renderer, tex_manager, font_tileset, tile_width, tile_height);
