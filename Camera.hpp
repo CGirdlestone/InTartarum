@@ -17,6 +17,8 @@ public:
 	Camera(Window& _window);
 	~Camera() { };
 
+	void update();
+
 	inline const int get_width() const { return width; };
 	inline const int get_height() const { return height; };
 	inline void set_width(int _width) { width = _width; };

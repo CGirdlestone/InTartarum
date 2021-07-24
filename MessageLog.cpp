@@ -32,7 +32,8 @@ MessageLog::MessageLog(World& _world, EventManager& _event_manager)
 	event_manager.add_subscriber(EventTypes::CRITICAL_MELEE_HIT, *this);
 	event_manager.add_subscriber(EventTypes::CRITICAL_RANGED_HIT, *this);
 	event_manager.add_subscriber(EventTypes::CRITICAL_SPELL_HIT, *this);
-	event_manager.add_subscriber(EventTypes::DEATH, *this);
+	event_manager.add_subscriber(EventTypes::PLAYER_DEATH, *this);
+	event_manager.add_subscriber(EventTypes::MOB_DEATH, *this);
 	event_manager.add_subscriber(EventTypes::LEVEL_UP, *this);
 	event_manager.add_subscriber(EventTypes::MESSAGE, *this);
 	event_manager.add_subscriber(EventTypes::BLOCKED_MOVEMENT, *this);
@@ -49,6 +50,7 @@ MessageLog::MessageLog(World& _world, EventManager& _event_manager)
 	event_manager.add_subscriber(EventTypes::DEBUFF_HEALTH, *this);
 	event_manager.add_subscriber(EventTypes::OUT_OF_RANGE, *this);
 	event_manager.add_subscriber(EventTypes::DEAL_DAMAGE, *this);
+	event_manager.add_subscriber(EventTypes::EXP_GAIN, *this);
 	
 }
 
@@ -90,6 +92,11 @@ void MessageLog::receive(EventTypes event)
 		add_message(msg);
 		break;
 	}
+	case EventTypes::PLAYER_DEATH: {
+		auto msg = Message("You have been slain!");
+		add_message(msg);
+		break;
+	}
 	}
 }
 
@@ -108,6 +115,21 @@ void MessageLog::receive(EventTypes event, uint32_t actor)
 		auto* item = world.GetComponent<Item>(actor);
 		std::string text = "You drop up the $ on the ground.";
 		interpolate(text, item->name);
+		auto msg = Message(text);
+		add_message(msg);
+		break;
+	}
+	case EventTypes::MOB_DEATH: {
+		auto* mob = world.GetComponent<Actor>(actor);
+		std::string text = "The $ has been slain.";
+		interpolate(text, mob->name);
+		auto msg = Message(text);
+		add_message(msg);
+		break;
+	}
+	case EventTypes::EXP_GAIN: {
+		std::string text = "You gain $ xp.";
+		interpolate(text, actor);
 		auto msg = Message(text);
 		add_message(msg);
 		break;

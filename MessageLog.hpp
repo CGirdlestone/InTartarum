@@ -67,6 +67,10 @@ private:
 		flavour_text.replace(flavour_text.find('$'), 1, std::to_string(x));
 	};
 
+	inline void interpolate(std::string& flavour_text, uint32_t x) {
+		flavour_text.replace(flavour_text.find('$'), 1, std::to_string(x));
+	};
+
 	inline void interpolate(std::string& flavour_text, std::string s) {
 		flavour_text.replace(flavour_text.find('$'), 1, s);
 	};

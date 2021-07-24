@@ -38,6 +38,8 @@ struct Player : public ISerializeable {
 	~Player() {};
 	int level{ 1 };
 	int vision{ 10 };
+	uint32_t xp{ 0 };
+	uint32_t next_xp{ 100 };
 
 	virtual void serialise(std::ofstream& file) override;
 	virtual void deserialise(const char* buffer, size_t& offset) override;
@@ -70,13 +72,14 @@ struct Actor : public ISerializeable {
 
 struct AI : public ISerializeable {
 	AI() {};
-	AI(Attitude _attitude, bool _blind, bool _scent, bool _smart) : attitude(_attitude), blind(_blind), scent(_scent), smart(_smart) {};
+	AI(Attitude _attitude, bool _blind, bool _scent, bool _smart, uint32_t _xp) : attitude(_attitude), blind(_blind), scent(_scent), smart(_smart), xp(_xp) {};
 	~AI() {};
 
 	Attitude attitude{ Attitude::NEUTRAL };
 	bool smart{ false };
 	bool blind{ false };
 	bool scent{ false };
+	uint32_t xp{ 0 };
 	std::vector<std::tuple<int, int> > path{};
 	
 	virtual void serialise(std::ofstream& file) override;

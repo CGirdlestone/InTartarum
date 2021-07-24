@@ -177,6 +177,9 @@
     <ClCompile Include="AISystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.hpp">
@@ -324,6 +327,9 @@
       <Filter>Header Files\States</Filter>
     </ClInclude>
     <ClInclude Include="AISystem.hpp">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerSystem.hpp">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
   </ItemGroup>

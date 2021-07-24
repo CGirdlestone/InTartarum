@@ -22,12 +22,16 @@ void Player::serialise(std::ofstream& file)
 {
 	utils::serialiseUint32(file, static_cast<uint32_t>(level));
 	utils::serialiseUint32(file, static_cast<uint32_t>(vision));
+	utils::serialiseUint32(file, xp);
+	utils::serialiseUint32(file, next_xp);
 }
 
 void Player::deserialise(const char* buffer, size_t& offset)
 {
 	level = static_cast<int>(utils::deserialiseUint32(buffer, offset));
 	vision = static_cast<int>(utils::deserialiseUint32(buffer, offset));
+	xp = utils::deserialiseUint32(buffer, offset);
+	next_xp = utils::deserialiseUint32(buffer, offset);
 }
 
 void Actor::serialise(std::ofstream& file)
@@ -294,6 +298,7 @@ void AI::serialise(std::ofstream& file)
 	utils::serialiseUint32(file, static_cast<uint32_t>(attitude));
 	utils::serialiseUint32(file, static_cast<uint32_t>(blind));
 	utils::serialiseUint32(file, static_cast<uint32_t>(scent));
+	utils::serialiseUint32(file, xp);
 }
 
 void AI::deserialise(const char* buffer, size_t& offset)
@@ -301,6 +306,7 @@ void AI::deserialise(const char* buffer, size_t& offset)
 	attitude = static_cast<Attitude>(utils::deserialiseUint32(buffer, offset));
 	blind = static_cast<bool>(utils::deserialiseUint32(buffer, offset));
 	scent = static_cast<bool>(utils::deserialiseUint32(buffer, offset));
+	xp = utils::deserialiseUint32(buffer, offset);
 }
 
 void Container::serialise(std::ofstream& file)

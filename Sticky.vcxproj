@@ -170,6 +170,7 @@
     <ClCompile Include="MoveSystem.cpp" />
     <ClCompile Include="Pathfinding.cpp" />
     <ClCompile Include="PauseScreen.cpp" />
+    <ClCompile Include="PlayerSystem.cpp" />
     <ClCompile Include="QuantityState.cpp" />
     <ClCompile Include="ScriptSystem.cpp" />
     <ClCompile Include="SoundManager.cpp" />
@@ -220,6 +221,7 @@
     <ClInclude Include="ParticleSystem.hpp" />
     <ClInclude Include="Pathfinding.hpp" />
     <ClInclude Include="PauseScreen.hpp" />
+    <ClInclude Include="PlayerSystem.hpp" />
     <ClInclude Include="Prefabs.hpp" />
     <ClInclude Include="QuantityState.hpp" />
     <ClInclude Include="RandomNumberGenerator.hpp" />

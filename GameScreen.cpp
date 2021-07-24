@@ -173,8 +173,8 @@ void GameScreen::update(float dt)
 		else if (keyboard.is_pressed(SDLK_DOWN)) {
 			message_log.scroll_down();
 		}
-
 	}
+	camera.update();
 }
 
 void GameScreen::draw_scene(Renderer& renderer, const uint32_t fps, float dt) const

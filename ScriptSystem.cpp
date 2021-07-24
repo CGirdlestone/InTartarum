@@ -90,6 +90,11 @@ void ScriptSystem::load_consume_scripts()
 	auto heal = [](World& world, WorldMap& world_map, EventManager& event_manager, SoundManager& sound_manager, TextureManager& texture_manager, int tile_width, int tile_height, uint32_t entity, uint32_t target, uint32_t item) {
 		event_manager.push_event(EventTypes::HEAL);
 		event_manager.push_event(EventTypes::DECREASE_CHARGE, entity, item);
+		auto* fighter = world.GetComponent<Fighter>(entity);
+		if (fighter != nullptr) {
+			fighter->hp += 10;
+			fighter->hp = fighter->hp > fighter->max_hp ? fighter->max_hp : fighter->hp;
+		}
 	};
 
 	consume_scripts.insert({ "heal", heal });
@@ -106,7 +111,6 @@ void ScriptSystem::load_use_scripts()
 	auto fireball = [](World& world, WorldMap& world_map, EventManager& event_manager, SoundManager& sound_manager, TextureManager& texture_manager, int tile_width, int tile_height, uint32_t entity, uint32_t target, uint32_t item) {
 		
 		if (target != MAX_ENTITIES + 1) {
-			auto* pos = world.GetComponent<Position>(target);
 			event_manager.push_event(EventTypes::CAST, entity, target, item);
 		}
 		else {
@@ -130,6 +134,11 @@ void ScriptSystem::load_equip_scripts()
 {
 	auto buff_health = [](World& world, WorldMap& world_map, EventManager& event_manager, SoundManager& sound_manager, TextureManager& texture_manager, int tile_width, int tile_height, uint32_t entity, uint32_t target, uint32_t item) {
 		event_manager.push_event(EventTypes::BUFF_HEALTH, entity, item);
+		auto* fighter = world.GetComponent<Fighter>(entity);
+		if (fighter != nullptr) {
+			fighter->max_hp += 10;
+			fighter->hp += 10;
+		}
 	};
 
 	equip_scripts.insert({ "buff_health", buff_health });
@@ -145,6 +154,14 @@ void ScriptSystem::load_unequip_scripts()
 {
 	auto debuff_health = [](World& world, WorldMap& world_map, EventManager& event_manager, SoundManager& sound_manager, TextureManager& texture_manager, int tile_width, int tile_height, uint32_t entity, uint32_t target, uint32_t item) {
 		event_manager.push_event(EventTypes::DEBUFF_HEALTH, entity, item);
+		auto* fighter = world.GetComponent<Fighter>(entity);
+		if (fighter != nullptr) {
+			fighter->max_hp -= 10;
+			fighter->hp -= 10;
+			if (fighter->hp <= 0) {
+				fighter->hp = 1;
+			}
+		}
 	};
 
 	unequip_scripts.insert({ "debuff_health", debuff_health });
@@ -181,6 +198,7 @@ ScriptSystem::ScriptSystem(World& _world, EventManager& _event_manager, WorldMap
 	event_manager.add_subscriber(EventTypes::ON_USE_SCRIPT, *this);
 	event_manager.add_subscriber(EventTypes::ON_EQUIP_SCRIPT, *this);
 	event_manager.add_subscriber(EventTypes::ON_UNEQUIP_SCRIPT, *this);
+	event_manager.add_subscriber(EventTypes::ON_DEATH_SCRIPT, *this);
 	Lua_VM.reset(luaL_newstate());
 }
 
@@ -225,6 +243,7 @@ void ScriptSystem::receive(EventTypes event, uint32_t actor)
 {
 	switch (event) {
 	case EventTypes::BUMP_SCRIPT: do_bump(actor); break;
+	case EventTypes::ON_DEATH_SCRIPT: do_death(actor); break;
 	}
 }
 

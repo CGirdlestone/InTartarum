@@ -295,6 +295,10 @@ void Renderer::DrawHealth(int x, int y, int health, int max_health)
 
 void Renderer::DrawPlayerInfo(WorldMap& world_map)
 {
+	uint32_t player_entity = world.GetEntitiesWith<Player>()[0];
+	auto* player = world.GetComponent<Player>(player_entity);
+	auto* fighter = world.GetComponent<Fighter>(player_entity);
+
 	std::string depth = "Dungeon depth: ";
 	auto dungeon_depth = std::to_string(world_map.get_current_depth());
 	depth += dungeon_depth;
@@ -302,14 +306,14 @@ void Renderer::DrawPlayerInfo(WorldMap& world_map)
 	
 	int y{ camera.get_height() + 2 * camera.get_offset_y() + 2 };
 	int x{ window.GetWidth() * 3 / 4 + 1 };
-	std::string player_level = "Level: 1";
+	std::string player_level = "Level: " + std::to_string(player->level);
 	DrawText(player_level, x, y, 0xBB, 0xAA, 0x99);
 	y += 2;
 
-	int hp = 20;
-	int max_hp = 20;
+	int hp = fighter->hp;
+	int max_hp = fighter->max_hp;
 	std::string health = "Health: " + std::to_string(hp) + " / " + std::to_string(max_hp);
-	if (max_hp / hp >= 10) {
+	if (max_hp >= 10 * hp) {
 		DrawText(health,  x, y, 0xCD, 0x5C, 0x5C);
 	}
 	else {
@@ -317,9 +321,10 @@ void Renderer::DrawPlayerInfo(WorldMap& world_map)
 	}
 	y += 2;
 
-	int xp = 300;
-	int max_xp = 500;
-	std::string experience = "Exp: " + std::to_string(xp) + " / " + std::to_string(max_xp);
+	
+	uint32_t xp = player->xp;
+	uint32_t next_xp = player->next_xp;
+	std::string experience = "Exp: " + std::to_string(xp) + " / " + std::to_string(next_xp);
 	DrawText(experience, x, y, 0xB0, 0xC4, 0xDE);
 }
 
