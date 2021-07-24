@@ -72,4 +72,5 @@ enum class EventTypes {
 	DEAL_DAMAGE,
 	EXP_GAIN,
 	SCREEN_SHAKE,
+	APPLY_DAMAGE,
 };

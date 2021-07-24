@@ -81,6 +81,7 @@ void RegisterComponents(World& world) {
 	world.RegisterComponent<ID>();
 	world.RegisterComponent<Useable>();
 	world.RegisterComponent<Fighter>();
+	world.RegisterComponent<Armour>();
 }
 
 void load_tiles(Renderer& renderer, TextureManager& tex_manager, unsigned int font_tileset, int tile_width, int tile_height) {

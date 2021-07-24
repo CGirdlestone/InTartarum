@@ -277,6 +277,17 @@ struct Weapon : public ISerializeable {
 	virtual void deserialise(const char* buffer, size_t& offset) override;
 };
 
+struct Armour : public ISerializeable {
+	Armour() {};
+	~Armour() {};
+	Armour(int _defence_bonus) : defence_bonus(_defence_bonus) {};
+	int defence_bonus{ 0 };
+	int sides{ 0 };
+
+	virtual void serialise(std::ofstream& file) override;
+	virtual void deserialise(const char* buffer, size_t& offset) override;
+};
+
 struct Body : public ISerializeable {
 	Body(): equipment(11, MAX_ENTITIES + 1) {};
 	~Body() {};

@@ -82,11 +82,6 @@ void MessageLog::receive(EventTypes event)
 		add_message(msg);
 		break;
 	}
-	case EventTypes::HEAL: {
-		auto msg = Message("You quaff the potion and feel much better!");
-		add_message(msg);
-		break;
-	}
 	case EventTypes::OUT_OF_RANGE: {
 		auto msg = Message("Target out of range!");
 		add_message(msg);
@@ -157,6 +152,10 @@ void MessageLog::receive(EventTypes event, uint32_t actor, uint32_t target)
 		break;
 	}
 	case EventTypes::BUFF_HEALTH: {
+		auto* player = world.GetComponent<Player>(actor);
+		if (player == nullptr) {
+			return;
+		}
 		auto* item = world.GetComponent<Item>(target);
 		std::string text{ "You equip the $ and feel stronger!" };
 		interpolate(text, item->name);
@@ -165,6 +164,10 @@ void MessageLog::receive(EventTypes event, uint32_t actor, uint32_t target)
 		break;
 	}
 	case EventTypes::DEBUFF_HEALTH: {
+		auto* player = world.GetComponent<Player>(actor);
+		if (player == nullptr) {
+			return;
+		}
 		auto* item = world.GetComponent<Item>(target);
 		std::string text{ "You unequip the $ and feel weaker!" };
 		interpolate(text, item->name);
@@ -178,6 +181,25 @@ void MessageLog::receive(EventTypes event, uint32_t actor, uint32_t target)
 		interpolate(text, item->name);
 		auto msg = Message(text);
 		add_message(msg);
+		break;
+	}
+	case EventTypes::HEAL: {
+		auto* entity = world.GetComponent<Actor>(actor);
+		if (entity != nullptr) {
+			auto* player = world.GetComponent<Player>(actor);
+			if (player == nullptr) {
+				std::string text = "You quaff the potion and heal for $!";
+				interpolate(text, target);
+				auto msg = Message(text);
+				add_message(msg);
+			}
+			else {
+				std::string text = "$ quaffs the potion and heals for $!";
+				interpolate(text, entity->name, target);
+				auto msg = Message(text);
+				add_message(msg);
+			}
+		}
 		break;
 	}
 	}

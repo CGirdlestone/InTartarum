@@ -65,6 +65,9 @@ void WorldMap::build_town()
 	std::string bat = "bat";
 	entity_factory.create_mob(bat, 15, 25, 0, world_x, world_y);
 
+	std::string gobbo = "goblin";
+	entity_factory.create_mob(gobbo, 2, 2, 0, world_x, world_y);
+
 	town.swap(level);
 }
 

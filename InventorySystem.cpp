@@ -156,19 +156,20 @@ void InventorySystem::equip(uint32_t actor, uint32_t item)
 	auto* equipable = world.GetComponent<Equipable>(item);
 	
 	if (equipable != nullptr) {
+		auto slot = equipable->slot;
+		auto* body = world.GetComponent<Body>(actor);
 		if (is_slot_occupied(actor, item)) {
-			// swap items
-		}
-		else {
-			auto slot = equipable->slot;
-			remove_from_inventory(actor, item);
-			auto* body = world.GetComponent<Body>(actor);
+			auto equipped_item = body->equipment[static_cast<int>(slot)];
+			add_to_inventory(actor, equipped_item);
 			body->equipment[static_cast<int>(slot)] = item;
-			auto* script = world.GetComponent<Scriptable>(item);
-			if (script != nullptr) {
-				if (script->OnEquip != "") {
-					event_manager.push_event(EventTypes::ON_EQUIP_SCRIPT, actor, item);
-				}
+		}
+
+		remove_from_inventory(actor, item);
+		body->equipment[static_cast<int>(slot)] = item;
+		auto* script = world.GetComponent<Scriptable>(item);
+		if (script != nullptr) {
+			if (script->OnEquip != "") {
+				event_manager.push_event(EventTypes::ON_EQUIP_SCRIPT, actor, item);
 			}
 		}
 	}

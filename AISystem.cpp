@@ -26,26 +26,92 @@ void AISystem::on_tick()
 		auto* pos = world.GetComponent<Position>(mob);
 		auto* ai = world.GetComponent<AI>(mob);
 
-		if (!world_map.get_level().get_grid().get_tile(pos->x, pos->y).visible) {
-			// scent tracking
-			if (ai->attitude == Attitude::HOSTILE && ai->blind) {
+		if (ai->attitude == Attitude::HOSTILE) {
+			if (ai->blind) {
 				if (world_map.get_scent_map().is_marked(pos->x, pos->y)) {
 					track_player(mob);
 				}
+				else {
+					// whatever blind mobs do when not tracking player
+				}
 			}
-		}
-		else {
-			// visual tracking
-			if (ai->attitude == Attitude::HOSTILE) {
-				if (ai->blind) {
-					if (world_map.get_scent_map().is_marked(pos->x, pos->y)) {
-						track_player(mob);
+			else {
+				if (world_map.get_level().get_grid().get_tile(pos->x, pos->y).visible) {
+					if (ai->smart) {
+						auto* fighter = world.GetComponent<Fighter>(mob);
+						if (fighter != nullptr) {
+							if (fighter->max_hp >= 5 * fighter->hp) {
+								// if the mob has a health potion, use it
+								auto* container = world.GetComponent<Container>(mob);
+								if (container != nullptr) {
+									for (auto _item : container->inventory) {
+										auto* item = world.GetComponent<Useable>(_item);
+										auto* script = world.GetComponent<Scriptable>(_item);
+										if (item != nullptr && script != nullptr) {
+											if (item->type == UseableType::CONSUMABLE) {
+												event_manager.push_event(EventTypes::ON_USE_SCRIPT, mob, _item);
+												break;
+											}
+										}
+									}
+								}
+							}
+							else {
+								auto* container = world.GetComponent<Container>(mob);
+								if (container != nullptr) {
+									bool scroll_used{ false };
+
+									for (auto _item : container->inventory) {
+										auto* item = world.GetComponent<Useable>(_item);
+										auto* script = world.GetComponent<Scriptable>(_item);
+										if (item != nullptr && script != nullptr) {
+											if (item->type == UseableType::TARGETED || item->type == UseableType::TARGETED_AOE) {
+												uint32_t target = world.GetEntitiesWith<Player>()[0];
+												event_manager.push_event(EventTypes::ON_USE_SCRIPT, mob, target, _item);
+												scroll_used = true;
+												break;
+											}
+										}
+									}
+									if (!scroll_used) {
+										hunt_player(mob);
+									}
+								}
+								else {
+									hunt_player(mob);
+								}
+							}
+						}
+					}
+					else {
+						hunt_player(mob);
 					}
 				}
 				else {
-					hunt_player(mob);
+					if (ai->smart) {
+						// whatever smart mobs do when they can't see the player
+						auto* container = world.GetComponent<Container>(mob);
+						auto* body = world.GetComponent<Body>(mob);
+						if (body != nullptr && container != nullptr) {
+							for (auto item : container->inventory) {
+								if (world.GetComponent<Equipable>(item)) {
+									event_manager.push_event(EventTypes::EQUIP_ITEM, mob, item);
+									break;
+								}
+							}
+						}
+					}
+					else {
+						// whatever stupid mobs do when they can't see the player
+					}
 				}
 			}
+		}
+		else if (ai->attitude == Attitude::NEUTRAL) {
+			// whatever neutral mobs do
+		}
+		else if (ai->attitude == Attitude::FRIENDLY) {
+			// whatever friendly mobs do
 		}
 	}
 }

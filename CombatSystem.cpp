@@ -5,6 +5,7 @@ CombatSystem::CombatSystem(World& _world, EventManager& _event_manager, WorldMap
 	:world(_world), event_manager(_event_manager), world_map(_world_map)
 {
 	event_manager.add_subscriber(EventTypes::BUMP_ATTACK, *this);
+	event_manager.add_subscriber(EventTypes::APPLY_DAMAGE, *this);
 }
 
 CombatSystem::~CombatSystem()
@@ -41,7 +42,23 @@ void CombatSystem::receive(EventTypes event, uint32_t actor, uint32_t target)
 
 void CombatSystem::receive(EventTypes event, uint32_t actor, uint32_t target, uint32_t item) 
 {
+	switch (event) {
+	case EventTypes::APPLY_DAMAGE: apply_external_damage(actor, target, item);
+	}
+}
 
+void CombatSystem::apply_external_damage(uint32_t actor, uint32_t target, uint32_t damage)
+{
+	auto* attacker = world.GetComponent<Fighter>(actor);
+	auto* player_is_attacker = world.GetComponent<Player>(actor);
+
+	auto* defender = world.GetComponent<Fighter>(target);
+	auto* player_is_defender = world.GetComponent<Player>(target);
+
+	defender->hp -= damage;
+	event_manager.push_event(EventTypes::DEAL_DAMAGE, actor, target, static_cast<uint32_t>(damage));
+
+	check_alive(actor, target);
 }
 
 void CombatSystem::attack(uint32_t actor, uint32_t target)
@@ -69,22 +86,7 @@ void CombatSystem::attack(uint32_t actor, uint32_t target)
 		defender->hp -= dmg;
 		event_manager.push_event(EventTypes::DEAL_DAMAGE, actor, target, static_cast<uint32_t>(dmg));
 
-		if (defender->hp <= 0) {
-			on_death(target);
-
-			if (player_is_attacker != nullptr) {
-				event_manager.push_event(EventTypes::MOB_DEATH, target);
-				event_manager.push_event(EventTypes::EXP_GAIN, world.GetComponent<AI>(target)->xp);
-
-				world.RemoveComponent<Fighter>(target);
-				world.RemoveComponent<AI>(target);
-				world.RemoveComponent<Actor>(target);
-				world.RemoveComponent<Blocker>(target);
-			}
-			else {
-				event_manager.push_event(EventTypes::PLAYER_DEATH, target);
-			}
-		}
+		check_alive(actor, target);
 	}
 }
 
@@ -122,6 +124,32 @@ void CombatSystem::on_death(uint32_t actor) {
 	if (script != nullptr) {
 		if (script->OnDeath != "") {
 			event_manager.push_event(EventTypes::ON_DEATH_SCRIPT, actor);
+		}
+	}
+}
+
+void CombatSystem::check_alive(uint32_t actor, uint32_t target)
+{
+	auto* attacker = world.GetComponent<Fighter>(actor);
+	auto* player_is_attacker = world.GetComponent<Player>(actor);
+
+	auto* defender = world.GetComponent<Fighter>(target);
+	auto* player_is_defender = world.GetComponent<Player>(target);
+
+	if (defender->hp <= 0) {
+		on_death(target);
+
+		if (player_is_attacker != nullptr) {
+			event_manager.push_event(EventTypes::MOB_DEATH, target);
+			event_manager.push_event(EventTypes::EXP_GAIN, world.GetComponent<AI>(target)->xp);
+
+			world.RemoveComponent<Fighter>(target);
+			world.RemoveComponent<AI>(target);
+			world.RemoveComponent<Actor>(target);
+			world.RemoveComponent<Blocker>(target);
+		}
+		else {
+			event_manager.push_event(EventTypes::PLAYER_DEATH, target);
 		}
 	}
 }

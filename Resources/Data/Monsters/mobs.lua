@@ -49,7 +49,7 @@ goblin = {
     ai = 
     {
         state = attitude["hostile"], 
-        smart = false,
+        smart = true,
         blind = false, 
         scent = false,
         xp = 10;
@@ -78,7 +78,7 @@ goblin = {
         weight_capacity = 100;
         starting_equipment = 
         { 
-            "fire_sword";
+            "fire_sword", "health_potion", "fireball_scroll";
         };
     };
     body = 

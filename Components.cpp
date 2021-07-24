@@ -293,6 +293,18 @@ void Weapon::deserialise(const char* buffer, size_t& offset)
 	sides = static_cast<int>(utils::deserialiseUint32(buffer, offset));
 }
 
+void Armour::serialise(std::ofstream& file)
+{
+	utils::serialiseUint32(file, static_cast<uint32_t>(defence_bonus));
+	utils::serialiseUint32(file, static_cast<uint32_t>(sides));
+}
+
+void Armour::deserialise(const char* buffer, size_t& offset)
+{
+	defence_bonus = static_cast<int>(utils::deserialiseUint32(buffer, offset));
+	sides = static_cast<int>(utils::deserialiseUint32(buffer, offset));
+}
+
 void AI::serialise(std::ofstream& file)
 {
 	utils::serialiseUint32(file, static_cast<uint32_t>(attitude));

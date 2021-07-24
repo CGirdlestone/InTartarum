@@ -204,6 +204,9 @@ void EntityFactory::create_entity(SmartLuaVM& vm, uint32_t& entity)
         else if (component == "fighter") {
             create_fighter(vm, entity);
         }
+        else if (component == "armour") {
+            create_armour(vm, entity);
+        }
         lua_pop(vm.get(), 2);
     }
     lua_pop(vm.get(), 1);
@@ -437,6 +440,13 @@ void EntityFactory::create_fighter(SmartLuaVM& vm, uint32_t& entity)
     auto intelligence = utils::read_lua_int(vm, "int", -3);
     auto cha = utils::read_lua_int(vm, "cha", -3);
     world.AddComponent<Fighter>(entity, hp, defence, str, dex, con, wis, intelligence, cha);
+}
+
+void EntityFactory::create_armour(SmartLuaVM& vm, uint32_t& entity)
+{
+    auto defence_bonus = utils::read_lua_int(vm, "defence_bonus", -3);
+
+    world.AddComponent<Armour>(entity, defence_bonus);
 }
 
 std::vector<uint32_t> EntityFactory::load_starting_equipment()

@@ -24,4 +24,6 @@ private:
 	void attack(uint32_t actor, uint32_t target);
 	bool try_hit(uint32_t attacker, uint32_t defender, bool& crit);
 	void on_death(uint32_t actor);
+	void apply_external_damage(uint32_t actor, uint32_t target, uint32_t damage);
+	void check_alive(uint32_t actor, uint32_t target);
 };

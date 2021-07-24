@@ -88,11 +88,14 @@ void ScriptSystem::do_death(uint32_t entity)
 void ScriptSystem::load_consume_scripts()
 {
 	auto heal = [](World& world, WorldMap& world_map, EventManager& event_manager, SoundManager& sound_manager, TextureManager& texture_manager, int tile_width, int tile_height, uint32_t entity, uint32_t target, uint32_t item) {
-		event_manager.push_event(EventTypes::HEAL);
+		std::string roll = "2d6";
+		uint32_t health = static_cast<uint32_t>(utils::roll(roll));
+		event_manager.push_event(EventTypes::HEAL, entity, health);
 		event_manager.push_event(EventTypes::DECREASE_CHARGE, entity, item);
+
 		auto* fighter = world.GetComponent<Fighter>(entity);
 		if (fighter != nullptr) {
-			fighter->hp += 10;
+			fighter->hp += health;
 			fighter->hp = fighter->hp > fighter->max_hp ? fighter->max_hp : fighter->hp;
 		}
 	};
@@ -118,7 +121,12 @@ void ScriptSystem::load_use_scripts()
 		}
 
 		event_manager.push_event(EventTypes::DECREASE_CHARGE, entity, item);
-
+		auto* fighter = world.GetComponent<Fighter>(target);
+		if (fighter != nullptr) {
+			std::string roll = "3d8";
+			uint32_t dmg = static_cast<uint32_t>(utils::roll(roll));
+			event_manager.push_event(EventTypes::APPLY_DAMAGE, entity, target, dmg);
+		}
 	};
 
 	use_scripts.insert({ "fireball", fireball });
