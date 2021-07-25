@@ -230,6 +230,7 @@ void Fighter::serialise(std::ofstream& file)
 	utils::serialiseUint32(file, static_cast<uint32_t>(base_charisma));
 	utils::serialiseUint32(file, static_cast<uint32_t>(cha_buff));
 	utils::serialiseUint32(file, static_cast<uint32_t>(cha_mod));
+	utils::serialiseUint32(file, static_cast<uint32_t>(crit_mod));
 }
 
 void Fighter::deserialise(const char* buffer, size_t& offset)
@@ -255,6 +256,7 @@ void Fighter::deserialise(const char* buffer, size_t& offset)
 	base_charisma = static_cast<int>(utils::deserialiseUint32(buffer, offset));
 	cha_buff = static_cast<int>(utils::deserialiseUint32(buffer, offset));
 	cha_mod = static_cast<int>(utils::deserialiseUint32(buffer, offset));
+	crit_mod = static_cast<int>(utils::deserialiseUint32(buffer, offset));
 }
 
 void Item::serialise(std::ofstream& file)

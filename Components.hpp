@@ -230,6 +230,7 @@ struct Fighter : public ISerializeable {
 	int base_charisma{ 0 };
 	int cha_buff{ 0 };
 	int cha_mod{ 0 };
+	int crit_mod{ 0 };
 
 	virtual void serialise(std::ofstream& file) override;
 	virtual void deserialise(const char* buffer, size_t& offset) override;

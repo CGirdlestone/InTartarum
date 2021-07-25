@@ -26,4 +26,5 @@ private:
 	void on_death(uint32_t actor);
 	void apply_external_damage(uint32_t actor, uint32_t target, uint32_t damage);
 	void check_alive(uint32_t actor, uint32_t target);
+	int damage_reduction(uint32_t actor, int dmg);
 };

@@ -73,16 +73,32 @@ void CombatSystem::attack(uint32_t actor, uint32_t target)
 		return;
 	}
 
-	bool crit = true;
+	bool crit = false;
 
 	if (try_hit(actor, target, crit)) {
 
+		std::string dmg_roll = "2d6";
+
+		// get weapon damage roll if one is equipped
+		if (world.GetComponent<Body>(actor) != nullptr) {
+			if (world.GetComponent<Body>(actor)->equipment[static_cast<int>(Slot::RIGHT_HAND)] != MAX_ENTITIES + 1) {
+				auto* weapon = world.GetComponent<Weapon>(world.GetComponent<Body>(actor)->equipment[static_cast<int>(Slot::RIGHT_HAND)]);
+				if (weapon != nullptr) {
+					dmg_roll = std::to_string(weapon->num_dice) + "d" + std::to_string(weapon->sides);
+				}
+			}
+		}
+		
+		int dmg = utils::roll(dmg_roll) + attacker->str_mod;
+
 		if (crit) {
-			// do something here
+			// crit gives additional max value of 2d6 (12) to damage roll 
+			dmg += 12; 
 		}
 
-		std::string dmg_roll = "2d6";
-		int dmg = utils::roll(dmg_roll) + attacker->str_mod;
+		// check whether the enemy is armoured and apply modifiers if it is
+		dmg = damage_reduction(target, dmg);
+
 		defender->hp -= dmg;
 		event_manager.push_event(EventTypes::DEAL_DAMAGE, actor, target, static_cast<uint32_t>(dmg));
 
@@ -97,9 +113,9 @@ bool CombatSystem::try_hit(uint32_t actor, uint32_t target, bool& crit)
 
 	std::string attack_roll = "3d6";
 	int score = utils::roll(attack_roll) + attacker->str_mod;
-	int defence = 9 + defender->defence;
+	int defence = 9 + defender->dex_mod;
 
-	if (score == 18) {
+	if (score + attacker->crit_mod >= 18) {
 		crit = true;
 		return true;
 	} else if (score > defence) {
@@ -152,4 +168,9 @@ void CombatSystem::check_alive(uint32_t actor, uint32_t target)
 			event_manager.push_event(EventTypes::PLAYER_DEATH, target);
 		}
 	}
+}
+
+int CombatSystem::damage_reduction(uint32_t actor, int dmg)
+{
+	return dmg;
 }
