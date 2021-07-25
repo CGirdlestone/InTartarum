@@ -50,6 +50,36 @@ arrow =
     };
 }
 
+bow = 
+{
+    item =
+    {
+        name ="bow", description = "A simple oak flatbow.", weight = 5;
+    };
+    sprite =
+    {
+        tilesheet = "Cooz-curses-14x16.png", 
+        clip_x = 13, clip_y = 7, 
+        width = width, height = height, depth = 1,
+        red = 187, green = 170, blue = 153,
+    };
+    equipable = 
+    {
+        slot = ID["LEFT_HAND"];
+    };
+    weapon = 
+    {
+        num_dice = 2,
+        sides = 6,
+        ranged = true,
+        ammo = "arrow";
+    };
+    id =
+    {
+        uid = "flatbow";
+    };
+}
+
 health_potion = 
 {
     item = 
@@ -160,6 +190,8 @@ fire_sword =
     {
         num_dice = 2,
         sides = 8,
+        ranged = false,
+        ammo = "";
     };
     id = 
     {

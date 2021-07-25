@@ -287,12 +287,16 @@ void Weapon::serialise(std::ofstream& file)
 {
 	utils::serialiseUint32(file, static_cast<uint32_t>(num_dice));
 	utils::serialiseUint32(file, static_cast<uint32_t>(sides));
+	utils::serialiseUint32(file, static_cast<uint32_t>(ranged));
+	utils::serialiseString(file, ammo);
 }
 
 void Weapon::deserialise(const char* buffer, size_t& offset)
 {
 	num_dice = static_cast<int>(utils::deserialiseUint32(buffer, offset));
 	sides = static_cast<int>(utils::deserialiseUint32(buffer, offset));
+	ranged = static_cast<bool>(utils::deserialiseUint32(buffer, offset));
+	ammo = utils::deserialiseString(buffer, offset);
 }
 
 void Armour::serialise(std::ofstream& file)

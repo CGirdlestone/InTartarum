@@ -368,7 +368,12 @@ void EntityFactory::create_weapon(SmartLuaVM& vm, uint32_t& entity)
 {
     auto num_dice = utils::read_lua_int(vm, "num_dice", -3);
     auto sides = utils::read_lua_int(vm, "sides", -3);
+    auto ranged = utils::read_lua_bool(vm, "ranged", -3);
+    std::string ammo = utils::read_lua_string(vm, "ammo", -3);
     world.AddComponent<Weapon>(entity, num_dice, sides);
+    auto* weapon = world.GetComponent<Weapon>(entity);
+    weapon->ranged = ranged;
+    weapon->ammo = ammo;
 }
 
 void EntityFactory::create_container(SmartLuaVM& vm, uint32_t& entity)

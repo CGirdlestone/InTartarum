@@ -277,12 +277,17 @@ struct Weapon : public ISerializeable {
 	Weapon() {};
 	~Weapon() {};
 	Weapon(int _num_dice, int _sides) : num_dice(_num_dice), sides(_sides) {};
+	Weapon(int _num_dice, int _sides, bool _ranged, std::string& _ammo) : num_dice(_num_dice), sides(_sides), ranged(_ranged), ammo(_ammo) {};
 	int num_dice{ 0 };
 	int sides{ 0 };
+	bool ranged{ false };
+	std::string ammo{ "" };
 
 	virtual void serialise(std::ofstream& file) override;
 	virtual void deserialise(const char* buffer, size_t& offset) override;
 };
+
+
 
 struct Armour : public ISerializeable {
 	Armour() {};
