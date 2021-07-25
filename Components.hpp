@@ -180,8 +180,14 @@ struct Animation : public ISerializeable {
 struct Particle : public ISerializeable {
 	Particle() {};
 	Particle(float _lifetime) :lifetime(_lifetime) {};
+	Particle(float _x, float _y, int _tx, int _ty) : x(_x), y(_y), target_x(_tx), target_y(_ty) {};
 	~Particle() {};
-	float lifetime{ 0.0f };
+	float lifetime{ -10.0f };
+	float velocity{ 5.0f };
+	float x{ 0.0f };
+	float y{ 0.0f };
+	int target_x{ 0 };
+	int target_y{ 0 };
 
 	virtual void serialise(std::ofstream& file) override;
 	virtual void deserialise(const char* buffer, size_t& offset) override;

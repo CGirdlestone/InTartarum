@@ -70,13 +70,20 @@ void ScriptSystem::load_update_scripts()
 void ScriptSystem::load_death_scripts()
 {
 	auto spawn_explosion_script = [](World& world, WorldMap& world_map, EventManager& event_manager, SoundManager& sound_manager, TextureManager& texture_manager, int tile_width, int tile_height, uint32_t entity, uint32_t target, uint32_t item) {
-		auto* pos = world.GetComponent<Position>(entity);
-		auto* script = world.GetComponent<Scriptable>(entity);
-		Prefab::create_explosion(world, pos->x * tile_width, pos->y * tile_height, pos->z, texture_manager.LoadTexture("./Resources/exp2_0.png"));
-		world.KillEntity(entity);
+		// particle effect
+		auto* user_pos = world.GetComponent<Position>(entity);
+		auto* sprite = world.GetComponent<Sprite>(entity);
+		for (int i = -1; i < 2; i++) {
+			for (int j = -1; j < 2; j++) {
+				uint32_t particle = world.CreateEntity();
+				world.AddComponent<Position>(particle, user_pos->x + i, user_pos->y + j, user_pos->z, user_pos->world_x, user_pos->world_y);
+				world.AddComponent<Sprite>(particle, 0, 10 * sprite->width, 2 * sprite->height, sprite->width, sprite->height, 0, 205, 92, 92);
+				world.AddComponent<Particle>(particle, 0.3f);
+			}
+		}
 	};
 
-	bump_scripts.insert({ "SPAWN_EXPLOSION", spawn_explosion_script });
+	death_scripts.insert({ "spawn_explosion", spawn_explosion_script });
 }
 
 void ScriptSystem::do_death(uint32_t entity)
@@ -98,6 +105,23 @@ void ScriptSystem::load_consume_scripts()
 			fighter->hp += health;
 			fighter->hp = fighter->hp > fighter->max_hp ? fighter->max_hp : fighter->hp;
 		}
+
+
+		// particle effect
+		auto* user_pos = world.GetComponent<Position>(entity);
+		auto* sprite = world.GetComponent<Sprite>(entity);
+		for (int i = -2; i <= 2; i += 2) {
+			for (int j = -2; j <= 2; j += 2) {
+				if (i == 0 && j == 0) {
+					continue;
+				}
+				uint32_t particle = world.CreateEntity();
+				world.AddComponent<Position>(particle, user_pos->x + i, user_pos->y + j, user_pos->z, user_pos->world_x, user_pos->world_y);
+				world.AddComponent<Sprite>(particle, 0, 10 * sprite->width, 2 * sprite->height, sprite->width, sprite->height, 0, 176, 196, 222);
+				world.AddComponent<Particle>(particle, static_cast<float>(user_pos->x + i), static_cast<float>(user_pos->y + j), user_pos->x, user_pos->y);
+			}
+		}
+		
 	};
 
 	consume_scripts.insert({ "heal", heal });
@@ -127,6 +151,19 @@ void ScriptSystem::load_use_scripts()
 			uint32_t dmg = static_cast<uint32_t>(utils::roll(roll));
 			event_manager.push_event(EventTypes::APPLY_DAMAGE, entity, target, dmg);
 		}
+
+		// paticle effect
+		auto* user_pos = world.GetComponent<Position>(entity);
+		auto* sprite = world.GetComponent<Sprite>(entity);
+		auto* target_pos = world.GetComponent<Position>(target);
+		uint32_t particle = world.CreateEntity();
+		world.AddComponent<Position>(particle, user_pos->x, user_pos->y, user_pos->z, user_pos->world_x, user_pos->world_y);
+		world.AddComponent<Sprite>(particle, 0, 10 * sprite->width, 2 * sprite->height, sprite->width, sprite->height, 0, 205, 92, 92);
+		world.AddComponent<Particle>(particle, static_cast<float>(user_pos->x), static_cast<float>(user_pos->y), target_pos->x, target_pos->y);
+		std::string particle_death_script = "spawn_explosion";
+		world.AddComponent<Scriptable>(particle);
+		auto* script = world.GetComponent<Scriptable>(particle);
+		script->OnDeath = particle_death_script;
 	};
 
 	use_scripts.insert({ "fireball", fireball });
