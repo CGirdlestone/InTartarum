@@ -90,3 +90,8 @@ int lua_addItem(lua_State* vm);
 int lua_getItem(lua_State* vm);
 int lua_removeItem(lua_State* vm);
 int lua_getEntitiesWithItem(lua_State* vm);
+
+int lua_addActor(lua_State* vm);
+int lua_getActor(lua_State* vm);
+int lua_removeActor(lua_State* vm);
+int lua_getEntitiesWithActor(lua_State* vm);

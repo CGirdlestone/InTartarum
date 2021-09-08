@@ -43,7 +43,7 @@ end
 
 -- This runs when the actor dies
 function OnDeath(actor)
-    MessageLog:addMessage("The enemy dies.")
+    
 
 end
 
@@ -63,8 +63,9 @@ end
 -- This runs when the actor uses the item (e.g. health potion), or it may involve a target (e.g. a fireball)
 function OnUse(actor, target, item)
     local _item = World:getItem(item)
+    local _target = World:getActor(target)
     log("Using scroll ".._item.name..".")
-    
+
     local fighter = World:getFighter(target);
     
     log("Fighter hp before cast: "..fighter.hp..".")
@@ -78,7 +79,7 @@ function OnUse(actor, target, item)
 
     log("Fighter hp after cast: "..fighter.hp..".")
 
-    MessageLog:addMessage("You cast fireball at the enemy and deal "..dmg.." damage!")
+    MessageLog:addMessage("You cast ".._item.name.." at the ".._target.name.." and deal "..dmg.." damage!")
     
     CombatSystem:checkAlive(actor, target)
 	

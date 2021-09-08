@@ -68,7 +68,7 @@ private:
 	int offset{ 0 };
 	int num_lines{ 0 };
 
-	
+	bool wrap_text(Message& message, std::vector<std::string>& lines);
 	void load_descriptions(const char* path);
 
 	inline void interpolate(std::string& flavour_text, int x) {

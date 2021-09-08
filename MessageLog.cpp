@@ -266,6 +266,46 @@ void MessageLog::load_intro(const char* path)
 	}
 }
 
+bool MessageLog::wrap_text(Message& message, std::vector<std::string>& lines)
+{
+	if (message.text.size() < width) {
+		return false;
+	}
+
+	int i{ 0 };
+	int j{ 0 };
+	auto& text = message.text;
+	bool final{ false };
+
+	while (true) {
+		i += width;
+		if (i >= text.size()) {
+			i = text.size();
+			lines.push_back(text.substr(j, i));
+			break;
+		}
+
+		if (text.at(i) == ' ') { // the final character on the line is a space
+			lines.push_back(text.substr(j, i));
+			j = i + 1;
+			continue;
+		}
+		else { // walk back until we find a space
+			i--;
+			for (;;) {
+				if (text.at(i) == ' ') {
+					lines.push_back(text.substr(j, i));
+					j = i + 1;
+					break;
+				}
+				i--;
+			}
+		}
+	}
+
+	return true;
+}
+
 void MessageLog::load_descriptions(const char* path)
 {
 
@@ -273,9 +313,21 @@ void MessageLog::load_descriptions(const char* path)
 
 void MessageLog::add_message(Message message)
 {
-	message_queue.push_back(message);
-	if (message_queue.size() == message_history) {
-		message_queue.pop_front();
+	std::vector<std::string> lines;
+	if (wrap_text(message, lines)) {
+		std::vector<std::string>::reverse_iterator it = lines.rbegin();
+		for (; it != lines.rend(); it++) {
+			message_queue.push_back(Message((*it), message.colour.r, message.colour.g, message.colour.b));
+			if (message_queue.size() == message_history) {
+				message_queue.pop_front();
+			}
+		}
+	}
+	else {
+		message_queue.push_back(message);
+		if (message_queue.size() == message_history) {
+			message_queue.pop_front();
+		}
 	}
 }
 

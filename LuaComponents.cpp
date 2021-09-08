@@ -234,3 +234,32 @@ int __setItem(lua_State* vm)
 
 	return 0;
 }
+
+void registerActor(lua_State* vm, Actor* actor)
+{
+	registerObject(Actor, actor);
+}
+
+int __getActor(lua_State* vm)
+{
+	Actor** s = (Actor**)luaL_checkudata(vm, 1, "ActorMetaTable");
+	const char* k = luaL_checkstring(vm, 2);
+
+	getVarStr(s, k, name);
+	getVarStr(s, k, description);
+
+	// If we reach here, the lua string k doesn't match of the members
+	lua_pushnil(vm);
+	return 1;
+}
+
+int __setActor(lua_State* vm)
+{
+	Actor** s = (Actor**)luaL_checkudata(vm, 1, "ActorMetaTable");
+	const char* k = luaL_checkstring(vm, 2);
+
+	setVarStr(s, k, name);
+	setVarStr(s, k, description);
+
+	return 0;
+}

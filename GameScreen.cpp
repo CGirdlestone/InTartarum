@@ -125,7 +125,7 @@ void GameScreen::handle_input(SDL_Event& event)
 	case SDLK_UP: message_log.scroll_up(); break;
 	case SDLK_DOWN: message_log.scroll_down(); break;
 	case SDLK_o: open_doors(); event_manager.push_event(EventTypes::TICK); break;
-	case SDLK_ESCAPE: state_manager.stop_playing(); save_game(); break;;
+	case SDLK_ESCAPE: state_manager.stop_playing(); save_game(); break;
 	case SDLK_g: event_manager.push_event(EventTypes::TRY_PICK_UP_ITEM, entity); break;
 	case SDLK_i: state_manager.push(GameState::INVENTORY); break;
 	case SDLK_l: state_manager.push(GameState::TARGETING); event_manager.push_event(EventTypes::LOOK, entity);  break;
@@ -134,6 +134,7 @@ void GameScreen::handle_input(SDL_Event& event)
 			state_manager.push(GameState::HELP);
 			break;
 		}
+		break;
 	}
 	case SDLK_PERIOD: {
 		if (keyboard.is_pressed(SDLK_LSHIFT) || keyboard.is_pressed(SDLK_RSHIFT)) {

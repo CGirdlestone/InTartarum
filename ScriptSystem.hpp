@@ -64,6 +64,9 @@ private:
 	void load_unequip_scripts();
 	void do_unequip(uint32_t entity, uint32_t item);
 
+
+	void do_hit(uint32_t entity, uint32_t target, uint32_t item);
+
 public:
 	ScriptSystem(World& _world, 
 					EventManager& _event_manager, 

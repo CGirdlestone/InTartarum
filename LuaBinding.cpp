@@ -548,6 +548,11 @@ void registerWorld(lua_State* vm, World& world)
 	registerMethod(removeItem);
 	registerMethod(getEntitiesWithItem);
 
+	registerMethod(addActor);
+	registerMethod(getActor);
+	registerMethod(removeActor);
+	registerMethod(getEntitiesWithActor);
+
 	lua_setmetatable(vm, -2);
 	lua_setglobal(vm, "World");
 }
@@ -854,7 +859,7 @@ int lua_addItem(lua_State* vm)
 	uint32_t entity = luaL_checknumber(vm, 2);
 	std::string name = luaL_checkstring(vm, 3);
 	std::string desc = luaL_checkstring(vm, 4);
-	int weight = luaL_checknumber(vm, 4);
+	int weight = luaL_checknumber(vm, 5);
 
 	(*world)->AddComponent<Item>(entity, name, desc, weight);
 
@@ -889,6 +894,57 @@ int lua_getEntitiesWithItem(lua_State* vm)
 {
 	World** world = (World**)luaL_checkudata(vm, 1, "World");
 	std::vector<uint32_t> entities = (*world)->GetEntitiesWith<Item>();
+
+	if (entities.empty()) {
+		lua_pushnil(vm);
+	}
+	else {
+		registerEntities(vm, entities);
+	}
+	return 1;
+}
+
+int lua_addActor(lua_State* vm)
+{
+	World** world = (World**)luaL_checkudata(vm, 1, "World");
+
+	uint32_t entity = luaL_checknumber(vm, 2);
+	std::string name = luaL_checkstring(vm, 3);
+	std::string desc = luaL_checkstring(vm, 4);
+
+	(*world)->AddComponent<Actor>(entity, name, desc);
+
+	return 0;
+}
+
+int lua_getActor(lua_State* vm)
+{
+	World** world = (World**)luaL_checkudata(vm, 1, "World");
+
+	uint32_t entity = luaL_checknumber(vm, 2);
+	Actor* actor = (*world)->GetComponent<Actor>(entity);
+	if (actor) {
+		registerActor(vm, actor);
+	}
+	else {
+		lua_pushnil(vm);
+	}
+	return 1;
+}
+
+int lua_removeActor(lua_State* vm)
+{
+	World** world = (World**)luaL_checkudata(vm, 1, "World");
+
+	uint32_t entity = luaL_checknumber(vm, 2);
+	(*world)->RemoveComponent<Actor>(entity);
+	return 0;
+}
+
+int lua_getEntitiesWithActor(lua_State* vm)
+{
+	World** world = (World**)luaL_checkudata(vm, 1, "World");
+	std::vector<uint32_t> entities = (*world)->GetEntitiesWith<Actor>();
 
 	if (entities.empty()) {
 		lua_pushnil(vm);

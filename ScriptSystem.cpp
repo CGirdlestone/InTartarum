@@ -320,6 +320,25 @@ void ScriptSystem::do_unequip(uint32_t entity, uint32_t item)
 	}
 }
 
+void ScriptSystem::do_hit(uint32_t entity, uint32_t target, uint32_t item)
+{
+	auto* script = world.GetComponent<Scriptable>(item);
+	std::string path = "./Resources/Scripts/" + script->scriptFile;
+	int x = luaL_dofile(Lua_VM.get(), path.c_str());
+
+	lua_getglobal(Lua_VM.get(), "OnHit");
+	lua_pushnumber(Lua_VM.get(), entity);
+	lua_pushnumber(Lua_VM.get(), target);
+	lua_pushnumber(Lua_VM.get(), item);
+	lua_pcall(Lua_VM.get(), 3, 0, 0);
+	lua_settop(Lua_VM.get(), 0);
+
+	if (x == 1) {
+		const char* str = lua_tostring(Lua_VM.get(), -1);
+		printf("%s\n", str);
+	}
+}
+
 ScriptSystem::ScriptSystem(World& _world, 
 							EventManager& _event_manager, 
 							WorldMap& _world_map, 
@@ -366,6 +385,7 @@ ScriptSystem::ScriptSystem(World& _world,
 	event_manager.add_subscriber(EventTypes::ON_EQUIP_SCRIPT, *this);
 	event_manager.add_subscriber(EventTypes::ON_UNEQUIP_SCRIPT, *this);
 	event_manager.add_subscriber(EventTypes::ON_DEATH_SCRIPT, *this);
+	event_manager.add_subscriber(EventTypes::ON_HIT_SCRIPT, *this);
 	Lua_VM.reset(luaL_newstate());
 }
 ScriptSystem::~ScriptSystem()
@@ -440,5 +460,6 @@ void ScriptSystem::receive(EventTypes event, uint32_t actor, uint32_t target, ui
 {
 	switch (event) {
 	case EventTypes::ON_USE_SCRIPT: do_use(actor, target, item); break;
+	case EventTypes::ON_HIT_SCRIPT: do_hit(actor, target, item); break;
 	}
 }

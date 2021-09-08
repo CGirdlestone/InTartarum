@@ -81,15 +81,20 @@ void CombatSystem::attack(uint32_t actor, uint32_t target)
 
 		// get weapon damage roll if one is equipped
 		if (world.GetComponent<Body>(actor) != nullptr) {
-			if (world.GetComponent<Body>(actor)->equipment[static_cast<int>(Slot::RIGHT_HAND)] != MAX_ENTITIES + 1) {
-				auto* weapon = world.GetComponent<Weapon>(world.GetComponent<Body>(actor)->equipment[static_cast<int>(Slot::RIGHT_HAND)]);
+			uint32_t item = world.GetComponent<Body>(actor)->equipment[static_cast<int>(Slot::RIGHT_HAND)];
+			if (item != MAX_ENTITIES + 1) {
+				auto* weapon = world.GetComponent<Weapon>(item);
 				if (weapon != nullptr) {
 					dmg_roll = std::to_string(weapon->num_dice) + "d" + std::to_string(weapon->sides);
+				}
+				auto* script = world.GetComponent<Scriptable>(item);
+				if (script != nullptr) {
+					event_manager.push_event(EventTypes::ON_HIT_SCRIPT, actor, target, item);
 				}
 			}
 		}
 		
-		int dmg = utils::roll(dmg_roll) + attacker->strength.mod;
+		int dmg = utils::roll(dmg_roll) + attacker->strength.mod + attacker->strength.buff;
 
 		if (crit) {
 			// crit gives additional max value of 2d6 (12) to damage roll 
@@ -115,8 +120,8 @@ bool CombatSystem::try_hit(uint32_t actor, uint32_t target, bool& crit)
 	auto* defender = world.GetComponent<Fighter>(target);
 
 	std::string attack_roll = "3d6";
-	int score = utils::roll(attack_roll) + attacker->strength.mod;
-	int defence = 9 + defender->dexterity.mod;
+	int score = utils::roll(attack_roll) + attacker->strength.mod + attacker->strength.buff;
+	int defence = 9 + defender->dexterity.mod + defender->dexterity.buff;
 
 	if (score + attacker->crit_mod >= 18) {
 		crit = true;

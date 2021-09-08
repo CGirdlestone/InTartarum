@@ -49,14 +49,25 @@ end
 
 -- This runs when the actor equips the item
 function OnEquip(actor, item)
+    local fighter = World:getFighter(actor)
+    local strength = fighter.strength
+    local buff = 2
 
+    local _item = World:getItem(item)
 
+    strength.buff = strength.buff + buff
+
+    MessageLog:addMessage("You feel the power of the ".._item.name.." course through your veins.")
 end
 
 -- This runs when the actor unequips the item
 function OnUnequip(actor, item)
+    local fighter = World:getFighter(actor)
+    local strength = fighter.strength
+    local buff = 2
 
-
+    strength.buff = strength.buff - buff
+    MessageLog:addMessage("You suddenly feel weaker.")
 end
 
 

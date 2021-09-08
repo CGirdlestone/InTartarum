@@ -1,7 +1,7 @@
 -- config data for the SDL window.
 title = "In Tartarum";
-width = 80;
-height = 50;
+width = 100;
+height = 60;
 
 -- default renderer colour
 colour_r = 28;
@@ -9,8 +9,8 @@ colour_g = 28;
 colour_b = 28;
 
 -- config data for the world map.
-map_width = 100;
-map_height = 60;
+map_width = 120;
+map_height = 70;
 overworld_width = 200;
 overworld_height = 150;
 
@@ -39,7 +39,7 @@ font_height = 16;
 
 
 -- config data for the message log.
-message_log_width = 20;
+message_log_width = 60;
 message_log_height = 20;
 message_log_number_msgs = 100;
 message_log_num_lines = info_panel_height;
