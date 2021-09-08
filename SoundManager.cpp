@@ -27,6 +27,7 @@ unsigned int SoundManager::LoadChunk(const std::string& path)
 
 	auto chunk_ptr = Mix_LoadWAV(path.c_str());
 	if (chunk_ptr == nullptr) {
+		printf("Can't load %s\n", path.c_str());
 		exit(1); // must fix this...
 	}
 

@@ -271,7 +271,7 @@ void MessageLog::load_descriptions(const char* path)
 
 }
 
-void MessageLog::add_message(Message& message)
+void MessageLog::add_message(Message message)
 {
 	message_queue.push_back(message);
 	if (message_queue.size() == message_history) {
@@ -281,16 +281,16 @@ void MessageLog::add_message(Message& message)
 
 void Message::serialise(std::ofstream& file)
 {
-	utils::serialiseUint8(file, r);
-	utils::serialiseUint8(file, g);
-	utils::serialiseUint8(file, b);
+	utils::serialiseUint8(file, colour.r);
+	utils::serialiseUint8(file, colour.g);
+	utils::serialiseUint8(file, colour.b);
 	utils::serialiseString(file, text);
 }
 
 void Message::deserialise(const char* buffer, size_t& offset)
 {
-	r = utils::deserialiseUint8(buffer, offset);
-	g = utils::deserialiseUint8(buffer, offset);
-	b = utils::deserialiseUint8(buffer, offset);
+	colour.r = utils::deserialiseUint8(buffer, offset);
+	colour.g = utils::deserialiseUint8(buffer, offset);
+	colour.b = utils::deserialiseUint8(buffer, offset);
 	text = utils::deserialiseString(buffer, offset);
 }

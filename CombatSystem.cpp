@@ -1,8 +1,8 @@
 #include "CombatSystem.hpp"
 #include "Utils.hpp"
 
-CombatSystem::CombatSystem(World& _world, EventManager& _event_manager, WorldMap& _world_map)
-	:world(_world), event_manager(_event_manager), world_map(_world_map)
+CombatSystem::CombatSystem(World& _world, EventManager& _event_manager, WorldMap& _world_map, SoundManager& _sound_manager)
+	:world(_world), event_manager(_event_manager), world_map(_world_map), sound_manager(_sound_manager)
 {
 	event_manager.add_subscriber(EventTypes::BUMP_ATTACK, *this);
 	event_manager.add_subscriber(EventTypes::APPLY_DAMAGE, *this);
@@ -89,7 +89,7 @@ void CombatSystem::attack(uint32_t actor, uint32_t target)
 			}
 		}
 		
-		int dmg = utils::roll(dmg_roll) + attacker->str_mod;
+		int dmg = utils::roll(dmg_roll) + attacker->strength.mod;
 
 		if (crit) {
 			// crit gives additional max value of 2d6 (12) to damage roll 
@@ -101,6 +101,9 @@ void CombatSystem::attack(uint32_t actor, uint32_t target)
 
 		defender->hp -= dmg;
 		event_manager.push_event(EventTypes::DEAL_DAMAGE, actor, target, static_cast<uint32_t>(dmg));
+		
+		auto hit = sound_manager.LoadChunk("./Resources/Sounds/SFX/shoot_01.ogg");
+		event_manager.push_event(EventTypes::PLAY_CHUNK, hit);
 
 		check_alive(actor, target);
 	}
@@ -112,8 +115,8 @@ bool CombatSystem::try_hit(uint32_t actor, uint32_t target, bool& crit)
 	auto* defender = world.GetComponent<Fighter>(target);
 
 	std::string attack_roll = "3d6";
-	int score = utils::roll(attack_roll) + attacker->str_mod;
-	int defence = 9 + defender->dex_mod;
+	int score = utils::roll(attack_roll) + attacker->strength.mod;
+	int defence = 9 + defender->dexterity.mod;
 
 	if (score + attacker->crit_mod >= 18) {
 		crit = true;
@@ -138,9 +141,7 @@ void CombatSystem::on_death(uint32_t actor) {
 	
 	auto* script = world.GetComponent<Scriptable>(actor);
 	if (script != nullptr) {
-		if (script->OnDeath != "") {
-			event_manager.push_event(EventTypes::ON_DEATH_SCRIPT, actor);
-		}
+		event_manager.push_event(EventTypes::ON_DEATH_SCRIPT, actor);
 	}
 }
 
@@ -163,6 +164,9 @@ void CombatSystem::check_alive(uint32_t actor, uint32_t target)
 			world.RemoveComponent<AI>(target);
 			world.RemoveComponent<Actor>(target);
 			world.RemoveComponent<Blocker>(target);
+
+			auto death = sound_manager.LoadChunk("./Resources/Sounds/SFX/weird_01.ogg");
+			event_manager.push_event(EventTypes::PLAY_CHUNK, death);
 		}
 		else {
 			event_manager.push_event(EventTypes::PLAYER_DEATH, target);

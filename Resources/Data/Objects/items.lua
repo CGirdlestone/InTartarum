@@ -108,13 +108,14 @@ health_potion =
     };
     script = 
     {
+        scriptFile = "HealthPotion.lua"
         --OnInit = "";
         --OnUpdate = "";
         --OnBump = "";
         --OnDeath = "";
         --OnEquip = "buff_strength",
         --OnUnequip = "debuff_strength",
-        OnUse = "heal";
+        --OnUse = "heal";
         --OnHit = "";
     };
 }
@@ -147,13 +148,14 @@ fireball_scroll =
     };
     script = 
     {
+        scriptFile = "Fireball.lua"
         --OnInit = "";
         --OnUpdate = "";
         --OnBump = "";
         --OnDeath = "";
         --OnEquip = "",
         --OnUnequip = "",
-        OnUse = "fireball";
+        --OnUse = "fireball";
         --OnHit = "";
     };
 }
@@ -175,17 +177,17 @@ fire_sword =
     {
         slot = ID["RIGHT_HAND"];
     };
-    script = 
-    {
+    --script = 
+    --{
         --OnInit = "";
         --OnUpdate = "";
         --OnBump = "";
         --OnDeath = "";
-        OnEquip = "buff_health",
-        OnUnequip = "debuff_health",
+        --OnEquip = "buff_health",
+        --OnUnequip = "debuff_health",
         --OnUse = "";
         --OnHit = "";
-    };
+    --};
     weapon = 
     {
         num_dice = 2,

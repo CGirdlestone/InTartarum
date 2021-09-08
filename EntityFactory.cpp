@@ -6,7 +6,26 @@ EntityFactory::EntityFactory(World& _world, TextureManager& _texture_manager)
 
 }
 
-uint32_t EntityFactory::create_mob(std::string& entity_name, int x, int y, int z, int world_x, int world_y)
+uint32_t EntityFactory::create_mob(std::string& entity_name)
+{
+    /* Create the position component and push the corret table onto the lua stack. */
+    SmartLuaVM vm(nullptr, lua_close);
+    vm.reset(luaL_newstate());
+    std::string mob_file = "./Resources/Data/Monsters/mobs.lua";
+    load_file(vm, mob_file);
+
+    auto entity = world.CreateEntity();
+
+    lua_getglobal(vm.get(), entity_name.c_str()); // push object name
+    if (!lua_istable(vm.get(), -1)) {
+        printf("Expected table!");
+    }
+
+    create_entity(vm, entity);
+    return entity;
+}
+
+uint32_t EntityFactory::create_mob_at(std::string& entity_name, int x, int y, int z, int world_x, int world_y)
 {
     /* Create the position component and push the corret table onto the lua stack. */
     SmartLuaVM vm(nullptr, lua_close);
@@ -67,7 +86,7 @@ uint32_t EntityFactory::create_prop(std::string& entity_name, int x, int y, int 
     return entity;
 }
 
-uint32_t EntityFactory::create_item(std::string& entity_name, int x, int y, int z, int world_x, int world_y)
+uint32_t EntityFactory::create_item(std::string& entity_name)
 {
     /* Create the position component and push the correct table onto the lua stack. */
     SmartLuaVM vm(nullptr, lua_close);
@@ -76,7 +95,6 @@ uint32_t EntityFactory::create_item(std::string& entity_name, int x, int y, int 
     load_file(vm, item_file);
 
     auto entity = world.CreateEntity();
-    world.AddComponent<Position>(entity, x, y, z, world_x, world_y);
 
     lua_getglobal(vm.get(), entity_name.c_str()); // push object name
     if (!lua_istable(vm.get(), -1)) {
@@ -87,16 +105,17 @@ uint32_t EntityFactory::create_item(std::string& entity_name, int x, int y, int 
     return entity;
 }
 
-uint32_t EntityFactory::create_item(std::string& entity_name)
+uint32_t EntityFactory::create_item_at(std::string& entity_name, int x, int y, int z, int world_x, int world_y)
 {
-    /* Push the corret table onto the lua stack. */
+    /* Create the position component and push the correct table onto the lua stack. */
     SmartLuaVM vm(nullptr, lua_close);
     vm.reset(luaL_newstate());
     std::string item_file = "./Resources/Data/Objects/items.lua";
     load_file(vm, item_file);
 
-    auto entity = world.CreateEntity(); 
-    
+    auto entity = world.CreateEntity();
+    world.AddComponent<Position>(entity, x, y, z, world_x, world_y);
+
     lua_getglobal(vm.get(), entity_name.c_str()); // push object name
     if (!lua_istable(vm.get(), -1)) {
         printf("Expected table!");
@@ -314,7 +333,9 @@ void EntityFactory::create_script(SmartLuaVM& vm, uint32_t& entity)
     world.AddComponent<Scriptable>(entity);
     auto* script = world.GetComponent<Scriptable>(entity);
     
-    auto init = utils::read_lua_string(vm, "OnInit", -3);
+    auto scriptFile = utils::read_lua_string(vm, "scriptFile", -3);
+    script->scriptFile = scriptFile;
+    /*
     if (init != " ") {
         script->OnInit = init;
     }
@@ -345,7 +366,7 @@ void EntityFactory::create_script(SmartLuaVM& vm, uint32_t& entity)
     auto hit = utils::read_lua_string(vm, "OnHit", -3);
     if (hit != " ") {
         script->OnHit = hit;
-    }
+    }*/
 }
 
 void EntityFactory::create_item(SmartLuaVM& vm, uint32_t& entity)

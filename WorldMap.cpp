@@ -49,24 +49,24 @@ void WorldMap::build_town()
 
 
 	std::string sword = "fire_sword";
-	entity_factory.create_item(sword, 21, 21, 0, world_x, world_y);
+	entity_factory.create_item_at(sword, 21, 21, 0, world_x, world_y);
 
 	std::string arrow = "arrow";
-	entity_factory.create_item(arrow, 20, 20, 0, world_x, world_y);
-	entity_factory.create_item(arrow, 19, 20, 0, world_x, world_y);
+	entity_factory.create_item_at(arrow, 20, 20, 0, world_x, world_y);
+	entity_factory.create_item_at(arrow, 19, 20, 0, world_x, world_y);
 
 	std::string health_potion = "health_potion";
-	entity_factory.create_item(health_potion, 18, 25, 0, world_x, world_y);
+	entity_factory.create_item_at(health_potion, 18, 25, 0, world_x, world_y);
 
 	std::string fireball = "fireball_scroll";
-	entity_factory.create_item(fireball, 19, 22, 0, world_x, world_y);
+	entity_factory.create_item_at(fireball, 19, 22, 0, world_x, world_y);
 
 
 	std::string bat = "bat";
-	entity_factory.create_mob(bat, 15, 25, 0, world_x, world_y);
+	entity_factory.create_mob_at(bat, 15, 25, 0, world_x, world_y);
 
 	std::string gobbo = "goblin";
-	entity_factory.create_mob(gobbo, 2, 2, 0, world_x, world_y);
+	entity_factory.create_mob_at(gobbo, 2, 2, 0, world_x, world_y);
 
 	town.swap(level);
 }

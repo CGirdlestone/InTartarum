@@ -196,19 +196,19 @@ int main(int argc, char* argv[])
 		auto inventory_system = InventorySystem(world, event_manager, world_map, entity_factory);
 		systems.push_back(std::reference_wrapper(inventory_system));
 
-		auto script_system = ScriptSystem(world, event_manager, world_map, sound_manager, tex_manager);
-		script_system.init();
-		systems.push_back(std::reference_wrapper(script_system));
 
 		auto ai_system = AISystem(world, event_manager, world_map);
 		systems.push_back(std::reference_wrapper(ai_system));
 
-		auto combat_system = CombatSystem(world, event_manager, world_map);
+		auto combat_system = CombatSystem(world, event_manager, world_map, sound_manager);
 		systems.push_back(std::reference_wrapper(combat_system));
 
 		auto player_system = PlayerSystem(world, event_manager, world_map);
 		systems.push_back(std::reference_wrapper(player_system));
 		
+		auto script_system = ScriptSystem(world, event_manager, world_map, message_log, entity_factory, sound_system, sound_manager, tex_manager, inventory_system, combat_system);
+		script_system.init();
+		systems.push_back(std::reference_wrapper(script_system));
 
 		auto state_manager = StateManager(world, renderer, event_manager);
 

@@ -173,6 +173,7 @@ void Particle::deserialise(const char* buffer, size_t& offset)
 void Scriptable::serialise(std::ofstream& file)
 {
 	utils::serialiseUint32(file, owner);
+	utils::serialiseString(file, scriptFile);
 	utils::serialiseString(file, OnInit);
 	utils::serialiseString(file, OnUpdate);
 	utils::serialiseString(file, OnBump);
@@ -186,6 +187,7 @@ void Scriptable::serialise(std::ofstream& file)
 void Scriptable::deserialise(const char* buffer, size_t& offset)
 {
 	owner = utils::deserialiseUint32(buffer, offset);
+	scriptFile = utils::deserialiseString(buffer, offset);
 	OnInit = utils::deserialiseString(buffer, offset);
 	OnUpdate = utils::deserialiseString(buffer, offset);
 	OnBump = utils::deserialiseString(buffer, offset);
@@ -196,14 +198,28 @@ void Scriptable::deserialise(const char* buffer, size_t& offset)
 	OnHit = utils::deserialiseString(buffer, offset);
 }
 
+void Stat::serialise(std::ofstream& file)
+{
+	utils::serialiseUint32(file, static_cast<uint32_t>(base));
+	utils::serialiseUint32(file, static_cast<uint32_t>(buff));
+	utils::serialiseUint32(file, static_cast<uint32_t>(mod));
+}
+
+void Stat::deserialise(const char* buffer, size_t& offset)
+{
+	base = static_cast<int>(utils::deserialiseUint32(buffer, offset));
+	buff = static_cast<int>(utils::deserialiseUint32(buffer, offset));
+	mod = static_cast<int>(utils::deserialiseUint32(buffer, offset));
+}
+
 Fighter::Fighter(int _hp, int _defence, int _str, int _dex, int _con, int _wis, int _int, int _cha)
-	: max_hp(_hp), hp(_hp), defence(_defence),
-	base_strength(_str), str_buff(0), str_mod(utils::getAttributeMod(_str)),
-	base_dexterity(_str), dex_buff(0), dex_mod(utils::getAttributeMod(_dex)),
-	base_constitution(_str), con_buff(0), con_mod(utils::getAttributeMod(_con)),
-	base_wisdom(_str), wis_buff(0), wis_mod(utils::getAttributeMod(_wis)),
-	base_intelligence(_str), int_buff(0), int_mod(utils::getAttributeMod(_int)),
-	base_charisma(_str), cha_buff(0), cha_mod(utils::getAttributeMod(_cha))
+	: max_hp(_hp), hp(_hp), defence(_defence), 
+	strength(_str, 0, utils::getAttributeMod(_str)),
+	dexterity(_dex, 0, utils::getAttributeMod(_dex)),
+	constitution(_con, 0, utils::getAttributeMod(_con)),
+	wisdom(_wis, 0, utils::getAttributeMod(_wis)),
+	intelligence(_int, 0, utils::getAttributeMod(_int)),
+	charisma(_cha, 0, utils::getAttributeMod(_cha))
 {
 }
 
@@ -212,25 +228,13 @@ void Fighter::serialise(std::ofstream& file)
 	utils::serialiseUint32(file, static_cast<uint32_t>(max_hp));
 	utils::serialiseUint32(file, static_cast<uint32_t>(hp));
 	utils::serialiseUint32(file, static_cast<uint32_t>(defence));
-	utils::serialiseUint32(file, static_cast<uint32_t>(base_strength));
-	utils::serialiseUint32(file, static_cast<uint32_t>(str_buff));
-	utils::serialiseUint32(file, static_cast<uint32_t>(str_mod));
-	utils::serialiseUint32(file, static_cast<uint32_t>(base_dexterity));
-	utils::serialiseUint32(file, static_cast<uint32_t>(dex_buff));
-	utils::serialiseUint32(file, static_cast<uint32_t>(dex_mod));
-	utils::serialiseUint32(file, static_cast<uint32_t>(base_constitution));
-	utils::serialiseUint32(file, static_cast<uint32_t>(con_buff));
-	utils::serialiseUint32(file, static_cast<uint32_t>(con_mod));
-	utils::serialiseUint32(file, static_cast<uint32_t>(base_wisdom));
-	utils::serialiseUint32(file, static_cast<uint32_t>(wis_buff));
-	utils::serialiseUint32(file, static_cast<uint32_t>(wis_mod));
-	utils::serialiseUint32(file, static_cast<uint32_t>(base_intelligence));
-	utils::serialiseUint32(file, static_cast<uint32_t>(int_buff));
-	utils::serialiseUint32(file, static_cast<uint32_t>(int_mod));
-	utils::serialiseUint32(file, static_cast<uint32_t>(base_charisma));
-	utils::serialiseUint32(file, static_cast<uint32_t>(cha_buff));
-	utils::serialiseUint32(file, static_cast<uint32_t>(cha_mod));
 	utils::serialiseUint32(file, static_cast<uint32_t>(crit_mod));
+	strength.serialise(file);
+	dexterity.serialise(file);
+	constitution.serialise(file);
+	intelligence.serialise(file);
+	wisdom.serialise(file);
+	charisma.serialise(file);
 }
 
 void Fighter::deserialise(const char* buffer, size_t& offset)
@@ -238,25 +242,13 @@ void Fighter::deserialise(const char* buffer, size_t& offset)
 	max_hp = static_cast<int>(utils::deserialiseUint32(buffer, offset));
 	hp = static_cast<int>(utils::deserialiseUint32(buffer, offset));
 	defence = static_cast<int>(utils::deserialiseUint32(buffer, offset));
-	base_strength = static_cast<int>(utils::deserialiseUint32(buffer, offset));
-	str_buff = static_cast<int>(utils::deserialiseUint32(buffer, offset));
-	str_mod = static_cast<int>(utils::deserialiseUint32(buffer, offset));
-	base_dexterity = static_cast<int>(utils::deserialiseUint32(buffer, offset));
-	dex_buff = static_cast<int>(utils::deserialiseUint32(buffer, offset));
-	dex_mod = static_cast<int>(utils::deserialiseUint32(buffer, offset));
-	base_constitution = static_cast<int>(utils::deserialiseUint32(buffer, offset));
-	con_buff = static_cast<int>(utils::deserialiseUint32(buffer, offset));
-	con_mod = static_cast<int>(utils::deserialiseUint32(buffer, offset));
-	base_wisdom = static_cast<int>(utils::deserialiseUint32(buffer, offset));
-	wis_buff = static_cast<int>(utils::deserialiseUint32(buffer, offset));
-	wis_mod = static_cast<int>(utils::deserialiseUint32(buffer, offset));
-	base_intelligence = static_cast<int>(utils::deserialiseUint32(buffer, offset));
-	int_buff = static_cast<int>(utils::deserialiseUint32(buffer, offset));
-	int_mod = static_cast<int>(utils::deserialiseUint32(buffer, offset));
-	base_charisma = static_cast<int>(utils::deserialiseUint32(buffer, offset));
-	cha_buff = static_cast<int>(utils::deserialiseUint32(buffer, offset));
-	cha_mod = static_cast<int>(utils::deserialiseUint32(buffer, offset));
 	crit_mod = static_cast<int>(utils::deserialiseUint32(buffer, offset));
+	strength.deserialise(buffer, offset);
+	dexterity.deserialise(buffer, offset);
+	constitution.deserialise(buffer, offset);
+	intelligence.deserialise(buffer, offset);
+	wisdom.deserialise(buffer, offset);
+	charisma.deserialise(buffer, offset);
 }
 
 void Item::serialise(std::ofstream& file)
@@ -375,10 +367,14 @@ void Useable::serialise(std::ofstream& file)
 {
 	utils::serialiseUint32(file, static_cast<uint32_t>(type));
 	utils::serialiseUint32(file, static_cast<uint32_t>(charges));
+	utils::serialiseUint32(file, static_cast<uint32_t>(base_charges));
 }
 
 void Useable::deserialise(const char* buffer, size_t& offset)
 {
 	type = static_cast<UseableType>(utils::deserialiseUint32(buffer, offset));
 	charges = static_cast<int>(utils::deserialiseUint32(buffer, offset));
+	base_charges = static_cast<int>(utils::deserialiseUint32(buffer, offset));
 }
+
+

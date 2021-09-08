@@ -166,6 +166,8 @@
     <ClCompile Include="InventorySystem.cpp" />
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Level.cpp" />
+    <ClCompile Include="LuaBinding.cpp" />
+    <ClCompile Include="LuaComponents.cpp" />
     <ClCompile Include="MessageLog.cpp" />
     <ClCompile Include="MoveSystem.cpp" />
     <ClCompile Include="Pathfinding.cpp" />
@@ -216,6 +218,9 @@
     <ClInclude Include="InventorySystem.hpp" />
     <ClInclude Include="Keyboard.hpp" />
     <ClInclude Include="Level.hpp" />
+    <ClInclude Include="LuaBinding.hpp" />
+    <ClInclude Include="LuaComponents.hpp" />
+    <ClInclude Include="LuaUtilMacros.hpp" />
     <ClInclude Include="MessageLog.hpp" />
     <ClInclude Include="MoveSystem.hpp" />
     <ClInclude Include="ParticleSystem.hpp" />

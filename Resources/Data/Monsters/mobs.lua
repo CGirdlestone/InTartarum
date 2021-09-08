@@ -76,10 +76,10 @@ goblin = {
     container = 
     {
         weight_capacity = 100;
-        starting_equipment = 
-        { 
-            "fire_sword", "health_potion", "fireball_scroll";
-        };
+        --starting_equipment = 
+        --{ 
+        --    "health_potion", "fireball_scroll";
+        --};
     };
     body = 
     {

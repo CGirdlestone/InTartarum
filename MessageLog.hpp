@@ -11,17 +11,25 @@ enum class MessageTopic {
 	DEATH,
 };
 
+struct Colour {
+	Colour() {};
+	Colour(uint8_t _r, uint8_t _g, uint8_t _b) : r(_r), g(_g), b(_b) {};
+	~Colour() {};
+	
+	uint8_t r{ 0xBB };
+	uint8_t g{ 0xAA };
+	uint8_t b{ 0x99 };
+};
+
 struct Message : public ISerializeable
 {
 	Message() {};
 	Message(std::string _text) : text(_text) { };
 	Message(const char* _text) : text(_text) { };
-	Message(std::string _text, uint8_t _r, uint8_t _g, uint8_t _b) : text(_text), r(_r), g(_g), b(_b) { };
-	const std::tuple<uint8_t, uint8_t, uint8_t> get_colour() const { return std::make_tuple(r, g, b); };
+	Message(std::string _text, uint8_t _r, uint8_t _g, uint8_t _b) : text(_text), colour(_r, _g, _b) { };
+	const Colour get_colour() const { return colour; };
 	std::string text{ "" };
-	uint8_t r{ 0xBB };
-	uint8_t g{ 0xAA };
-	uint8_t b{ 0x99 };
+	Colour colour;
 
 	virtual void serialise(std::ofstream& file) override;
 	virtual void deserialise(const char* buffer, size_t& offset) override;
@@ -33,6 +41,7 @@ public:
 	MessageLog(World& _world, EventManager& _event_manager);
 	~MessageLog() { };
 	
+	void add_message(Message message);
 	inline const std::deque<Message>& get_messages() const { return message_queue; };
 	inline const int get_offset() const { return offset; };
 	inline void scroll_up() { offset = std::max(0, offset - 1); };
@@ -61,7 +70,6 @@ private:
 
 	
 	void load_descriptions(const char* path);
-	void add_message(Message& message);
 
 	inline void interpolate(std::string& flavour_text, int x) {
 		flavour_text.replace(flavour_text.find('$'), 1, std::to_string(x));

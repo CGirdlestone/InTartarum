@@ -197,6 +197,7 @@ struct Particle : public ISerializeable {
 struct Scriptable : public ISerializeable {
 	Scriptable() {};
 	Scriptable(uint32_t entity) : owner(entity) {};
+	std::string scriptFile{ "" };
 	std::string OnInit{ "" };
 	std::string OnUpdate{ "" };
 	std::string OnBump{ "" };
@@ -211,6 +212,19 @@ struct Scriptable : public ISerializeable {
 	virtual void deserialise(const char* buffer, size_t& offset) override;
 };
 
+struct Stat : public ISerializeable {
+	Stat() {};
+	Stat(int _base, int _buff, int _mod) : base(_base), buff(_buff), mod(_mod) {};
+	~Stat() {};
+
+	int base{ 0 };
+	int buff{ 0 };
+	int mod{ 0 };
+
+	virtual void serialise(std::ofstream& file) override;
+	virtual void deserialise(const char* buffer, size_t& offset) override;
+};
+
 struct Fighter : public ISerializeable {
 	Fighter() {};
 	~Fighter() {};
@@ -218,24 +232,12 @@ struct Fighter : public ISerializeable {
 	int max_hp{ 0 };
 	int hp{ 0 };
 	int defence{ 0 };
-	int base_strength{ 0 };
-	int str_buff{ 0 };
-	int str_mod{ 0 };
-	int base_dexterity{ 0 };
-	int dex_buff{ 0 };
-	int dex_mod{ 0 };
-	int base_constitution{ 0 };
-	int con_buff{ 0 };
-	int con_mod{ 0 };
-	int base_wisdom{ 0 };
-	int wis_buff{ 0 };
-	int wis_mod{ 0 };
-	int base_intelligence{ 0 };
-	int int_buff{ 0 };
-	int int_mod{ 0 };
-	int base_charisma{ 0 };
-	int cha_buff{ 0 };
-	int cha_mod{ 0 };
+	Stat strength;
+	Stat dexterity;
+	Stat constitution;
+	Stat wisdom;
+	Stat intelligence;
+	Stat charisma;
 	int crit_mod{ 0 };
 
 	virtual void serialise(std::ofstream& file) override;
@@ -324,10 +326,11 @@ enum class UseableType { CONSUMABLE, TARGETED, TARGETED_AOE };
 struct Useable : public ISerializeable {
 	Useable() {};
 	~Useable() {};
-	Useable(UseableType _type, int _charges) : type(_type), charges(_charges) {};
+	Useable(UseableType _type, int _charges) : type(_type), charges(_charges), base_charges(_charges){};
 
 	UseableType type{ UseableType::CONSUMABLE };
 	int charges{ -1 };
+	int base_charges{ -1 };
 	virtual void serialise(std::ofstream& file) override;
 	virtual void deserialise(const char* buffer, size_t& offset) override;
 };

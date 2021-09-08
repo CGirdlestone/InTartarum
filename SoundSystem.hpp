@@ -12,10 +12,18 @@ private:
 	float interval{ 0.005f };
 	float cumulative_time{ 0.0f };
 	void play_chunks();
+
+	std::string sfx_path{ "./Resources/Sounds/SFX" };
+	std::string music_path{ "./Resources/Sounds" };
 	
 public:
 	SoundSystem(EventManager& _event_manager, SoundManager& _sound_manager);
 	~SoundSystem() { };
+
+	void play_music(std::string& music);
+	void play_chunk(std::string& chunk);
+	void fade_in(std::string& music, int ms);
+	void fade_out(int ms);
 
 	virtual void update(float dt) override;
 	virtual void on_tick() override;

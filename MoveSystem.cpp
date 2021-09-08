@@ -131,8 +131,7 @@ bool MoveSystem::can_move(uint32_t mover, int x, int y)
 			auto* sprite = world.GetComponent<Sprite>(mover);
 			pos->x_offset = (x - pos->x) * sprite->width / 2;
 			pos->y_offset = (y - pos->y) * sprite->height / 2;
-			auto hit = sound_manager.LoadChunk("./Resources/Sounds/SFX/explosion_01.ogg");
-			event_manager.push_event(EventTypes::PLAY_CHUNK, hit);
+			
 			event_manager.push_event(EventTypes::BUMP_ATTACK, mover, entity); // don't have a combat system to handle this yet...
 			if (world.GetComponent<Player>(mover) != nullptr) {
 				event_manager.push_event(EventTypes::TICK);

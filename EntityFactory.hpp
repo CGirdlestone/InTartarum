@@ -9,11 +9,12 @@ public:
 	EntityFactory(World& _world, TextureManager& _texture_manager);
 	~EntityFactory() {};
 
-	uint32_t create_mob(std::string& entity_name, int x, int y, int z, int world_x, int world_y);
+	uint32_t create_mob(std::string& entity_name);
+	uint32_t create_mob_at(std::string& entity_name, int x, int y, int z, int world_x, int world_y);
 	uint32_t create_player(int world_x, int world_y);
 	uint32_t create_prop(std::string& entity_name, int x, int y, int z, int world_x, int world_y);
-	uint32_t create_item(std::string& entity_name, int x, int y, int z, int world_x, int world_y);
 	uint32_t create_item(std::string& entity_name); // used to create items that are owned (inventory or equipped) by an actor
+	uint32_t create_item_at(std::string& entity_name, int x, int y, int z, int world_x, int world_y);
 	uint32_t create_npc(std::string& entity_name, int x, int y, int z, int world_x, int world_y);
 
 private:

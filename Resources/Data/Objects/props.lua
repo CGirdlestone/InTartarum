@@ -56,9 +56,10 @@ door =
     };
     script = 
     {
+        scriptFile = "Door.lua"
         --OnInit = "";
         --OnUpdate = "";
-        OnBump = "OPEN_DOOR";
+        --OnBump = "OPEN_DOOR";
         --OnDeath = "";
         --OnEquip = "",
         --OnUnequip = "",

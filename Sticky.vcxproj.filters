@@ -61,6 +61,12 @@
     <Filter Include="Source Files\ECS">
       <UniqueIdentifier>{114cf16e-839a-45d2-930c-f47ffc618427}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Scripting">
+      <UniqueIdentifier>{831ca2a6-fcea-47a1-9fbf-9f3675bf8963}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scripting">
+      <UniqueIdentifier>{7e67d464-5ca6-4608-ada7-387d78924800}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -179,6 +185,12 @@
     </ClCompile>
     <ClCompile Include="PlayerSystem.cpp">
       <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaBinding.cpp">
+      <Filter>Source Files\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaComponents.cpp">
+      <Filter>Source Files\Scripting</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -331,6 +343,15 @@
     </ClInclude>
     <ClInclude Include="PlayerSystem.hpp">
       <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaBinding.hpp">
+      <Filter>Header Files\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaComponents.hpp">
+      <Filter>Header Files\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaUtilMacros.hpp">
+      <Filter>Header Files\Scripting</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

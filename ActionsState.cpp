@@ -113,9 +113,6 @@ void ActionsState::handle_inventory_input(SDL_Event& event)
 			event_manager.push_event(EventTypes::NO_USE);
 			break;
 		}
-		if (script->OnUse == "") {
-			break;
-		}
 		if (useable->type == UseableType::TARGETED) {
 			state_manager.pop(2);
 			state_manager.push(GameState::TARGETING);

@@ -136,7 +136,7 @@ void InventorySystem::drop_stack(uint32_t actor, uint32_t item, uint32_t quantit
 	if (static_cast<int>(quantity) <= stack->quantity) {
 		auto* id = world.GetComponent<ID>(item);
 		std::string entity_name = id->id;
-		auto entity = entity_factory.create_item(entity_name, pos->x, pos->y, pos->z, pos->world_x, pos->world_y);
+		auto entity = entity_factory.create_item_at(entity_name, pos->x, pos->y, pos->z, pos->world_x, pos->world_y);
 		auto* new_stack = world.GetComponent<Stackable>(entity);
 		new_stack->quantity = quantity;
 		if (static_cast<int>(quantity) == stack->quantity) {
@@ -224,6 +224,7 @@ void InventorySystem::decrease_charges(uint32_t owner, uint32_t item)
 	if (useable->charges == -1) {
 		return;
 	}
+	
 
 	useable->charges -= 1;
 	if (useable->charges == 0) {
@@ -233,6 +234,9 @@ void InventorySystem::decrease_charges(uint32_t owner, uint32_t item)
 			if (stack->quantity == 0) {
 				remove_from_inventory(owner, item);
 				world.KillEntity(item);
+			}
+			else {
+				useable->charges = useable->base_charges;
 			}
 		}
 		else {

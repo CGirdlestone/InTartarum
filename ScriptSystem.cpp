@@ -1,4 +1,33 @@
 #include "ScriptSystem.hpp"
+#include "LuaBinding.hpp"
+#include "Utils.hpp"
+
+int lua_print(lua_State* vm)
+{
+	int nargs = lua_gettop(vm);
+	const char* str;
+	for (int i = 1; i <= nargs; i++) {
+		str = luaL_checkstring(vm, i);
+		printf("%s\t", str);
+	}
+	printf("\n");
+	return 0;
+}
+
+int lua_roll(lua_State* vm)
+{
+	std::string roll = luaL_checkstring(vm, 1);
+	int score = utils::roll(roll);
+
+	lua_pushnumber(vm, score);
+
+	return 1;
+}
+
+void ScriptSystem::prepare_vm(uint32_t actor, uint32_t target, uint32_t item)
+{
+	
+}
 
 void ScriptSystem::load_bump_scripts()
 {
@@ -59,7 +88,18 @@ void ScriptSystem::load_bump_scripts()
 void ScriptSystem::do_bump(uint32_t entity)
 {
 	auto* script = world.GetComponent<Scriptable>(entity);
-	bump_scripts.at(script->OnBump)(world, world_map, event_manager, sound_manager, texture_manager, tile_width, tile_height, entity, MAX_ENTITIES + 1, MAX_ENTITIES + 1);
+	std::string path = "./Resources/Scripts/" + script->scriptFile;
+	int x = luaL_dofile(Lua_VM.get(), path.c_str());
+
+	lua_getglobal(Lua_VM.get(), "OnBump");
+	lua_pushnumber(Lua_VM.get(), entity);
+	lua_pcall(Lua_VM.get(), 1, 0, 0);
+	lua_settop(Lua_VM.get(), 0);
+
+	if (x == 1) {
+		const char* str = lua_tostring(Lua_VM.get(), -1);
+		printf("%s\n", str);
+	}
 }
 
 void ScriptSystem::load_update_scripts()
@@ -89,7 +129,18 @@ void ScriptSystem::load_death_scripts()
 void ScriptSystem::do_death(uint32_t entity)
 {
 	auto* script = world.GetComponent<Scriptable>(entity);
-	death_scripts.at(script->OnDeath)(world, world_map, event_manager, sound_manager, texture_manager, tile_width, tile_height, entity, MAX_ENTITIES + 1, MAX_ENTITIES + 1);
+	std::string path = "./Resources/Scripts/" + script->scriptFile;
+	int x = luaL_dofile(Lua_VM.get(), path.c_str());
+
+	lua_getglobal(Lua_VM.get(), "OnDeath");
+	lua_pushnumber(Lua_VM.get(), entity);
+	lua_pcall(Lua_VM.get(), 1, 0, 0);
+	lua_settop(Lua_VM.get(), 0);
+
+	if (x == 1) {
+		const char* str = lua_tostring(Lua_VM.get(), -1);
+		printf("%s\n", str);
+	}
 }
 
 void ScriptSystem::load_consume_scripts()
@@ -130,7 +181,20 @@ void ScriptSystem::load_consume_scripts()
 void ScriptSystem::do_consume(uint32_t entity, uint32_t item)
 {
 	auto* script = world.GetComponent<Scriptable>(item);
-	consume_scripts.at(script->OnUse)(world, world_map, event_manager, sound_manager, texture_manager, tile_width, tile_height, entity, MAX_ENTITIES + 1, item);
+	std::string path = "./Resources/Scripts/" + script->scriptFile;
+	int x = luaL_dofile(Lua_VM.get(), path.c_str());
+
+	lua_getglobal(Lua_VM.get(), "OnUse");
+	lua_pushnumber(Lua_VM.get(), entity);
+	lua_pushnil(Lua_VM.get());
+	lua_pushnumber(Lua_VM.get(), item);
+	lua_pcall(Lua_VM.get(), 3, 0, 0);
+	lua_settop(Lua_VM.get(), 0);
+
+	if (x == 1) {
+		const char* str = lua_tostring(Lua_VM.get(), -1);
+		printf("%s\n", str);
+	}
 }
 
 void ScriptSystem::load_use_scripts()
@@ -172,7 +236,20 @@ void ScriptSystem::load_use_scripts()
 void ScriptSystem::do_use(uint32_t entity, uint32_t target, uint32_t item)
 {
 	auto* script = world.GetComponent<Scriptable>(item);
-	use_scripts.at(script->OnUse)(world, world_map, event_manager, sound_manager, texture_manager, tile_width, tile_height, entity, target, item);
+	std::string path = "./Resources/Scripts/" + script->scriptFile;
+	int x = luaL_dofile(Lua_VM.get(), path.c_str());
+
+	lua_getglobal(Lua_VM.get(), "OnUse");
+	lua_pushnumber(Lua_VM.get(), entity);
+	lua_pushnumber(Lua_VM.get(), target);
+	lua_pushnumber(Lua_VM.get(), item);
+	lua_pcall(Lua_VM.get(), 3, 0, 0);
+	lua_settop(Lua_VM.get(), 0);
+
+	if (x == 1) {
+		const char* str = lua_tostring(Lua_VM.get(), -1);
+		printf("%s\n", str);
+	}
 }
 
 void ScriptSystem::load_equip_scripts()
@@ -192,7 +269,19 @@ void ScriptSystem::load_equip_scripts()
 void ScriptSystem::do_equip(uint32_t entity, uint32_t item)
 {
 	auto* script = world.GetComponent<Scriptable>(item);
-	equip_scripts.at(script->OnEquip)(world, world_map, event_manager, sound_manager, texture_manager, tile_width, tile_height, entity, MAX_ENTITIES + 1, item);
+	std::string path = "./Resources/Scripts/" + script->scriptFile;
+	int x = luaL_dofile(Lua_VM.get(), path.c_str());
+
+	lua_getglobal(Lua_VM.get(), "OnEquip");
+	lua_pushnumber(Lua_VM.get(), entity);
+	lua_pushnumber(Lua_VM.get(), item);
+	lua_pcall(Lua_VM.get(), 2, 0, 0);
+	lua_settop(Lua_VM.get(), 0);
+	
+	if (x == 1) {
+		const char* str = lua_tostring(Lua_VM.get(), -1);
+		printf("%s\n", str);
+	}
 }
 
 void ScriptSystem::load_unequip_scripts()
@@ -216,13 +305,46 @@ void ScriptSystem::load_unequip_scripts()
 void ScriptSystem::do_unequip(uint32_t entity, uint32_t item)
 {
 	auto* script = world.GetComponent<Scriptable>(item);
-	unequip_scripts.at(script->OnUnequip)(world, world_map, event_manager, sound_manager, texture_manager, tile_width, tile_height, entity, MAX_ENTITIES + 1, item);
+	std::string path = "./Resources/Scripts/" + script->scriptFile;
+	int x = luaL_dofile(Lua_VM.get(), path.c_str());
+
+	lua_getglobal(Lua_VM.get(), "OnUnequip");
+	lua_pushnumber(Lua_VM.get(), entity);
+	lua_pushnumber(Lua_VM.get(), item);
+	lua_pcall(Lua_VM.get(), 2, 0, 0);
+	lua_settop(Lua_VM.get(), 0);
+
+	if (x == 1) {
+		const char* str = lua_tostring(Lua_VM.get(), -1);
+		printf("%s\n", str);
+	}
 }
 
-ScriptSystem::ScriptSystem(World& _world, EventManager& _event_manager, WorldMap& _world_map, SoundManager& _sound_manager, TextureManager& _texture_manager)
-	: world(_world), event_manager(_event_manager), world_map(_world_map), sound_manager(_sound_manager), texture_manager(_texture_manager),
-	tile_width(0), tile_height(0), Lua_VM(nullptr, lua_close)
+ScriptSystem::ScriptSystem(World& _world, 
+							EventManager& _event_manager, 
+							WorldMap& _world_map, 
+							MessageLog& _message_log, 
+							EntityFactory& _entity_factory, 
+							SoundSystem& _sound_system, 
+							SoundManager& _sound_manager, 
+							TextureManager& _texture_manager, 
+							InventorySystem& _inventory_system,
+							CombatSystem& _combat_system)
+							: world(_world), 
+							event_manager(_event_manager), 
+							world_map(_world_map), 
+							message_log(_message_log), 
+							entity_factory(_entity_factory), 
+							sound_system(_sound_system), 
+							sound_manager(_sound_manager), 
+							texture_manager(_texture_manager),
+							inventory_system(_inventory_system),
+							combat_system(_combat_system),
+							tile_width(0),
+							tile_height(0), 
+							Lua_VM(nullptr, lua_close)
 {
+
 	SmartLuaVM vm(nullptr, &lua_close);
 	vm.reset(luaL_newstate());
 	auto result = luaL_dofile(vm.get(), "./Config/window.lua");
@@ -246,7 +368,6 @@ ScriptSystem::ScriptSystem(World& _world, EventManager& _event_manager, WorldMap
 	event_manager.add_subscriber(EventTypes::ON_DEATH_SCRIPT, *this);
 	Lua_VM.reset(luaL_newstate());
 }
-
 ScriptSystem::~ScriptSystem()
 {
 
@@ -254,13 +375,23 @@ ScriptSystem::~ScriptSystem()
 
 void ScriptSystem::init()
 {
-	load_bump_scripts();
-	load_update_scripts();
-	load_death_scripts();
-	load_consume_scripts();
-	load_use_scripts();
-	load_equip_scripts();
-	load_unequip_scripts();
+	luaopen_table(Lua_VM.get());
+	luaopen_string(Lua_VM.get());
+	luaopen_math(Lua_VM.get());
+
+	registerWorld(Lua_VM.get(), world);
+	registerWorldMap(Lua_VM.get(), world_map);
+	registerMessageLog(Lua_VM.get(), message_log);
+	registerSoundSystem(Lua_VM.get(), sound_system);
+	registerEntityFactory(Lua_VM.get(), entity_factory);
+	registerInventorySystem(Lua_VM.get(), inventory_system);
+	registerCombatSystem(Lua_VM.get(), combat_system);
+
+	lua_pushcfunction(Lua_VM.get(), lua_print);
+	lua_setglobal(Lua_VM.get(), "log");
+
+	lua_pushcfunction(Lua_VM.get(), lua_roll);
+	lua_setglobal(Lua_VM.get(), "rollDice");
 }
 
 void ScriptSystem::update(float dt)
@@ -268,9 +399,13 @@ void ScriptSystem::update(float dt)
 	auto entities = world.GetEntitiesWith<Scriptable>();
 	for (auto e : entities) {
 		auto* script = world.GetComponent<Scriptable>(e);
-		if (script->OnUpdate != "") {
-			update_scripts.at(script->OnUpdate)(world, world_map, event_manager, sound_manager, texture_manager, tile_width, tile_height, e, MAX_ENTITIES + 1, MAX_ENTITIES + 1);
-		}
+		std::string path = "./Resources/Scripts/" + script->scriptFile;
+		luaL_dofile(Lua_VM.get(), path.c_str());
+		lua_getglobal(Lua_VM.get(), "OnUpdate");
+		lua_pushnumber(Lua_VM.get(), dt);
+		lua_pushnumber(Lua_VM.get(), e);
+		lua_pcall(Lua_VM.get(), 2, 0, 0);
+		lua_settop(Lua_VM.get(), 0);
 	}
 }
 

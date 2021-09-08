@@ -20,6 +20,29 @@ void SoundSystem::play_chunks()
 	}
 }
 
+void SoundSystem::play_music(std::string& music)
+{
+	std::string sound_path = music_path + "/" + music;
+	Mix_PlayMusic(sound_manager.GetMusic(sound_manager.LoadMusic(sound_path)), -1);
+}
+
+void SoundSystem::play_chunk(std::string& chunk)
+{
+	std::string chunk_path = sfx_path + "/" + chunk;
+	queued_chunks.insert(sound_manager.LoadChunk(chunk_path));
+}
+
+void SoundSystem::fade_in(std::string& music, int ms)
+{
+	std::string sound_path = music_path + "/" + music;
+	Mix_FadeInMusic(sound_manager.GetMusic(sound_manager.LoadMusic(sound_path)), -1, ms);
+}
+
+void SoundSystem::fade_out(int ms)
+{
+	Mix_FadeOutMusic(ms);
+}
+
 void SoundSystem::update(float dt)
 {
 	cumulative_time += dt;

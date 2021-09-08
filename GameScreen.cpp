@@ -68,9 +68,6 @@ void GameScreen::open_doors()
 					continue;
 				}
 				auto* script = world.GetComponent<Scriptable>(e);
-				if (script->OnBump == "") {
-					continue;
-				}
 
 				if (interactable->repeatable) {
 					event_manager.push_event(EventTypes::BUMP_SCRIPT, e);
@@ -184,7 +181,7 @@ void GameScreen::draw_scene(Renderer& renderer, const uint32_t fps, float dt) co
 
 void GameScreen::on_entrance(Renderer& renderer)
 {
-	event_manager.push_event(EventTypes::PLAY_SOUND, id);
+	//event_manager.push_event(EventTypes::PLAY_SOUND, id);
 	auto components = world.GetComponents<Player, Position>();
 	auto& [p, pos] = components[0];
 	camera.follow(pos->x, pos->y);
